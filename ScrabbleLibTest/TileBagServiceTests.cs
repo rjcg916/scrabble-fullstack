@@ -4,21 +4,21 @@ using Xunit;
 
 namespace ScrabbleLibTest
 {
-    public class TileBagTests
+    public class TileBagServiceTests
     {
         [Fact]
         public void TileBagCorrect()
         {
             // Arrange
-            var tb = new TileBag();
+            var tbs = new TileBagService();
 
             // Act
-            var tiles = tb.GetTiles();
+            var tb = tbs.GetTileBag();
 
             // Assert
             // tiles generated
-            Assert.Equal(100, tiles.Count);
-            Assert.Equal(6, tiles.FindAll(t => t.Letter == "R").Count);
+            Assert.Equal(100, tb.Count);
+            Assert.Equal(6, tb.FindAll(t => t.Letter == "R").Count);
 
         }
 

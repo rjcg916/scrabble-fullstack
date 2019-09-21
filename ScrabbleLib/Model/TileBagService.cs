@@ -18,7 +18,7 @@ namespace ScrabbleLib.Model
         }
     }
 
-    public class TileBag
+    public class TileBagService
     {
         private static List<Letter> letters = new List<Letter>()
       {
@@ -52,7 +52,7 @@ namespace ScrabbleLib.Model
         };
 
 
-        public List<Tile> GetTiles()
+        public List<Tile> GetTileBag()
         {
             var tiles = new List<Tile>();
 
