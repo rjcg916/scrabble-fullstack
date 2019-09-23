@@ -6,32 +6,33 @@ namespace ScrabbleLib.Model
 {
     public class Game
     {
-        Board board { get; set; }
+        public Board board { get; set; }
 
-        Dictionary<byte, Player> players { get; set; }
-        byte numberOfPlayers { get; set; }
+        public Dictionary<byte, Player> players { get; set; } = new Dictionary<byte, Player>();
+        public byte numberOfPlayers { get; set; }
 
-        TileBagService tileBagService = new TileBagService();
-        List<Tile> tileBag;
+        TileBag tileBag = new TileBag();
+       
+        public byte turnOfPlayer { get; set; }
 
-        byte turnOfPlayer { get; set; }
-        bool gameDone { get; } = false;
-        Lexicon lexicon;
+        public bool gameDone { get; } = false;
 
-        Game(byte numberOfPlayers = 2)
+        public Lexicon lexicon { get; set; }
+
+        public Game(byte numberOfPlayers = 2)
         {
             // initialize/choose lexicon
             this.lexicon = new Lexicon();
 
             // fill tile bag
-            this.tileBag = this.tileBagService.GetTileBag();
+            this.tileBag = new TileBag();
 
             // for each player, draw tiles from bag
             this.numberOfPlayers = numberOfPlayers;
             for (byte i = 1; i <= numberOfPlayers; i++)
             {
-                var player = new Player(i.ToString());
-                this.tileBag = player.DrawTiles(this.tileBag);
+                var player = new Player();
+                player.DrawTiles(this.tileBag);
                 players.Add(i, player);
             }
 

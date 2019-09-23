@@ -8,6 +8,7 @@ namespace ScrabbleLib.Model
     public class Slot
     {
         public Tile tile { get; set; }
+
         public Slot(Tile tile = null)
         {
             this.tile = tile;
@@ -17,7 +18,7 @@ namespace ScrabbleLib.Model
     {
         public static byte capacity = 7;
         List<Tile> tiles;
-
+        
         public byte TileCount
         {
             get
@@ -35,21 +36,24 @@ namespace ScrabbleLib.Model
             return tiles;
         }
 
+
         public List<Tile> AddTiles(List<Tile> tiles)
         {
-            var tilesNeeded = Rack.capacity - this.tiles.Count;
-            var tilesAvailable = tiles.Count;
-            var drawCount = tilesAvailable > tilesNeeded ? tilesNeeded : tilesAvailable;
+            if (tiles.Count > (Rack.capacity - this.tiles.Count))
+                throw new Exception("Attempt to add tiles beyond rack capacity");
 
-            var tilesToAdd = tiles.GetRange(0, drawCount);
+            this.tiles.AddRange(tiles);
 
-            this.tiles.AddRange(tilesToAdd);
+            return this.tiles;
 
-            return GetTiles();
         }
 
         public List<Tile> RemoveTiles(List<Tile> tiles)
         {
+
+            if (tiles.Count > this.tiles.Count)
+                throw new Exception("Attempt to remove more tiles than existing in rack.");
+
             tiles.ForEach(r =>
            {
               var index = this.tiles.FindIndex( t => t.Letter == r.Letter);

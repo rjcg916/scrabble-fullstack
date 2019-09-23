@@ -6,19 +6,24 @@ namespace ScrabbleLib.Model
 {
     public class Player
     {
-        Rack rack { get; set; }
-        String name { get; set; }
+        public Rack rack { get; set; } = new Rack();
 
-        public Player(String name)
+        public List<Tile> DrawTiles(TileBag tileBag)
         {
-            this.name = name;
-            this.rack = new Rack();
+            var tilesAvailable = tileBag.count;
+
+            if (tilesAvailable == 0)
+                throw new Exception("No tiles available to draw.");
+
+            var tilesNeeded = Rack.capacity - this.rack.TileCount;
+
+            var drawCount = tilesAvailable > tilesNeeded ? tilesNeeded : tilesAvailable;
+
+            var tilesToAdd = tileBag.DrawTiles(drawCount);
+            this.rack.AddTiles(tilesToAdd);
+
+            return tilesToAdd;
         }
 
-        public List<Tile> DrawTiles(List<Tile> tiles)
-        {
-            return this.rack.AddTiles(tiles);
-        }
-    } 
+    }
 }
-

@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
+using ScrabbleLib.Model;
 
 namespace ScrabbleAPI
 {
@@ -26,6 +27,7 @@ namespace ScrabbleAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IGames, Games>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSwaggerGen(c =>
@@ -35,7 +37,7 @@ namespace ScrabbleAPI
                     Version = "v1",
                     Title = "ScrabbleAPI",
                     Description = "Testing"  
-      });
+                });
             });
         }
 

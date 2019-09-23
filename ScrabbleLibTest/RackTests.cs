@@ -24,6 +24,7 @@ namespace ScrabbleLibTest
         {
             // Arrange
             var r = new Rack();
+            var tb = new TileBag();
 
             var tiles = new List<Tile>()
             {
@@ -33,8 +34,7 @@ namespace ScrabbleLibTest
                 new Tile("D"),
                 new Tile("E"),
                 new Tile("F"),
-                new Tile("G"),
-                new Tile("H")
+                new Tile("G")
             };
 
             // Act
@@ -53,8 +53,8 @@ namespace ScrabbleLibTest
             // Arrange
             var r = new Rack();
 
-            
-            var tilesToAdd = new List<Tile>()
+
+            var tiles = new List<Tile>()
             {
                 new Tile("A"),
                 new Tile("B"),
@@ -62,10 +62,9 @@ namespace ScrabbleLibTest
                 new Tile("D"),
                 new Tile("E"),
                 new Tile("F"),
-                new Tile("G"),
-                new Tile("H")
+                new Tile("G")
             };
-
+            r.AddTiles(tiles);
 
             var tilesToRemove = new List<Tile>()
             {
@@ -74,7 +73,7 @@ namespace ScrabbleLibTest
                 new Tile("E"),  
                 new Tile("G")
             };
-            r.AddTiles(tilesToAdd);
+
 
             // Act
 
@@ -108,17 +107,19 @@ namespace ScrabbleLibTest
         {
             // Arrange
             var r = new Rack();
+
+            // Act
             var tiles = new List<Tile>()
             {
                 new Tile("A"),
                 new Tile("B"),
                 new Tile("C"),
                 new Tile("D"),
- 
+                new Tile("E"),
+                new Tile("F")
             };
-
-            // Act
             r.AddTiles(tiles);
+
             var slots = r.GetSlots();
 
             // Assert
