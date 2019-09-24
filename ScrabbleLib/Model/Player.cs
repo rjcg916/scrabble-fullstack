@@ -25,5 +25,9 @@ namespace ScrabbleLib.Model
             return tilesToAdd;
         }
 
+        public bool PlaceTile(Board board, TileLocation tileLocation)
+        {
+            return board.PlaceTile(tileLocation);
+        }
     }
 }

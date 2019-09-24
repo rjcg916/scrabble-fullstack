@@ -47,17 +47,17 @@ namespace ScrabbleLib.Model
             return GetSquare(loc).Tile;
         }
 
-        public bool PlaceTile(Coord loc, Tile tile)
+        public bool PlaceTile(TileLocation tileLocation)
         {
             bool isSuccessful;
 
-            var square = this.board[(int)loc.row, (int)loc.col];
+            var square = this.board[(int) tileLocation.coord.row, (int)tileLocation.coord.col];
 
             if (square.IsOccupied)
                 isSuccessful = false;
             else
             {
-                square.Tile = tile;
+                square.Tile = tileLocation.tile;
                 isSuccessful = true;
             }
 

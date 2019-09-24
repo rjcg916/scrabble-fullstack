@@ -12,7 +12,16 @@ namespace ScrabbleLib.Model
         public byte numberOfPlayers { get; set; }
 
         TileBag tileBag = new TileBag();
-       
+
+        public int remainingTileCount
+        {
+            get
+            {
+                return tileBag.count;
+            }
+        }
+
+
         public byte turnOfPlayer { get; set; }
 
         public bool gameDone { get; } = false;

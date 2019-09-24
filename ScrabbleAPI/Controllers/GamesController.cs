@@ -8,6 +8,7 @@ using ScrabbleLib.Model;
 
 namespace ScrabbleAPI.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class GamesController : ControllerBase
@@ -49,6 +50,38 @@ namespace ScrabbleAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+
+
+        [HttpPost]
+        [Route("{gameId}/{playerId}/Board/Tiles")]
+        public void PlaceTile(int gameId, int playerId, [FromBody] TileLocation tileLocation)
+        {
+            var game = this.games.GetGame(gameId);
+            var board = game.board;
+            var player = game.players[(byte)playerId];
+
+            player.PlaceTile(board, tileLocation);
+        }
+
+        [HttpGet]
+        [Route("{gameId}/Board/Squares")]
+        public ActionResult<IEnumerable<CoordSquare>> GetSquares(int gameId)
+        {
+            var game = this.games.GetGame(gameId);
+            var board = game.board;
+            return board.GetCoordSquares();
+        }
+
+        [HttpGet]
+        [Route("{gameId}/Board/Tiles")]
+        public ActionResult<IEnumerable<CoordSquare>> GetTiles(int gameId)
+        {
+
+            var game = this.games.GetGame(gameId);
+            var board = game.board;
+            return board.GetCoordSquares(filterForOccupied: true);
+
         }
     }
 }

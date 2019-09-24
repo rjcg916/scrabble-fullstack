@@ -15,6 +15,17 @@ namespace ScrabbleLib.Model
         }
   }
 
+    public class TileLocation
+    {
+        public Coord coord { get; set; }
+        public Tile tile { get; set; }
+        public TileLocation(Coord coord, Tile tile)
+        {
+            this.coord = coord;
+            this.tile = tile;
+        }
+    }
+
 }
 
 
