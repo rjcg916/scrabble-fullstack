@@ -12,9 +12,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using ScrabbleLib.Model;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace ScrabbleAPI
 {
+ 
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -27,7 +29,10 @@ namespace ScrabbleAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddSingleton<IGames, Games>();
+
+    //        services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSwaggerGen(c =>
@@ -38,6 +43,7 @@ namespace ScrabbleAPI
                     Title = "ScrabbleAPI",
                     Description = "Testing"  
                 });
+
             });
         }
 
@@ -55,13 +61,16 @@ namespace ScrabbleAPI
             }
 
             app.UseHttpsRedirection();
+
+       //     app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseMvc();
+
 
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json","MyAPI");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyAPI");
             });
         }
     }
