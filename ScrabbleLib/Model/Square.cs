@@ -63,12 +63,16 @@ namespace ScrabbleLib.Model
 
         public Square Square { get; set; }
         public int Row { get; set; }
+        public string rowName { get; set; }
         public int Col { get; set; }
+        public string colName { get; set; }
 
         public CoordSquare(int row, int col, Square square = null)
         {
             this.Row = row;
+            this.rowName = ((R)row).ToString().Substring(1);
             this.Col = col;
+            this.colName = ((C)col).ToString().Substring(1);
             this.Square = square;
         }
     }
