@@ -16,6 +16,20 @@ namespace ScrabbleLib.Model
 
         Square[,] board = new Square[rowCount, colCount];
 
+        public static List<string> GetRowLabels()
+        {
+            return new List<string>  { 
+            "1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15"
+            };
+        }
+
+        public static List<string> GetColLabels()
+        {
+            return new List<string>  {
+            "A", "B","C","D","E","F","G","H","I","J","K","L","M","N","O"
+            };
+        }
+
         public Board()
         {
             for (int r = 0; r <= (int)lastRow; r++)

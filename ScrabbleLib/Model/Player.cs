@@ -6,7 +6,14 @@ namespace ScrabbleLib.Model
 {
     public class Player
     {
-        public Rack rack { get; set; } = new Rack();
+        public Rack rack { get; set; };
+
+        public string Name { get; set; }
+        public Player(string name)
+        {
+            this.Name = name;
+            this.rack = new Rack();
+        }
 
         public List<Tile> DrawTiles(TileBag tileBag)
         {

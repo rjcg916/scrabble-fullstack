@@ -15,9 +15,9 @@ namespace ScrabbleLib.Model
            return games.Count + 1;
 
         }
-        public int CreateGame(byte numberOfPlayers = 2)
+        public int CreateGame(List<string> playerNames)
         {
-            Game g = new Game(numberOfPlayers);           
+            Game g = new Game(playerNames);           
             int key = GetKey();
             games.Add(key, g);
             return key;

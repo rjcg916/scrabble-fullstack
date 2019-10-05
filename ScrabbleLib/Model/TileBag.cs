@@ -4,6 +4,19 @@ using System.Text;
 
 namespace ScrabbleLib.Model
 {
+    public class LetterValue
+    {
+
+        public String name { get; set; }
+        public short value { get; set; }
+
+        public LetterValue( string name, short value)
+        {
+            this.name = name;
+            this.value = value;
+        }
+    }
+
     class Letter
     {
         public String name { get; set; }
@@ -27,6 +40,8 @@ namespace ScrabbleLib.Model
     }
     public class TileBag : ITileBag
     {
+        string TOOMANYERROR = "Attempt to draw more tiles than present in TileBag";
+
         private static List<Letter> letters = new List<Letter>()
       {
         new Letter("A", 1, 9),
@@ -57,6 +72,18 @@ namespace ScrabbleLib.Model
         new Letter("Z", 10, 1),
         new Letter("", 0, 2)
         };
+
+        public static List<LetterValue> GetLetterValues()
+        {
+            List<LetterValue> letterValues = new List<LetterValue>();
+
+            letters.ForEach(l =>
+           {
+               letterValues.Add(new LetterValue(l.name, l.value));
+           });
+
+            return letterValues;
+        }
 
         public List<Tile> tiles { get; set; } = new List<Tile>();
 
@@ -102,7 +129,7 @@ namespace ScrabbleLib.Model
 
             // can't draw more than available
             if (drawCount > this.tiles.Count)
-                throw new Exception("Attemp to draw more tiles than present in TileBag");
+                throw new Exception(TOOMANYERROR);
 
             // fetch the tiles to draw
             var tiles = this.tiles.GetRange(0, drawCount);
@@ -118,5 +145,7 @@ namespace ScrabbleLib.Model
             // return the list of drawn tiles
             return tiles;
         }
+
+
     }
 }
