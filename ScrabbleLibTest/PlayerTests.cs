@@ -10,7 +10,7 @@ namespace ScrabbleLibTest
         public void PlayerInitialRack()
         {
             // Arrange
-            var p = new Player();
+            var p = new Player("player 1");
             var tb = new TileBag();
 
             // Act

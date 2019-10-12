@@ -6,7 +6,7 @@ namespace ScrabbleLib.Model
 {
     public class Player
     {
-        public Rack rack { get; set; };
+        public Rack rack { get; set; }
 
         public string Name { get; set; }
         public Player(string name)

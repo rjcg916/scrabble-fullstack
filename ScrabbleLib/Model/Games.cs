@@ -7,7 +7,6 @@ namespace ScrabbleLib.Model
     public class Games : IGames
     {
 
-
         Dictionary<int, Game> games { get; set; } = new Dictionary<int, Game>();
 
         int GetKey( )
@@ -33,6 +32,11 @@ namespace ScrabbleLib.Model
         {
             games.Remove(key);
                         
+        }
+
+        public int Count()
+        {
+            return games.Count;
         }
 
     }
