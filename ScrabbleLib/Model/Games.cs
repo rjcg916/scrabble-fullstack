@@ -24,7 +24,9 @@ namespace ScrabbleLib.Model
 
         public Game GetGame(int key)
         {
+
             games.TryGetValue(key, out Game g);
+
             return g;
         }
 

@@ -19,23 +19,33 @@ namespace ScrabbleAPI.Controllers
 
         // GET: api/Games
         [HttpGet]
-        public IEnumerable<string> Get()
+        public int Get()
         {
-            return new string[] { "value1", "value2" };
+            return this.games.Count();
         }
 
         // GET: api/Games/5
         [HttpGet("{id}", Name = "Get")]
-        public Game Get(int id)
+        public IActionResult Get(int id)
         {
-            return this.games.GetGame(id);
+            var g =  this.games.GetGame(id);
+            if (g == null)
+            {
+                return NotFound();
+            } else
+            {
+                return Ok(g);
+            }
+           
+            
         }
 
         // POST: api/Games
         [HttpPost]
-        public int Post([FromForm] byte numberOfPlayers)
+        public int Post([FromForm] string names)
         {
-            var i = this.games.CreateGame(numberOfPlayers);
+
+            var i = this.games.CreateGame(names.Split(",").ToList());
 
             return i;
 

@@ -6,8 +6,9 @@ namespace ScrabbleLib.Model
 {
     public interface IGames
     {
-            int CreateGame(List<String> playerNames);
-            Game GetGame(int i);
-            void RemoveGame(int i);
+        int CreateGame(List<String> playerNames);
+        Game GetGame(int i);
+        void RemoveGame(int i);
+        int Count();
     }
 }
