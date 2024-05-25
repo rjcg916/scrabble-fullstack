@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29306.81
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.34909.67
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrabbleLib", "ScrabbleLib\ScrabbleLib.csproj", "{8484D580-EB0C-4315-89EB-46180674BD05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scrabble.Domain.Test", "tests\Scrabble.Domain.Test\Scrabble.Domain.Test.csproj", "{59A9F13C-5CF6-4B11-B9E9-FD11879EE715}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrabbleAPI", "ScrabbleAPI\ScrabbleAPI.csproj", "{3F46C4B1-416B-4D8C-8599-5D33F24E9D26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scrabble.Domain", "src\Scrabble.Domain\Scrabble.Domain.csproj", "{DBBD2397-707D-4BB9-96FF-247E538E3DA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrabbleLibTest", "ScrabbleLibTest\ScrabbleLibTest.csproj", "{59A9F13C-5CF6-4B11-B9E9-FD11879EE715}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scrabble.API", "src\Scrabble.API\Scrabble.API.csproj", "{FA844EF0-9650-449C-A6CD-000320EDB3D8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7961B6D7-3F49-4780-B8E0-416049C0A2F6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A8259792-7C58-4F6E-9095-30AFD1B88FC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,21 +19,26 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8484D580-EB0C-4315-89EB-46180674BD05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8484D580-EB0C-4315-89EB-46180674BD05}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8484D580-EB0C-4315-89EB-46180674BD05}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8484D580-EB0C-4315-89EB-46180674BD05}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3F46C4B1-416B-4D8C-8599-5D33F24E9D26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3F46C4B1-416B-4D8C-8599-5D33F24E9D26}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3F46C4B1-416B-4D8C-8599-5D33F24E9D26}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3F46C4B1-416B-4D8C-8599-5D33F24E9D26}.Release|Any CPU.Build.0 = Release|Any CPU
 		{59A9F13C-5CF6-4B11-B9E9-FD11879EE715}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{59A9F13C-5CF6-4B11-B9E9-FD11879EE715}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59A9F13C-5CF6-4B11-B9E9-FD11879EE715}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59A9F13C-5CF6-4B11-B9E9-FD11879EE715}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBBD2397-707D-4BB9-96FF-247E538E3DA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBBD2397-707D-4BB9-96FF-247E538E3DA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBBD2397-707D-4BB9-96FF-247E538E3DA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBBD2397-707D-4BB9-96FF-247E538E3DA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA844EF0-9650-449C-A6CD-000320EDB3D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA844EF0-9650-449C-A6CD-000320EDB3D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA844EF0-9650-449C-A6CD-000320EDB3D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA844EF0-9650-449C-A6CD-000320EDB3D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{59A9F13C-5CF6-4B11-B9E9-FD11879EE715} = {A8259792-7C58-4F6E-9095-30AFD1B88FC3}
+		{DBBD2397-707D-4BB9-96FF-247E538E3DA2} = {7961B6D7-3F49-4780-B8E0-416049C0A2F6}
+		{FA844EF0-9650-449C-A6CD-000320EDB3D8} = {7961B6D7-3F49-4780-B8E0-416049C0A2F6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {55B9FAD2-9D47-4F9B-905A-814FAC72CB44}

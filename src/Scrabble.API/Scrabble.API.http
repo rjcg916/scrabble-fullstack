@@ -1,0 +1,6 @@
+@Scrabble.API_HostAddress = http://localhost:5244
+
+GET {{Scrabble.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
