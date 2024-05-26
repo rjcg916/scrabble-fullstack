@@ -1,4 +1,6 @@
-﻿namespace Scrabble.Domain.Model
+﻿using System.Data.Common;
+
+namespace Scrabble.Domain.Model
 {
     public enum R
     {
@@ -14,30 +16,30 @@
 
     public class Coord(R row, C col)
     {
-        public R Row { get; } = row;
-        public C Col { get; } = col;
+        public R Row { get; init; } = row;
+        public C Col { get; init; } = col;
 
         public override string ToString()
         {
-            return $"{col}{(int)row}";
+            return $"{Col}{(int)Row}";
         }
     }
 
-    public class Span
-    {
-        Coord Start { get; }
-        Coord End { get; }
-    }
+    //public class Span
+    //{
+    //    Coord Start { get; }
+    //    Coord End { get; }
+    //}
 
-    public class Endpoints
-    {
-        int Start { get; }
-        int End { get; }
+    //public class Endpoints
+    //{
+    //    int Start { get; }
+    //    int End { get; }
 
-        Endpoints(int start, int end)
-        {
-            this.Start = start;
-            this.End = end;
-        }
-    }
+    //    Endpoints(int start, int end)
+    //    {
+    //        this.Start = start;
+    //        this.End = end;
+    //    }
+    //}
 }
