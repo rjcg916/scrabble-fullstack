@@ -20,40 +20,29 @@
             }
 
         }
-        public int LetterMultiplier
+        public int LetterMultiplier => SquareType switch
         {
-            get
-            {
-                if (SquareType == SquareType.tl)
-                    return 3;
-                else if (SquareType == SquareType.dl)
-                    return 2;
-                else
-                    return 1;
-            }
-        }
+            SquareType.tl => 3,
+            SquareType.dl => 2,
+            _ => 1
+        };
 
-        public int WordMultiplier
+
+        public int WordMultiplier => SquareType switch
         {
-            get
-            {
-                if (SquareType == SquareType.tw)
-                    return 3;
-                else if (SquareType == SquareType.dw)
-                    return 2;
-                else
-                    return 1;
-            }
-        }
+            SquareType.tw => 3,
+            SquareType.dw => 2,
+            _ => 1
+        };
 
     }
-    public class CoordSquare(int row, int col, Square square = null)
+    public class CoordSquare(ushort row, ushort col, Square square = null)
     {
 
         public Square Square { get; set; } = square;
-        public int Row { get; set; } = row;
+        public ushort Row { get; set; } = row;
         public string RowName { get; set; } = ((R)row).ToString()[1..];
-        public int Col { get; set; } = col;
+        public ushort Col { get; set; } = col;
         public string ColName { get; set; } = ((C)col).ToString()[1..];
     }
 }

@@ -15,7 +15,7 @@ namespace Scrabble.Domain.Model
             if (tilesAvailable == 0)
                 throw new Exception("No tiles available to draw.");
 
-            var tilesNeeded = Rack.capacity - this.Rack.TileCount;
+            var tilesNeeded = Rack.Capacity - this.Rack.TileCount;
 
             var drawCount = tilesAvailable > tilesNeeded ? tilesNeeded : tilesAvailable;
 

@@ -8,7 +8,7 @@ namespace Scrabble.Domain.Model
     {
         readonly string TOOMANYERROR = "Attempt to draw more tiles than present in TileBag";
 
-        private static readonly List<(Letter letter, short freq)> letters =
+        private static readonly List<(Letter letter, ushort freq)> letters =
         [
         new( new Letter('A', 1), 9),
         new( new Letter('B', 3), 2),

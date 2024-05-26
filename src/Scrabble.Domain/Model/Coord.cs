@@ -1,12 +1,12 @@
 ﻿namespace Scrabble.Domain.Model
 {
-    public enum R
+    public enum R : ushort
     {
         _1 = 1, _2, _3, _4, _5, _6, _7, _8,
         _9, _10, _11, _12, _13, _14, _15
     }
 
-    public enum C
+    public enum C : ushort
     {
         A = 1, B, C, D, E, F, G, H,
         I, J, K, L, M, N, O
@@ -19,7 +19,7 @@
 
         public override string ToString()
         {
-            return $"{Col}{(int)Row}";
+            return $"{Col}{(ushort)Row}";
         }
     }
 

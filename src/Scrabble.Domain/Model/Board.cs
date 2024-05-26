@@ -8,8 +8,8 @@ namespace Scrabble.Domain.Model
 
         static readonly R lastRow = R._15;
         static readonly C lastCol = C.O;
-        static readonly int rowCount = (int)R._15 - (int)R._1 + 1;
-        static readonly int colCount = (int)C.O - (int)C.A + 1;
+        static readonly ushort rowCount = R._15 - R._1 + 1;
+        static readonly ushort colCount = C.O - C.A + 1;
 
         readonly Square[,] board = new Square[rowCount, colCount];
 
@@ -29,8 +29,8 @@ namespace Scrabble.Domain.Model
 
         public Board()
         {
-            for (int r = 0; r <= (int)lastRow; r++)
-                for (int c = 0; c <= (int)lastCol; c++)
+            for (ushort r = 0; r <= (ushort)lastRow; r++)
+                for (ushort c = 0; c <= (ushort)lastCol; c++)
                     board[r, c] = new Square();
 
             this.SetAllSquareTypes();
@@ -40,8 +40,8 @@ namespace Scrabble.Domain.Model
         {
             List<CoordSquare> squares = [];
 
-            for (int r = 0; r <= (int)lastRow; r++)
-                for (int c = 0; c <= (int)lastCol; c++)
+            for (ushort r = 0; r <= (ushort)lastRow; r++)
+                for (ushort c = 0; c <= (ushort)lastCol; c++)
                     if ((board[r, c].IsOccupied && filterForOccupied) || !filterForOccupied)
                         squares.Add(new CoordSquare(r, c, board[r, c]));
 
@@ -50,7 +50,7 @@ namespace Scrabble.Domain.Model
 
         public Square GetSquare(Coord loc)
         {
-            return board[(int)loc.Row, (int)loc.Col];
+            return board[(ushort)loc.Row, (ushort)loc.Col];
         }
 
         public Tile GetTile(Coord loc)
@@ -62,7 +62,7 @@ namespace Scrabble.Domain.Model
         {
             bool isSuccessful;
 
-            var square = this.board[(int)coord.Row, (int)coord.Col];
+            var square = this.board[(ushort)coord.Row, (ushort)coord.Col];
 
             if (square.IsOccupied)
                 isSuccessful = false;
@@ -80,7 +80,7 @@ namespace Scrabble.Domain.Model
 
             foreach (Coord loc in locs)
             {
-                this.board[(int)loc.Row, (int)loc.Col].SquareType = t;
+                this.board[(ushort)loc.Row, (ushort)loc.Col].SquareType = t;
             }
 
         }
@@ -89,7 +89,7 @@ namespace Scrabble.Domain.Model
         {
 
             // start
-            this.board[(int)R._8, (int)C.H].SquareType = SquareType.start;
+            this.board[(ushort)R._8, (ushort)C.H].SquareType = SquareType.start;
 
             // triple letters
             this.SetSquareTypes(SquareType.tl,

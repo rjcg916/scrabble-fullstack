@@ -15,7 +15,6 @@ namespace Scrabble.Domain.Test
             // Act
 
             // Assert
-            // start square correctly set
             Assert.Equal([], r.GetTiles());
 
         }
@@ -41,7 +40,6 @@ namespace Scrabble.Domain.Test
             r.AddTiles(tiles);
 
             // Assert
-            // start square correctly set
             Assert.NotNull(r.GetTiles());
             Assert.Equal(7, r.TileCount);
 
@@ -81,7 +79,6 @@ namespace Scrabble.Domain.Test
 
 
             // Assert
-            // start square correctly set
             Assert.NotNull(r.GetTiles());
             Assert.Equal(3, r.TileCount);
 
@@ -95,10 +92,9 @@ namespace Scrabble.Domain.Test
             // Arrange
             var r = new Rack();
 
-            var slots = r.GetSlots();
-
-            Assert.NotNull(slots);
-            Assert.Equal(7, slots.Length);
+            var slotCount = r.TileCount;
+            
+            Assert.Equal(0, slotCount);
 
         }
 
@@ -120,13 +116,10 @@ namespace Scrabble.Domain.Test
             };
             r.AddTiles(tiles);
 
-            var slots = r.GetSlots();
 
             // Assert
-            Assert.NotNull(slots);
-            Assert.Equal(7, slots.Length);
-            Assert.Equal('B', slots[1].Tile.Letter);
-            Assert.Null(slots[6].Tile);
+            Assert.True(r.InRack('B'));
+            Assert.False(r.InRack('Z'));
 
         }
 
