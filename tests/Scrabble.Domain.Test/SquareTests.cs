@@ -29,14 +29,14 @@ namespace Scrabble.Domain.Test
         {
             // Arrange
             var s = new Square();
-            var t = new Tile("A");
+            var t = new Tile('A');
 
             // Act
             s.Tile = t;
 
             // Assert
             Assert.Equal<Tile>(t, s.Tile);
-            Assert.Equal("A", s.Tile.Letter);
+            Assert.Equal('A', s.Tile.Letter);
 
         }
 

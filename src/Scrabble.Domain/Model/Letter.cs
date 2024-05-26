@@ -2,9 +2,9 @@
 
 namespace Scrabble.Domain.Model
 {
-    class Letter(string name, short value)
+    class Letter(char name, short value)
     {
-        public String Name { get; set; } = name;
+        public char Name { get; set; } = name;
         public short Value { get; set; } = value;
     }
 }

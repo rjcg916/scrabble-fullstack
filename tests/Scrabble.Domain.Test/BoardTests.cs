@@ -27,7 +27,7 @@ namespace Scrabble.Domain.Test
         {
             // Arrange
             var b = new Board();
-            var t = new Tile("A");
+            var t = new Tile('A');
             var c = new Coord(R._8, C.H);
 
             // Act
@@ -44,8 +44,8 @@ namespace Scrabble.Domain.Test
         {
             // Arrange
             var b = new Board();
-            var t1 = new Tile("A");
-            var t2 = new Tile("B");
+            var t1 = new Tile('A');
+            var t2 = new Tile('B');
 
             var c = new Coord(R._8, C.H);
 
@@ -82,8 +82,8 @@ namespace Scrabble.Domain.Test
             var list = b.GetCoordSquares(filterForOccupied: true);
             Assert.Equal(2, list.Count);
             var arrayList = list.ToArray();
-            Assert.Equal("A", arrayList[0].Square.Tile.Letter);
-            Assert.Equal("B", arrayList[1].Square.Tile.Letter);
+            Assert.Equal('A', arrayList[0].Square.Tile.Letter);
+            Assert.Equal('B', arrayList[1].Square.Tile.Letter);
 
 
         }

@@ -28,13 +28,13 @@ namespace Scrabble.Domain.Test
 
             var tiles = new List<Tile>()
             {
-                new("A"),
-                new("B"),
-                new("C"),
-                new("D"),
-                new("E"),
-                new("F"),
-                new("G")
+                new('A'),
+                new('B'),
+                new('C'),
+                new('D'),
+                new('E'),
+                new('F'),
+                new('G')
             };
 
             // Act
@@ -56,22 +56,22 @@ namespace Scrabble.Domain.Test
 
             var tiles = new List<Tile>()
             {
-                new("A"),
-                new("B"),
-                new("C"),
-                new("D"),
-                new("E"),
-                new("F"),
-                new("G")
+                new('A'),
+                new('B'),
+                new('C'),
+                new('D'),
+                new('E'),
+                new('F'),
+                new('G')
             };
             r.AddTiles(tiles);
 
             var tilesToRemove = new List<Tile>()
             {
-                new("A"),
-                new("C"),
-                new("E"),
-                new("G")
+                new('A'),
+                new('C'),
+                new('E'),
+                new('G')
             };
 
 
@@ -111,12 +111,12 @@ namespace Scrabble.Domain.Test
             // Act
             var tiles = new List<Tile>()
             {
-                new("A"),
-                new("B"),
-                new("C"),
-                new("D"),
-                new("E"),
-                new("F")
+                new('A'),
+                new('B'),
+                new('C'),
+                new('D'),
+                new('E'),
+                new('F')
             };
             r.AddTiles(tiles);
 
@@ -125,7 +125,7 @@ namespace Scrabble.Domain.Test
             // Assert
             Assert.NotNull(slots);
             Assert.Equal(7, slots.Length);
-            Assert.Equal("B", slots[1].Tile.Letter);
+            Assert.Equal('B', slots[1].Tile.Letter);
             Assert.Null(slots[6].Tile);
 
         }

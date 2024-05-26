@@ -10,12 +10,12 @@ namespace Scrabble.Domain.Test
         public void LetterIsCapitalized()
         {
             // Arrange
-            var t = new Tile("a");
+            var t = new Tile('a');
 
             // Act
 
             // Assert
-            Assert.Equal("A", t.Letter);
+            Assert.Equal('A', t.Letter);
 
         }
 
@@ -23,7 +23,7 @@ namespace Scrabble.Domain.Test
         public void DefaultValueStored()
         {
             // Arrange
-            var t = new Tile("B");
+            var t = new Tile('B');
 
             // Act
 
@@ -36,7 +36,7 @@ namespace Scrabble.Domain.Test
         public void ExplictValueStored()
         {
             // Arrange
-            var t = new Tile("B", 3);
+            var t = new Tile('B', 3);
 
             // Act
 
