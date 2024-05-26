@@ -50,7 +50,7 @@ namespace Scrabble.Domain.Test
             var c = new Coord(R._8, C.H);
 
             // Act
-           // var result1 = b.PlaceTile(c, t1);
+            // var result1 = b.PlaceTile(c, t1);
             var result2 = b.PlaceTile(c, t2);
 
             // Assert

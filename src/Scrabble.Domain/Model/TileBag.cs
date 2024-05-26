@@ -40,14 +40,14 @@ namespace Scrabble.Domain.Model
         ];
 
 
-        private List<Tile> tiles { get; set; } = [];
+        private List<Tile> Tiles { get; set; } = [];
 
-        public int count
+        public int Count
         {
-            get { return tiles.Count; }
+            get { return Tiles.Count; }
         }
 
-        public List<Tile> FindAll(Predicate<Tile> match) => tiles.FindAll(match);
+        public List<Tile> FindAll(Predicate<Tile> match) => Tiles.FindAll(match);
 
         public void Shuffle()
         {
@@ -55,14 +55,14 @@ namespace Scrabble.Domain.Model
 
             Random r = new();
             int randomIndex;
-            while (this.tiles.Count > 0)
+            while (this.Tiles.Count > 0)
             {
-                randomIndex = r.Next(0, this.tiles.Count); //Choose a random object in the list
-                randomList.Add(this.tiles[randomIndex]); //add it to the new, random list
-                this.tiles.RemoveAt(randomIndex); //remove to avoid duplicates
+                randomIndex = r.Next(0, this.Tiles.Count); //Choose a random object in the list
+                randomList.Add(this.Tiles[randomIndex]); //add it to the new, random list
+                this.Tiles.RemoveAt(randomIndex); //remove to avoid duplicates
             }
 
-            this.tiles = randomList;
+            this.Tiles = randomList;
         }
 
         public TileBag()
@@ -73,7 +73,7 @@ namespace Scrabble.Domain.Model
             {
                 for (var c = 0; c < l.freq; c++)
                 {
-                    this.tiles.Add(new Tile(l.letter.name, l.letter.value));
+                    this.Tiles.Add(new Tile(l.letter.Name, l.letter.Value));
                 }
             });
 
@@ -86,18 +86,18 @@ namespace Scrabble.Domain.Model
         {
 
             // can't draw more than available
-            if (drawCount > this.tiles.Count)
+            if (drawCount > this.Tiles.Count)
                 throw new Exception(TOOMANYERROR);
 
             // fetch the tiles to draw
-            var tiles = this.tiles.GetRange(0, drawCount);
+            var tiles = this.Tiles.GetRange(0, drawCount);
 
             // remove tiles from bag
             tiles.ForEach(r =>
             {
-                var index = this.tiles.FindIndex(t => t.Letter == r.Letter);
+                var index = this.Tiles.FindIndex(t => t.Letter == r.Letter);
                 if (index > -1)
-                    this.tiles.RemoveAt(index);
+                    this.Tiles.RemoveAt(index);
             });
 
             // return the list of drawn tiles

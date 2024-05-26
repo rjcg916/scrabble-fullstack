@@ -50,7 +50,7 @@ namespace Scrabble.Domain.Model
 
         public Square GetSquare(Coord loc)
         {
-            return board[(int)loc.row, (int)loc.col];
+            return board[(int)loc.Row, (int)loc.Col];
         }
 
         public Tile GetTile(Coord loc)
@@ -62,7 +62,7 @@ namespace Scrabble.Domain.Model
         {
             bool isSuccessful;
 
-            var square = this.board[(int)coord.row, (int)coord.col];
+            var square = this.board[(int)coord.Row, (int)coord.Col];
 
             if (square.IsOccupied)
                 isSuccessful = false;
@@ -80,7 +80,7 @@ namespace Scrabble.Domain.Model
 
             foreach (Coord loc in locs)
             {
-                this.board[(int)loc.row, (int)loc.col].SquareType = t;
+                this.board[(int)loc.Row, (int)loc.Col].SquareType = t;
             }
 
         }

@@ -4,7 +4,7 @@ namespace Scrabble.Domain.Model
 {
     public interface ITileBag
     {
-        int count { get; }
+        int Count { get; }
 
         List<Tile> DrawTiles(int drawCount);
 

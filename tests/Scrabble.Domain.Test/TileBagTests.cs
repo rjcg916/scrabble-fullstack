@@ -15,7 +15,7 @@ namespace Scrabble.Domain.Test
 
             // Assert
             // tiles generated
-            Assert.Equal(100, tb.count);
+            Assert.Equal(100, tb.Count);
             Assert.Equal(6, tb.FindAll(t => t.Letter == "R").Count);
 
         }

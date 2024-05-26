@@ -5,7 +5,6 @@ namespace Scrabble.Domain.Model
     public class Lexicon : ILexicon
     {
 
-        //    private _words = new Array<string>();
         readonly List<string> words =
         [
             "Car",

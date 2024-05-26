@@ -5,8 +5,7 @@ namespace Scrabble.Domain.Model
 {
     public struct GameDetails
     {
-        public TileBag tileBag;
-        //       public List<LetterValue> letterValues;
+        public TileBag TileBag;
         public List<string> rowLabels;
         public List<string> colLabels;
         public List<CoordSquare> squares;
@@ -18,33 +17,33 @@ namespace Scrabble.Domain.Model
         public byte MAXPLAYERS = 4;
         readonly string MINMAXPLAYERERROR = "Game must have 2, 3 or 4 players.";
 
-        public Board board { get; set; }
+        public Board Board { get; set; }
 
-        public Dictionary<byte, Player> players { get; set; } = [];
-        public byte numberOfPlayers { get; set; }
+        public Dictionary<byte, Player> Players { get; set; } = [];
+        public byte NumberOfPlayers { get; set; }
 
-        readonly TileBag tileBag = new();
+        readonly TileBag TileBag = new();
 
-        public int remainingTileCount
+        public int RemainingTileCount
         {
             get
             {
-                return tileBag.count;
+                return TileBag.Count;
             }
         }
 
 
-        public byte turnOfPlayer { get; set; } = 1;
+        public byte TurnOfPlayer { get; set; } = 1;
 
-        public bool gameDone { get; } = false;
+        public bool GameDone { get; } = false;
 
-        public Lexicon lexicon { get; set; }
+        public Lexicon Lexicon { get; set; }
 
         public Game(List<string> playerNames)
         {
-            this.numberOfPlayers = (byte)playerNames.Count;
+            this.NumberOfPlayers = (byte)playerNames.Count;
 
-            bool validNumberOfPlayers = (numberOfPlayers >= MINPLAYERS) && (numberOfPlayers <= MAXPLAYERS);
+            bool validNumberOfPlayers = (NumberOfPlayers >= MINPLAYERS) && (NumberOfPlayers <= MAXPLAYERS);
 
             if (!validNumberOfPlayers)
             {
@@ -52,10 +51,10 @@ namespace Scrabble.Domain.Model
             }
 
             // initialize/choose lexicon
-            this.lexicon = new Lexicon();
+            this.Lexicon = new Lexicon();
 
             // fill tile bag
-            this.tileBag = new TileBag();
+            this.TileBag = new TileBag();
 
             // for each player, draw tiles from bag
 
@@ -64,13 +63,13 @@ namespace Scrabble.Domain.Model
             playerNames.ForEach(name =>
             {
                 var player = new Player(name);
-                player.DrawTiles(this.tileBag);
-                players.Add(i++, player);
+                player.DrawTiles(this.TileBag);
+                Players.Add(i++, player);
             }
             );
 
             // create board
-            this.board = new Board();
+            this.Board = new Board();
 
         }
 
@@ -79,15 +78,13 @@ namespace Scrabble.Domain.Model
 
             var details = new GameDetails
             {
-                tileBag = this.tileBag,
-
-                //     details.letterValues = TileBag.GetLetterValues();
+                TileBag = this.TileBag,
 
                 rowLabels = Board.GetRowLabels(),
 
                 colLabels = Board.GetColLabels(),
 
-                squares = this.board.GetCoordSquares()
+                squares = this.Board.GetCoordSquares()
             };
 
             return details;

@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-
-using Scrabble.Domain.Model;
-
+﻿using Scrabble.Domain.Model;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Scrabble.Domain.Test
@@ -26,7 +24,7 @@ namespace Scrabble.Domain.Test
         {
             // Arrange
             var r = new Rack();
-          //  var tb = new TileBag();
+            //  var tb = new TileBag();
 
             var tiles = new List<Tile>()
             {
@@ -127,8 +125,8 @@ namespace Scrabble.Domain.Test
             // Assert
             Assert.NotNull(slots);
             Assert.Equal(7, slots.Length);
-            Assert.Equal("B", slots[1].tile.Letter);
-            Assert.Null(slots[6].tile);
+            Assert.Equal("B", slots[1].Tile.Letter);
+            Assert.Null(slots[6].Tile);
 
         }
 

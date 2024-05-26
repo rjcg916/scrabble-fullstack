@@ -6,11 +6,11 @@ namespace Scrabble.Domain.Model
 
     public class Slot(Tile tile = null)
     {
-        public Tile tile { get; set; } = tile;
+        public Tile Tile { get; set; } = tile;
     }
     public class Rack
     {
-        public readonly static byte  capacity = 7;
+        public readonly static byte capacity = 7;
         readonly List<Tile> tiles;
 
         public byte TileCount
@@ -39,7 +39,6 @@ namespace Scrabble.Domain.Model
             this.tiles.AddRange(tiles);
 
             return this.tiles;
-
         }
 
         public List<Tile> RemoveTiles(List<Tile> tiles)
@@ -68,7 +67,7 @@ namespace Scrabble.Domain.Model
             byte i = 0;
             this.tiles.ForEach(t =>
            {
-               slots[i++].tile = t;
+               slots[i++].Tile = t;
            });
 
             return slots;

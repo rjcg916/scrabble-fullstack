@@ -14,8 +14,8 @@
 
     public class Coord(R row, C col)
     {
-        public R row { get; } = row;
-        public C col { get; } = col;
+        public R Row { get; } = row;
+        public C Col { get; } = col;
 
         public override string ToString()
         {
@@ -25,19 +25,19 @@
 
     public class Span
     {
-        Coord start { get; }
-        Coord end { get; }
+        Coord Start { get; }
+        Coord End { get; }
     }
 
     public class Endpoints
     {
-       int start { get; }
-       int end { get; }
+        int Start { get; }
+        int End { get; }
 
         Endpoints(int start, int end)
         {
-            this.start = start;
-            this.end = end;
+            this.Start = start;
+            this.End = end;
         }
     }
 }

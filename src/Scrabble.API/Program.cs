@@ -45,8 +45,8 @@ app.MapDelete("/api/Games/{id}", (int id, IGames games) =>
 app.MapPost("/api/Games/{gameId}/{playerId}/Board/Tiles", (int gameId, int playerId, Coord coord, Tile tile, IGames games) =>
 {
     var game = games.GetGame(gameId);
-    var board = game.board;
-    var player = game.players[(byte)playerId];
+    var board = game.Board;
+    var player = game.Players[(byte)playerId];
 
     Player.PlaceTile(board, coord, tile);
     return Results.Ok();
@@ -55,14 +55,14 @@ app.MapPost("/api/Games/{gameId}/{playerId}/Board/Tiles", (int gameId, int playe
 app.MapGet("/api/Games/{gameId}/Board/Squares", (int gameId, IGames games) =>
 {
     var game = games.GetGame(gameId);
-    var board = game.board;
+    var board = game.Board;
     return Results.Ok(board.GetCoordSquares());
 });
 
 app.MapGet("/api/Games/{gameId}/Board/Tiles", (int gameId, IGames games) =>
 {
     var game = games.GetGame(gameId);
-    var board = game.board;
+    var board = game.Board;
     return Results.Ok(board.GetCoordSquares(filterForOccupied: true));
 });
 

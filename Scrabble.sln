@@ -7,11 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scrabble.Domain.Test", "tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scrabble.Domain", "src\Scrabble.Domain\Scrabble.Domain.csproj", "{DBBD2397-707D-4BB9-96FF-247E538E3DA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scrabble.API", "src\Scrabble.API\Scrabble.API.csproj", "{FA844EF0-9650-449C-A6CD-000320EDB3D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scrabble.API", "src\Scrabble.API\Scrabble.API.csproj", "{FA844EF0-9650-449C-A6CD-000320EDB3D8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7961B6D7-3F49-4780-B8E0-416049C0A2F6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A8259792-7C58-4F6E-9095-30AFD1B88FC3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AE8425AC-3C4B-446B-B207-84EE923B07CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

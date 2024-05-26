@@ -7,7 +7,6 @@
 
     public class Square(SquareType squareType = SquareType.reg)
     {
-
         public SquareType SquareType { get; set; } = squareType;
 
         public bool IsFinal { get; set; } = false;
@@ -53,8 +52,8 @@
 
         public Square Square { get; set; } = square;
         public int Row { get; set; } = row;
-        public string rowName { get; set; } = ((R)row).ToString()[1..];
+        public string RowName { get; set; } = ((R)row).ToString()[1..];
         public int Col { get; set; } = col;
-        public string colName { get; set; } = ((C)col).ToString()[1..];
+        public string ColName { get; set; } = ((C)col).ToString()[1..];
     }
 }

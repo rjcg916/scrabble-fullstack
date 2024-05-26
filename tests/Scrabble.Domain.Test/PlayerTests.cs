@@ -18,7 +18,7 @@ namespace Scrabble.Domain.Test
 
 
             // Assert            
-            Assert.Equal(7, p.rack.TileCount);
+            Assert.Equal(7, p.Rack.TileCount);
 
         }
 
