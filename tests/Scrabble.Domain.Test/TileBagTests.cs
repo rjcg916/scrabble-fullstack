@@ -1,8 +1,8 @@
 ﻿using Scrabble.Domain.Model;
-using System.Collections.Generic;
+
 using Xunit;
 
-namespace ScrabbleLibTest
+namespace Scrabble.Domain.Test
 {
     public class TileBagTests
     {

@@ -1,9 +1,11 @@
-﻿using Scrabble.Domain.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using Scrabble.Domain.Model;
+
 using Xunit;
 
-namespace ScrabbleLibTest
+namespace Scrabble.Domain.Test
 {
     public class GameTests
     {
@@ -11,7 +13,7 @@ namespace ScrabbleLibTest
         public void GameDefaultsSaved()
         {
             // Arrange
-            var gameNames = new List<String> { "player1", "player2"};
+            var gameNames = new List<String> { "player1", "player2" };
 
             var g = new Game(gameNames);
 
@@ -19,15 +21,15 @@ namespace ScrabbleLibTest
             // Act
 
             // Assert
-            
-            
+
+
             Assert.False(g.gameDone);
             Assert.Equal(2, g.numberOfPlayers);
             Assert.NotNull(g.board);
             Assert.NotNull(g.players[1]);
             Assert.Equal(86, g.remainingTileCount);
             Assert.Equal(1, g.turnOfPlayer);
-            Exception ex = Assert.Throws<System.Collections.Generic.KeyNotFoundException>(() => g.players[3] );
+            Exception ex = Assert.Throws<System.Collections.Generic.KeyNotFoundException>(() => g.players[3]);
             Assert.Equal("The given key '3' was not present in the dictionary.", ex.Message);
 
         }

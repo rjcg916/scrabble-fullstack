@@ -1,9 +1,11 @@
-﻿using Scrabble.Domain.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using Scrabble.Domain.Model;
+
 using Xunit;
 
-namespace ScrabbleLibTest
+namespace Scrabble.Domain.Test
 {
     public class GamesTests
     {
@@ -32,9 +34,9 @@ namespace ScrabbleLibTest
         {
             // Arrange
             var factory = new Games();
-           
+
             var gameNames = new List<String> { "player1", "player2", "player3", "player4" };
-            
+
             var index = factory.CreateGame(gameNames);
             var g = factory.GetGame(index);
             var index2 = factory.CreateGame(gameNames);

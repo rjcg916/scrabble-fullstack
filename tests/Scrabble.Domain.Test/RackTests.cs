@@ -1,8 +1,10 @@
-﻿using Scrabble.Domain.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
+using Scrabble.Domain.Model;
+
 using Xunit;
 
-namespace ScrabbleLibTest
+namespace Scrabble.Domain.Test
 {
     public class RackTests
     {
@@ -16,7 +18,7 @@ namespace ScrabbleLibTest
 
             // Assert
             // start square correctly set
-            Assert.Equal( new List<Tile>(), r.GetTiles());
+            Assert.Equal(new List<Tile>(), r.GetTiles());
 
         }
         [Fact]
@@ -70,7 +72,7 @@ namespace ScrabbleLibTest
             {
                 new Tile("A"),
                 new Tile("C"),
-                new Tile("E"),  
+                new Tile("E"),
                 new Tile("G")
             };
 
@@ -85,7 +87,7 @@ namespace ScrabbleLibTest
             Assert.NotNull(r.GetTiles());
             Assert.Equal(3, r.TileCount);
 
-            
+
 
         }
 

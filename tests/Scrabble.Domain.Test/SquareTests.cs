@@ -1,7 +1,8 @@
 ﻿using Scrabble.Domain.Model;
+
 using Xunit;
 
-namespace ScrabbleLibTest
+namespace Scrabble.Domain.Test
 {
     public class SquareTests
     {

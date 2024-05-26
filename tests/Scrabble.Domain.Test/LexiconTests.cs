@@ -1,8 +1,8 @@
 ﻿using Scrabble.Domain.Model;
-using System.Collections.Generic;
+
 using Xunit;
 
-namespace ScrabbleLibTest
+namespace Scrabble.Domain.Test
 {
     public class LexiconTests
     {
@@ -13,10 +13,10 @@ namespace ScrabbleLibTest
             var l = new Lexicon();
 
             // Act
-          
+
 
             // Assert
-            
+
             Assert.True(l.IsWordValid("House"));
 
         }

@@ -1,6 +1,4 @@
-﻿using System.Data.Common;
-
-namespace Scrabble.Domain.Model
+﻿namespace Scrabble.Domain.Model
 {
     public enum R
     {
@@ -31,7 +29,8 @@ namespace Scrabble.Domain.Model
         Coord start { get; }
         Coord end { get; }
 
-        Span(Coord start, Coord end) {
+        Span(Coord start, Coord end)
+        {
             this.start = start;
             this.end = end;
         }

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Scrabble.Domain.Model
 {
     public struct GameDetails
     {
         public TileBag tileBag;
- //       public List<LetterValue> letterValues;
+        //       public List<LetterValue> letterValues;
         public List<string> rowLabels;
         public List<string> colLabels;
         public List<CoordSquare> squares;
@@ -45,7 +44,7 @@ namespace Scrabble.Domain.Model
         {
             this.numberOfPlayers = (byte)playerNames.Count;
 
-            bool validNumberOfPlayers = (numberOfPlayers >= MINPLAYERS) && (numberOfPlayers <= MAXPLAYERS); 
+            bool validNumberOfPlayers = (numberOfPlayers >= MINPLAYERS) && (numberOfPlayers <= MAXPLAYERS);
 
             if (!validNumberOfPlayers)
             {
@@ -59,30 +58,30 @@ namespace Scrabble.Domain.Model
             this.tileBag = new TileBag();
 
             // for each player, draw tiles from bag
-       
+
             byte i = 1;
 
-            playerNames.ForEach( name =>
+            playerNames.ForEach(name =>
             {
                 var player = new Player(name);
                 player.DrawTiles(this.tileBag);
                 players.Add(i++, player);
             }
             );
-        
+
             // create board
             this.board = new Board();
 
         }
 
-        public  GameDetails GetDetails()
+        public GameDetails GetDetails()
         {
 
             var details = new GameDetails();
 
             details.tileBag = this.tileBag;
 
-       //     details.letterValues = TileBag.GetLetterValues();
+            //     details.letterValues = TileBag.GetLetterValues();
 
             details.rowLabels = Board.GetRowLabels();
 

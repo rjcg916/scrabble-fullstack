@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Scrabble.Domain.Model
 {
@@ -20,7 +16,7 @@ namespace Scrabble.Domain.Model
 
         public bool IsWordValid(string word)
         {
-            return this.words.FindIndex( w => w.ToString() == word.ToString()) > -1;
+            return this.words.FindIndex(w => w.ToString() == word.ToString()) > -1;
         }
 
     }

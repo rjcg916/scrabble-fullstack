@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Scrabble.Domain.Model
 {
@@ -13,7 +12,7 @@ namespace Scrabble.Domain.Model
     {
         public static byte capacity = 7;
         List<Tile> tiles;
-        
+
         public byte TileCount
         {
             get
@@ -51,8 +50,8 @@ namespace Scrabble.Domain.Model
 
             tiles.ForEach(r =>
            {
-              var index = this.tiles.FindIndex( t => t.Letter == r.Letter);
-               if (index > -1) 
+               var index = this.tiles.FindIndex(t => t.Letter == r.Letter);
+               if (index > -1)
                    this.tiles.RemoveAt(index);
            });
 

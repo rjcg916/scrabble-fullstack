@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Scrabble.Domain.Model
 {
@@ -9,14 +7,14 @@ namespace Scrabble.Domain.Model
 
         Dictionary<int, Game> games { get; set; } = new Dictionary<int, Game>();
 
-        int GetKey( )
+        int GetKey()
         {
-           return games.Count + 1;
+            return games.Count + 1;
 
         }
         public int CreateGame(List<string> playerNames)
         {
-            Game g = new Game(playerNames);           
+            Game g = new Game(playerNames);
             int key = GetKey();
             games.Add(key, g);
             return key;
@@ -33,7 +31,7 @@ namespace Scrabble.Domain.Model
         public void RemoveGame(int key)
         {
             games.Remove(key);
-                        
+
         }
 
         public int Count()

@@ -1,11 +1,12 @@
 ﻿using Scrabble.Domain.Model;
+
 using Xunit;
 
-namespace ScrabbleLibTest
+namespace Scrabble.Domain.Test
 {
     public class TileTests
     {
-        [Fact] 
+        [Fact]
         public void LetterIsCapitalized()
         {
             // Arrange

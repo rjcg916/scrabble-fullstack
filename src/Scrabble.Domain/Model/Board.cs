@@ -15,7 +15,7 @@ namespace Scrabble.Domain.Model
 
         public static List<string> GetRowLabels()
         {
-            return new List<string>  { 
+            return new List<string>  {
             "1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15"
             };
         }
@@ -36,18 +36,18 @@ namespace Scrabble.Domain.Model
             this.SetAllSquareTypes();
         }
 
-        public List<CoordSquare> GetCoordSquares( bool filterForOccupied = false)
+        public List<CoordSquare> GetCoordSquares(bool filterForOccupied = false)
         {
             List<CoordSquare> squares = new List<CoordSquare>();
 
             for (int r = 0; r <= (int)lastRow; r++)
                 for (int c = 0; c <= (int)lastCol; c++)
-                    if ((board[r, c].IsOccupied && filterForOccupied) || !filterForOccupied )
+                    if ((board[r, c].IsOccupied && filterForOccupied) || !filterForOccupied)
                         squares.Add(new CoordSquare(r, c, board[r, c]));
 
             return squares;
         }
-   
+
         public Square GetSquare(Coord loc)
         {
             return board[(int)loc.row, (int)loc.col];
@@ -62,7 +62,7 @@ namespace Scrabble.Domain.Model
         {
             bool isSuccessful;
 
-            var square = this.board[(int) coord.row, (int)coord.col];
+            var square = this.board[(int)coord.row, (int)coord.col];
 
             if (square.IsOccupied)
                 isSuccessful = false;
