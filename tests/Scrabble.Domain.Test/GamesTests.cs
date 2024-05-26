@@ -38,7 +38,7 @@ namespace Scrabble.Domain.Test
             var gameNames = new List<String> { "player1", "player2", "player3", "player4" };
 
             var index = factory.CreateGame(gameNames);
-            var g = factory.GetGame(index);
+          //  var g = factory.GetGame(index);
             var index2 = factory.CreateGame(gameNames);
             var g2 = factory.GetGame(index);
 

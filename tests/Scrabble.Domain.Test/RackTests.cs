@@ -26,7 +26,7 @@ namespace Scrabble.Domain.Test
         {
             // Arrange
             var r = new Rack();
-            var tb = new TileBag();
+          //  var tb = new TileBag();
 
             var tiles = new List<Tile>()
             {

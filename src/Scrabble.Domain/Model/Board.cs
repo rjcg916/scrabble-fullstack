@@ -92,9 +92,9 @@ namespace Scrabble.Domain.Model
             this.board[(int)R._8, (int)C.H].SquareType = SquareType.start;
 
             // triple letters
-            this.SetSquareTypes(SquareType.tl, new Coord[]
+            this.SetSquareTypes(SquareType.tl,
 
-              {
+              [
                 new(R._2, C.F),
                 new(R._2, C.J),
 
@@ -110,11 +110,11 @@ namespace Scrabble.Domain.Model
 
                 new(R._14, C.F),
                 new(R._14, C.J)
-              });
+              ]);
 
             // double letters
-            this.SetSquareTypes(SquareType.dl, new Coord[]
-                {
+            this.SetSquareTypes(SquareType.dl,
+                [
               new(R._1, C.D),
               new(R._1, C.L),
 
@@ -148,12 +148,12 @@ namespace Scrabble.Domain.Model
               new(R._15, C.D),
               new(R._15, C.L)
 
-            });
+            ]);
 
             // double word
-            this.SetSquareTypes(SquareType.dw, new Coord[]
+            this.SetSquareTypes(SquareType.dw,
 
-              {
+              [
                 new(R._2, C.B),
                 new(R._2, C.N),
 
@@ -178,14 +178,14 @@ namespace Scrabble.Domain.Model
                 new(R._14, C.B),
                 new(R._14, C.N)
 
-              });
+              ]);
 
 
             // triple word
             this.SetSquareTypes(
-              SquareType.tw, new Coord[]
+              SquareType.tw,
 
-              {
+              [
                 new(R._1, C.A),
                 new(R._1, C.H),
                 new(R._1, C.O),
@@ -196,7 +196,7 @@ namespace Scrabble.Domain.Model
                 new(R._15, C.A),
                 new(R._15, C.H),
                 new(R._15, C.O)
-              }
+              ]
             );
 
         }

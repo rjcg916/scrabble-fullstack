@@ -26,7 +26,7 @@ app.MapGet("/api/Games/{id}", (int id, IGames games) =>
 
 app.MapPost("/api/Games", (string names, IGames games) =>
 {
-    var gameId = games.CreateGame(names.Split(",").ToList());
+    var gameId = games.CreateGame([.. names.Split(",")]);
     return Results.Ok(gameId);
 });
 

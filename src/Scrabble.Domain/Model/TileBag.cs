@@ -54,7 +54,7 @@ namespace Scrabble.Domain.Model
             List<Tile> randomList = [];
 
             Random r = new();
-            int randomIndex = 0;
+            int randomIndex;
             while (this.tiles.Count > 0)
             {
                 randomIndex = r.Next(0, this.tiles.Count); //Choose a random object in the list

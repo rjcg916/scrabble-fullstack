@@ -10,7 +10,7 @@ namespace Scrabble.Domain.Model
     }
     public class Rack
     {
-        public static byte capacity = 7;
+        public readonly static byte  capacity = 7;
         readonly List<Tile> tiles;
 
         public byte TileCount

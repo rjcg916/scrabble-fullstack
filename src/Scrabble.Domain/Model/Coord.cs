@@ -10,13 +10,12 @@
     {
         A = 1, B, C, D, E, F, G, H,
         I, J, K, L, M, N, O
-
     }
+
     public class Coord(R row, C col)
     {
         public R row { get; } = row;
         public C col { get; } = col;
-
 
         public override string ToString()
         {
@@ -28,18 +27,12 @@
     {
         Coord start { get; }
         Coord end { get; }
-
-        Span(Coord start, Coord end)
-        {
-            this.start = start;
-            this.end = end;
-        }
     }
 
     public class Endpoints
     {
-        int start { get; }
-        int end { get; }
+       int start { get; }
+       int end { get; }
 
         Endpoints(int start, int end)
         {

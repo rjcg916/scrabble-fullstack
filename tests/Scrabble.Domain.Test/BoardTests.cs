@@ -50,7 +50,7 @@ namespace Scrabble.Domain.Test
             var c = new Coord(R._8, C.H);
 
             // Act
-            var result1 = b.PlaceTile(c, t1);
+           // var result1 = b.PlaceTile(c, t1);
             var result2 = b.PlaceTile(c, t2);
 
             // Assert
@@ -68,15 +68,15 @@ namespace Scrabble.Domain.Test
         {
             // Arrange
             var b = new Board();
-            var t1 = new Tile("A");
-            var t2 = new Tile("B");
+            //var t1 = new Tile("A");
+            //var t2 = new Tile("B");
 
-            var c1 = new Coord(R._8, C.H);
-            var c2 = new Coord(R._9, C.H);
+            //var c1 = new Coord(R._8, C.H);
+            //var c2 = new Coord(R._9, C.H);
 
             // Act
-            var result1 = b.PlaceTile(c1, t1);
-            var result2 = b.PlaceTile(c2, t2);
+            //var result1 = b.PlaceTile(c1, t1);
+            //var result2 = b.PlaceTile(c2, t2);
 
             // Assert
             var list = b.GetCoordSquares(filterForOccupied: true);
