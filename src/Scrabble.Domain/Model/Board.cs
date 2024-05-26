@@ -59,17 +59,17 @@ namespace Scrabble.Domain.Model
             return GetSquare(loc).Tile;
         }
 
-        public bool PlaceTile(TileLocation tileLocation)
+        public bool PlaceTile(Coord coord, Tile tile)
         {
             bool isSuccessful;
 
-            var square = this.board[(int) tileLocation.coord.row, (int)tileLocation.coord.col];
+            var square = this.board[(int) coord.row, (int)coord.col];
 
             if (square.IsOccupied)
                 isSuccessful = false;
             else
             {
-                square.Tile = tileLocation.tile;
+                square.Tile = tile;
                 isSuccessful = true;
             }
 

@@ -42,13 +42,13 @@ app.MapDelete("/api/Games/{id}", (int id, IGames games) =>
     return Results.Ok();
 });
 
-app.MapPost("/api/Games/{gameId}/{playerId}/Board/Tiles", (int gameId, int playerId, TileLocation tileLocation, IGames games) =>
+app.MapPost("/api/Games/{gameId}/{playerId}/Board/Tiles", (int gameId, int playerId, Coord coord, Tile tile, IGames games) =>
 {
     var game = games.GetGame(gameId);
     var board = game.board;
     var player = game.players[(byte)playerId];
 
-    player.PlaceTile(board, tileLocation);
+    player.PlaceTile(board, coord, tile);
     return Results.Ok();
 });
 

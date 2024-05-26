@@ -7,8 +7,8 @@ namespace Scrabble.Domain.Model
     public class Player
     {
         public Rack rack { get; set; }
-
         public string Name { get; set; }
+
         public Player(string name)
         {
             this.Name = name;
@@ -32,9 +32,9 @@ namespace Scrabble.Domain.Model
             return tilesToAdd;
         }
 
-        public bool PlaceTile(Board board, TileLocation tileLocation)
+        public bool PlaceTile(Board board, Coord coord, Tile tile)
         {
-            return board.PlaceTile(tileLocation);
+            return board.PlaceTile(coord, tile);
         }
     }
 }

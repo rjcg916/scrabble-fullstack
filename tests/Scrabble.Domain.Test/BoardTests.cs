@@ -30,7 +30,7 @@ namespace ScrabbleLibTest
             var c = new Coord(R._8, C._H);
 
             // Act
-            b.PlaceTile(new TileLocation(c, t));
+            b.PlaceTile(c, t);
 
             // Assert
             Assert.Equal<Tile>(t, b.GetTile(c));
@@ -49,8 +49,8 @@ namespace ScrabbleLibTest
             var c = new Coord(R._8, C._H);
 
             // Act
-            var result1 = b.PlaceTile(new TileLocation(c, t1));
-            var result2 = b.PlaceTile(new TileLocation(c, t2));
+            var result1 = b.PlaceTile(c, t1);
+            var result2 = b.PlaceTile(c, t2);
 
             // Assert
             Assert.False(result2);
@@ -74,8 +74,8 @@ namespace ScrabbleLibTest
             var c2 = new Coord(R._9, C._H);
 
             // Act
-            var result1 = b.PlaceTile(new TileLocation(c1, t1));
-            var result2 = b.PlaceTile(new TileLocation(c2, t2));
+            var result1 = b.PlaceTile(c1, t1);
+            var result2 = b.PlaceTile(c2, t2);
 
             // Assert
             var list = b.GetCoordSquares(filterForOccupied: true);
