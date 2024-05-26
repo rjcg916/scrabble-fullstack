@@ -1,6 +1,4 @@
-﻿using System.Data.Common;
-
-namespace Scrabble.Domain.Model
+﻿namespace Scrabble.Domain.Model
 {
     public enum R
     {

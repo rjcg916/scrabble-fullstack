@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace Scrabble.Domain.Model
+﻿namespace Scrabble.Domain.Model
 {
-    class Letter(char name, short value)
+    class Letter(char name, ushort value)
     {
-        public char Name { get; set; } = name;
-        public short Value { get; set; } = value;
+        public char Name { get; init; } = name;
+        public ushort Value { get; init; } = value;
     }
 }
