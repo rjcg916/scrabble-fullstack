@@ -13,19 +13,18 @@ namespace Scrabble.Domain.Test
             // Arrange
             var gameNames = new List<String> { "player1", "player2" };
 
-            var g = new Game(gameNames);
-
+            var gameFactory = new Game.GameFactory();
 
             // Act
+            var g = gameFactory.CreateGame(gameNames);
 
             // Assert
-
 
             Assert.False(g.GameDone);
             Assert.Equal(2, g.NumberOfPlayers);
             Assert.NotNull(g.Board);
             Assert.NotNull(g.Players[1]);
-            Assert.Equal(86, g.RemainingTileCount);
+            Assert.Equal(86, g.TileBag.Count);
             Assert.Equal(1, g.TurnOfPlayer);
             Exception ex = Assert.Throws<System.Collections.Generic.KeyNotFoundException>(() => g.Players[3]);
             Assert.Equal("The given key '3' was not present in the dictionary.", ex.Message);
@@ -37,10 +36,11 @@ namespace Scrabble.Domain.Test
         {
             // Arrange
             var gameNames = new List<String> { "player1", "player2", "player3", "player4" };
-            var g = new Game(gameNames);
-
+            var gameFactory = new Game.GameFactory();
 
             // Act
+            var g = gameFactory.CreateGame(gameNames);
+
 
             // Assert
             Assert.False(g.GameDone);

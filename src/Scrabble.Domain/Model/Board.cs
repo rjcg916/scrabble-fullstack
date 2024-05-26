@@ -5,7 +5,6 @@ namespace Scrabble.Domain.Model
 
     public class Board
     {
-
         static readonly R lastRow = R._15;
         static readonly C lastCol = C.O;
         static readonly ushort rowCount = R._15 - R._1 + 1;
@@ -15,16 +14,12 @@ namespace Scrabble.Domain.Model
 
         public static List<string> GetRowLabels()
         {
-            return [
-            "1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15"
-            ];
+            return ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"];
         }
 
         public static List<string> GetColLabels()
         {
-            return [
-            "A", "B","C","D","E","F","G","H","I","J","K","L","M","N","O"
-            ];
+            return ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"];
         }
 
         public Board()

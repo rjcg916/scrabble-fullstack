@@ -3,93 +3,58 @@ using System.Collections.Generic;
 
 namespace Scrabble.Domain.Model
 {
-    public struct GameDetails
-    {
-        public TileBag TileBag;
-        public List<string> rowLabels;
-        public List<string> colLabels;
-        public List<CoordSquare> squares;
-    }
 
     public class Game
     {
-        public byte MINPLAYERS = 2;
-        public byte MAXPLAYERS = 4;
-        readonly string MINMAXPLAYERERROR = "Game must have 2, 3 or 4 players.";
-
+        public Lexicon Lexicon { get; set; }
         public Board Board { get; set; }
-
+        public TileBag TileBag { get; set; }
         public Dictionary<byte, Player> Players { get; set; } = [];
-        public byte NumberOfPlayers { get; set; }
 
-        readonly TileBag TileBag = new();
-
-        public int RemainingTileCount
-        {
-            get
-            {
-                return TileBag.Count;
-            }
-        }
-
+        public int NumberOfPlayers => Players.Count;
 
         public byte TurnOfPlayer { get; set; } = 1;
 
         public bool GameDone { get; } = false;
 
-        public Lexicon Lexicon { get; set; }
 
-        public Game(List<string> playerNames)
+        private Game() { }
+
+        public class GameFactory
         {
-            this.NumberOfPlayers = (byte)playerNames.Count;
+            private const byte MINPLAYERS = 2;
+            private const byte MAXPLAYERS = 4;
+            readonly string MINMAXPLAYERERROR = "Game must have 2, 3 or 4 players.";
 
-            bool validNumberOfPlayers = (NumberOfPlayers >= MINPLAYERS) && (NumberOfPlayers <= MAXPLAYERS);
-
-            if (!validNumberOfPlayers)
+            public Game CreateGame(List<string> playerNames)
             {
-                throw new Exception(MINMAXPLAYERERROR);
+                var numberOfPlayers = playerNames.Count;
+
+                bool validNumberOfPlayers = (numberOfPlayers >= MINPLAYERS) && (numberOfPlayers <= MAXPLAYERS);
+
+                if (!validNumberOfPlayers)
+                {
+                    throw new Exception(MINMAXPLAYERERROR);
+                }
+
+                var game = new Game
+                {
+                    Lexicon = new Lexicon(),
+                    TileBag = new TileBag(),
+                    Board = new Board()
+                };
+
+                // create each player, add to game and draw tiles from bag
+                byte i = 1;
+                playerNames.ForEach(name =>
+                {
+                    var player = new Player(name);
+                    player.DrawTiles(game.TileBag);
+                    game.Players.Add(i++, player);
+                });
+
+                return game;
             }
-
-            // initialize/choose lexicon
-            this.Lexicon = new Lexicon();
-
-            // fill tile bag
-            this.TileBag = new TileBag();
-
-            // for each player, draw tiles from bag
-
-            byte i = 1;
-
-            playerNames.ForEach(name =>
-            {
-                var player = new Player(name);
-                player.DrawTiles(this.TileBag);
-                Players.Add(i++, player);
-            }
-            );
-
-            // create board
-            this.Board = new Board();
-
         }
-
-        public GameDetails GetDetails()
-        {
-
-            var details = new GameDetails
-            {
-                TileBag = this.TileBag,
-
-                rowLabels = Board.GetRowLabels(),
-
-                colLabels = Board.GetColLabels(),
-
-                squares = this.Board.GetCoordSquares()
-            };
-
-            return details;
-
-        }
-
     }
 }

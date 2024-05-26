@@ -11,16 +11,13 @@ namespace Scrabble.Domain.Test
         public void GameCreateInCollection()
         {
             // Arrange
-            var factory = new Games();
             var gameNames = new List<String> { "player1", "player2", "player3", "player4" };
-            var index = factory.CreateGame(gameNames);
-            var g = factory.GetGame(index);
-
+            var factory = new Game.GameFactory();
 
             // Act
+            var g = factory.CreateGame(gameNames);
 
             // Assert
-            Assert.Equal(1, factory.Count());
             Assert.False(g.GameDone);
             Assert.Equal(4, g.NumberOfPlayers);
             Assert.NotNull(g.Players[3]);
@@ -31,22 +28,27 @@ namespace Scrabble.Domain.Test
         public void GameRemoveFromCollection()
         {
             // Arrange
-            var factory = new Games();
+            var gameManager = new GameManager();
+
+            // var factory = new Game.GameFactory();
 
             var gameNames = new List<String> { "player1", "player2", "player3", "player4" };
 
-            var index = factory.CreateGame(gameNames);
-            //  var g = factory.GetGame(index);
-            var index2 = factory.CreateGame(gameNames);
-            var g2 = factory.GetGame(index);
 
+            var id1 = gameManager.CreateGame(gameNames);
+            var id2 = gameManager.CreateGame(gameNames);
+          
             // Act
-            factory.RemoveGame(index);
+            var result = gameManager.RemoveGame(id1);
 
             // Assert
-            Assert.Null(factory.GetGame(index));
-            Assert.Equal(1, factory.Count());
-            Assert.NotNull(factory.GetGame(index2));
+
+            var g1 = gameManager.GetGame(id1);  
+            var g2 = gameManager.GetGame(id2);
+            Assert.True(result);
+            Assert.Null(g1);
+            Assert.Equal(1, gameManager.NumberOfGames());
+            Assert.NotNull(g2);
             Assert.False(g2.GameDone);
             Assert.Equal(4, g2.NumberOfPlayers);
             Assert.NotNull(g2.Players[3]);

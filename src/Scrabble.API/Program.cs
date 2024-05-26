@@ -16,17 +16,17 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/api/Games", (IGames games) => games.Count());
+app.MapGet("/api/Games", (IGameManager GameManager) => GameManager.NumberOfGames());
 
-app.MapGet("/api/Games/{id}", (int id, IGames games) =>
+app.MapGet("/api/Games/{Id}", (Guid Id, IGameManager GameManager) =>
 {
-    var game = games.GetGame(id);
+    var game = GameManager.GetGame(Id);
     return game == null ? Results.NotFound() : Results.Ok(game);
 });
 
-app.MapPost("/api/Games", (string names, IGames games) =>
+app.MapPost("/api/Games", (string names, IGameManager GameManager) =>
 {
-    var gameId = games.CreateGame([.. names.Split(",")]);
+    var gameId = GameManager.CreateGame([.. names.Split(",")]);
     return Results.Ok(gameId);
 });
 
@@ -42,9 +42,9 @@ app.MapDelete("/api/Games/{id}", (int id, IGames games) =>
     return Results.Ok();
 });
 
-app.MapPost("/api/Games/{gameId}/{playerId}/Board/Tiles", (int gameId, int playerId, Coord coord, Tile tile, IGames games) =>
+app.MapPost("/api/Games/{GameId}/{playerId}/Board/Tiles", (Guid GameId, int playerId, Coord coord, Tile tile, IGameManager GameManager) =>
 {
-    var game = games.GetGame(gameId);
+    var game = GameManager.GetGame(GameId);
     var board = game.Board;
     var player = game.Players[(byte)playerId];
 
@@ -52,16 +52,16 @@ app.MapPost("/api/Games/{gameId}/{playerId}/Board/Tiles", (int gameId, int playe
     return Results.Ok();
 });
 
-app.MapGet("/api/Games/{gameId}/Board/Squares", (int gameId, IGames games) =>
+app.MapGet("/api/Games/{GameId}/Board/Squares", (Guid GameId, IGameManager GameManager) =>
 {
-    var game = games.GetGame(gameId);
+    var game = GameManager.GetGame(GameId);
     var board = game.Board;
     return Results.Ok(board.GetCoordSquares());
 });
 
-app.MapGet("/api/Games/{gameId}/Board/Tiles", (int gameId, IGames games) =>
+app.MapGet("/api/Games/{GameId}/Board/Tiles", (Guid GameId, IGameManager GameManager) =>
 {
-    var game = games.GetGame(gameId);
+    var game = GameManager.GetGame(GameId);
     var board = game.Board;
     return Results.Ok(board.GetCoordSquares(filterForOccupied: true));
 });
