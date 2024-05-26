@@ -4,15 +4,10 @@ using System.Text;
 
 namespace Scrabble.Domain.Model
 {
-    public class Tile
+    public class Tile(String letter, int Value = 1)
     {
-        public string Letter { get; }
-        public int Value { get; } = 1;
-    
-        public Tile(String letter, int Value = 1) {
-            Letter = letter.ToUpper();
-            this.Value = Value;
-        }
+        public string Letter { get; } = letter.ToUpper();
+        public int Value { get; } = Value;
     }
 
     // public class TileLocation

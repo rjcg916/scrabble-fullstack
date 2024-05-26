@@ -7,7 +7,7 @@ namespace Scrabble.Domain.Model
     public struct GameDetails
     {
         public TileBag tileBag;
-        public List<LetterValue> letterValues;
+ //       public List<LetterValue> letterValues;
         public List<string> rowLabels;
         public List<string> colLabels;
         public List<CoordSquare> squares;
@@ -82,7 +82,7 @@ namespace Scrabble.Domain.Model
 
             details.tileBag = this.tileBag;
 
-            details.letterValues = TileBag.GetLetterValues();
+       //     details.letterValues = TileBag.GetLetterValues();
 
             details.rowLabels = Board.GetRowLabels();
 
