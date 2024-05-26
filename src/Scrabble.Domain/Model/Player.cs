@@ -31,7 +31,7 @@ namespace Scrabble.Domain.Model
             return tilesToAdd;
         }
 
-        public bool PlaceTile(Board board, Coord coord, Tile tile)
+        public static bool PlaceTile(Board board, Coord coord, Tile tile)
         {
             return board.PlaceTile(coord, tile);
         }

@@ -11,7 +11,7 @@ namespace Scrabble.Domain.Model
     public class Rack
     {
         public static byte capacity = 7;
-        List<Tile> tiles;
+        readonly List<Tile> tiles;
 
         public byte TileCount
         {
@@ -22,7 +22,7 @@ namespace Scrabble.Domain.Model
         }
         public Rack()
         {
-            tiles = new List<Tile>();
+            tiles = [];
         }
 
         public List<Tile> GetTiles()

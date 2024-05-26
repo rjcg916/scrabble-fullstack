@@ -6,25 +6,25 @@ namespace Scrabble.Domain.Model
     public class Board
     {
 
-        static R lastRow = R._15;
-        static C lastCol = C.O;
-        static int rowCount = (int)R._15 - (int)R._1 + 1;
-        static int colCount = (int)C.O - (int)C.A + 1;
+        static readonly R lastRow = R._15;
+        static readonly C lastCol = C.O;
+        static readonly int rowCount = (int)R._15 - (int)R._1 + 1;
+        static readonly int colCount = (int)C.O - (int)C.A + 1;
 
-        Square[,] board = new Square[rowCount, colCount];
+        readonly Square[,] board = new Square[rowCount, colCount];
 
         public static List<string> GetRowLabels()
         {
-            return new List<string>  {
+            return [
             "1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15"
-            };
+            ];
         }
 
         public static List<string> GetColLabels()
         {
-            return new List<string>  {
+            return [
             "A", "B","C","D","E","F","G","H","I","J","K","L","M","N","O"
-            };
+            ];
         }
 
         public Board()
@@ -38,7 +38,7 @@ namespace Scrabble.Domain.Model
 
         public List<CoordSquare> GetCoordSquares(bool filterForOccupied = false)
         {
-            List<CoordSquare> squares = new List<CoordSquare>();
+            List<CoordSquare> squares = [];
 
             for (int r = 0; r <= (int)lastRow; r++)
                 for (int c = 0; c <= (int)lastCol; c++)

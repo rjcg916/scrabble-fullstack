@@ -6,10 +6,10 @@ namespace Scrabble.Domain.Model
 
     public class TileBag : ITileBag
     {
-        string TOOMANYERROR = "Attempt to draw more tiles than present in TileBag";
+        readonly string TOOMANYERROR = "Attempt to draw more tiles than present in TileBag";
 
-        private static List<(Letter letter, short freq)> letters = new List<(Letter, short)>()
-        {
+        private static readonly List<(Letter letter, short freq)> letters =
+        [
         new( new Letter("A", 1), 9),
         new( new Letter("B", 3), 2),
         new( new Letter("C", 3), 2),
@@ -37,10 +37,10 @@ namespace Scrabble.Domain.Model
         new( new Letter("Y", 4), 2),
         new( new Letter("Z", 10), 1),
         new( new Letter("", 0), 2)
-        };
+        ];
 
 
-        private List<Tile> tiles { get; set; } = new List<Tile>();
+        private List<Tile> tiles { get; set; } = [];
 
         public int count
         {
@@ -51,9 +51,9 @@ namespace Scrabble.Domain.Model
 
         public void Shuffle()
         {
-            List<Tile> randomList = new List<Tile>();
+            List<Tile> randomList = [];
 
-            Random r = new Random();
+            Random r = new();
             int randomIndex = 0;
             while (this.tiles.Count > 0)
             {

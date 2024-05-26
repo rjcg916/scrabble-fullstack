@@ -6,13 +6,13 @@ namespace Scrabble.Domain.Model
     {
 
         //    private _words = new Array<string>();
-        List<string> words = new List<string>
-        {
+        readonly List<string> words =
+        [
             "Car",
             "House",
             "Dog",
             "Talent"
-        };
+        ];
 
         public bool IsWordValid(string word)
         {

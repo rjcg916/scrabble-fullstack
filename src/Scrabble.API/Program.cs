@@ -48,7 +48,7 @@ app.MapPost("/api/Games/{gameId}/{playerId}/Board/Tiles", (int gameId, int playe
     var board = game.board;
     var player = game.players[(byte)playerId];
 
-    player.PlaceTile(board, coord, tile);
+    Player.PlaceTile(board, coord, tile);
     return Results.Ok();
 });
 

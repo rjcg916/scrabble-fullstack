@@ -18,7 +18,7 @@ namespace Scrabble.Domain.Test
 
             // Assert
             // start square correctly set
-            Assert.Equal(new List<Tile>(), r.GetTiles());
+            Assert.Equal([], r.GetTiles());
 
         }
         [Fact]
@@ -30,13 +30,13 @@ namespace Scrabble.Domain.Test
 
             var tiles = new List<Tile>()
             {
-                new Tile("A"),
-                new Tile("B"),
-                new Tile("C"),
-                new Tile("D"),
-                new Tile("E"),
-                new Tile("F"),
-                new Tile("G")
+                new("A"),
+                new("B"),
+                new("C"),
+                new("D"),
+                new("E"),
+                new("F"),
+                new("G")
             };
 
             // Act
@@ -58,22 +58,22 @@ namespace Scrabble.Domain.Test
 
             var tiles = new List<Tile>()
             {
-                new Tile("A"),
-                new Tile("B"),
-                new Tile("C"),
-                new Tile("D"),
-                new Tile("E"),
-                new Tile("F"),
-                new Tile("G")
+                new("A"),
+                new("B"),
+                new("C"),
+                new("D"),
+                new("E"),
+                new("F"),
+                new("G")
             };
             r.AddTiles(tiles);
 
             var tilesToRemove = new List<Tile>()
             {
-                new Tile("A"),
-                new Tile("C"),
-                new Tile("E"),
-                new Tile("G")
+                new("A"),
+                new("C"),
+                new("E"),
+                new("G")
             };
 
 
@@ -113,12 +113,12 @@ namespace Scrabble.Domain.Test
             // Act
             var tiles = new List<Tile>()
             {
-                new Tile("A"),
-                new Tile("B"),
-                new Tile("C"),
-                new Tile("D"),
-                new Tile("E"),
-                new Tile("F")
+                new("A"),
+                new("B"),
+                new("C"),
+                new("D"),
+                new("E"),
+                new("F")
             };
             r.AddTiles(tiles);
 

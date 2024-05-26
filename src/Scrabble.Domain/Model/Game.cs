@@ -16,14 +16,14 @@ namespace Scrabble.Domain.Model
     {
         public byte MINPLAYERS = 2;
         public byte MAXPLAYERS = 4;
-        string MINMAXPLAYERERROR = "Game must have 2, 3 or 4 players.";
+        readonly string MINMAXPLAYERERROR = "Game must have 2, 3 or 4 players.";
 
         public Board board { get; set; }
 
-        public Dictionary<byte, Player> players { get; set; } = new Dictionary<byte, Player>();
+        public Dictionary<byte, Player> players { get; set; } = [];
         public byte numberOfPlayers { get; set; }
 
-        TileBag tileBag = new TileBag();
+        readonly TileBag tileBag = new();
 
         public int remainingTileCount
         {
@@ -77,17 +77,18 @@ namespace Scrabble.Domain.Model
         public GameDetails GetDetails()
         {
 
-            var details = new GameDetails();
+            var details = new GameDetails
+            {
+                tileBag = this.tileBag,
 
-            details.tileBag = this.tileBag;
+                //     details.letterValues = TileBag.GetLetterValues();
 
-            //     details.letterValues = TileBag.GetLetterValues();
+                rowLabels = Board.GetRowLabels(),
 
-            details.rowLabels = Board.GetRowLabels();
+                colLabels = Board.GetColLabels(),
 
-            details.colLabels = Board.GetColLabels();
-
-            details.squares = this.board.GetCoordSquares();
+                squares = this.board.GetCoordSquares()
+            };
 
             return details;
 
