@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Scrabble.Domain.Model
+﻿namespace Scrabble.Domain.Model
 {
-
     public enum R
     {
         _1, _2, _3, _4, _5, _6, _7, _8,
@@ -16,16 +11,10 @@ namespace Scrabble.Domain.Model
         _A, _B, _C, _D, _E, _F, _G, _H,
         _I, _J, _K, _L, _M, _N, _O
     }
-    public class Coord
+    public class Coord(R row, C col)
     {
-        public R row { get;  }
-        public C col { get;  }
-
-        public Coord(R row, C col)
-        {
-            this.row = row;
-            this.col = col;
-        }
+        public R row { get; } = row;
+        public C col { get; } = col;
     }
 
     public class Span
@@ -51,4 +40,3 @@ namespace Scrabble.Domain.Model
         }
     }
 }
-
