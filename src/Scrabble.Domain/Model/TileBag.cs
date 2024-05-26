@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Scrabble.Domain.Model
 {
@@ -41,7 +40,7 @@ namespace Scrabble.Domain.Model
         };
 
 
-        public List<Tile> tiles { get; set; } = new List<Tile>();
+        private List<Tile> tiles { get; set; } = new List<Tile>();
 
         public int count
         {

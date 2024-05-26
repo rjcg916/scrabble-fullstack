@@ -6,15 +6,9 @@ using System.Threading.Tasks;
 
 namespace Scrabble.Domain.Model
 {
-    class Letter
+    class Letter(string name, short value)
     {
-        public String name { get; set; }
-        public short value { get; set; }
-
-        public Letter(string name, short value)
-        {
-            this.name = name;
-            this.value = value;
-        }
+        public String name { get; set; } = name;
+        public short value { get; set; } = value;
     }
 }

@@ -3,7 +3,6 @@
 namespace Scrabble.Domain.Model
 {
 
-
     public class Board
     {
 
@@ -201,7 +200,5 @@ namespace Scrabble.Domain.Model
             );
 
         }
-
-
     }
 }
