@@ -9,7 +9,6 @@ namespace Scrabble.Domain.Model
         reg, dl, tl, dw, tw, start
     }
 
-
     public class Square
     {
 

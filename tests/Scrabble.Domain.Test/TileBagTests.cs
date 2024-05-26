@@ -16,10 +16,9 @@ namespace ScrabbleLibTest
             // Assert
             // tiles generated
             Assert.Equal(100, tb.count);
-            Assert.Equal(6, tb.tiles.FindAll(t => t.Letter == "R").Count);
+            Assert.Equal(6, tb.FindAll(t => t.Letter == "R").Count);
 
         }
-
 
     }
 }

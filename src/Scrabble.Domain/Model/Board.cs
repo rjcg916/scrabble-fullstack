@@ -7,9 +7,9 @@ namespace Scrabble.Domain.Model
     {
 
         static R lastRow = R._15;
-        static C lastCol = C._O;
+        static C lastCol = C.O;
         static int rowCount = (int)R._15 - (int)R._1 + 1;
-        static int colCount = (int)C._O - (int)C._A + 1;
+        static int colCount = (int)C.O - (int)C.A + 1;
 
         Square[,] board = new Square[rowCount, colCount];
 
@@ -89,64 +89,64 @@ namespace Scrabble.Domain.Model
         {
 
             // start
-            this.board[(int)R._8, (int)C._H].SquareType = SquareType.start;
+            this.board[(int)R._8, (int)C.H].SquareType = SquareType.start;
 
             // triple letters
             this.SetSquareTypes(SquareType.tl, new Coord[]
 
               {
-                new(R._2, C._F),
-                new(R._2, C._J),
+                new(R._2, C.F),
+                new(R._2, C.J),
 
-                new(R._6, C._B),
-                new(R._6, C._F),
-                new(R._6, C._J),
-                new(R._6, C._N),
+                new(R._6, C.B),
+                new(R._6, C.F),
+                new(R._6, C.J),
+                new(R._6, C.N),
 
-                new(R._10, C._B),
-                new(R._10, C._F),
-                new(R._10, C._J),
-                new(R._10, C._N),
+                new(R._10, C.B),
+                new(R._10, C.F),
+                new(R._10, C.J),
+                new(R._10, C.N),
 
-                new(R._14, C._F),
-                new(R._14, C._J)
+                new(R._14, C.F),
+                new(R._14, C.J)
               });
 
             // double letters
             this.SetSquareTypes(SquareType.dl, new Coord[]
                 {
-              new(R._1, C._D),
-              new(R._1, C._L),
+              new(R._1, C.D),
+              new(R._1, C.L),
 
-              new(R._3, C._G),
-              new(R._3, C._I),
+              new(R._3, C.G),
+              new(R._3, C.I),
 
-              new(R._4, C._A),
-              new(R._4, C._H),
-              new(R._4, C._O),
+              new(R._4, C.A),
+              new(R._4, C.H),
+              new(R._4, C.O),
 
-              new(R._7, C._C),
-              new(R._7, C._G),
-              new(R._7, C._I),
-              new(R._7, C._M),
+              new(R._7, C.C),
+              new(R._7, C.G),
+              new(R._7, C.I),
+              new(R._7, C.M),
 
-              new(R._8, C._D),
-              new(R._8, C._L),
+              new(R._8, C.D),
+              new(R._8, C.L),
 
-              new(R._9, C._C),
-              new(R._9, C._G),
-              new(R._9, C._I),
-              new(R._9, C._M),
+              new(R._9, C.C),
+              new(R._9, C.G),
+              new(R._9, C.I),
+              new(R._9, C.M),
 
-              new(R._12, C._A),
-              new(R._12, C._H),
-              new(R._12, C._O),
+              new(R._12, C.A),
+              new(R._12, C.H),
+              new(R._12, C.O),
 
-              new(R._13, C._G),
-              new(R._13, C._I),
+              new(R._13, C.G),
+              new(R._13, C.I),
 
-              new(R._15, C._D),
-              new(R._15, C._L)
+              new(R._15, C.D),
+              new(R._15, C.L)
 
             });
 
@@ -154,29 +154,29 @@ namespace Scrabble.Domain.Model
             this.SetSquareTypes(SquareType.dw, new Coord[]
 
               {
-                new(R._2, C._B),
-                new(R._2, C._N),
+                new(R._2, C.B),
+                new(R._2, C.N),
 
-                new(R._3, C._C),
-                new(R._3, C._M),
+                new(R._3, C.C),
+                new(R._3, C.M),
 
-                new(R._4, C._D),
-                new(R._4, C._L),
+                new(R._4, C.D),
+                new(R._4, C.L),
 
-                new(R._5, C._E),
-                new(R._5, C._K),
+                new(R._5, C.E),
+                new(R._5, C.K),
 
-                new(R._11, C._E),
-                new(R._11, C._K),
+                new(R._11, C.E),
+                new(R._11, C.K),
 
-                new(R._12, C._D),
-                new(R._12, C._L),
+                new(R._12, C.D),
+                new(R._12, C.L),
 
-                new(R._13, C._C),
-                new(R._13, C._M),
+                new(R._13, C.C),
+                new(R._13, C.M),
 
-                new(R._14, C._B),
-                new(R._14, C._N)
+                new(R._14, C.B),
+                new(R._14, C.N)
 
               });
 
@@ -186,16 +186,16 @@ namespace Scrabble.Domain.Model
               SquareType.tw, new Coord[]
 
               {
-                new(R._1, C._A),
-                new(R._1, C._H),
-                new(R._1, C._O),
+                new(R._1, C.A),
+                new(R._1, C.H),
+                new(R._1, C.O),
 
-                new(R._8, C._A),
-                new(R._8, C._O),
+                new(R._8, C.A),
+                new(R._8, C.O),
 
-                new(R._15, C._A),
-                new(R._15, C._H),
-                new(R._15, C._O)
+                new(R._15, C.A),
+                new(R._15, C.H),
+                new(R._15, C.O)
               }
             );
 

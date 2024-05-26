@@ -47,6 +47,8 @@ namespace Scrabble.Domain.Model
             get { return tiles.Count; }
         }
 
+        public List<Tile> FindAll(Predicate<Tile> match) => tiles.FindAll(match);
+
         public void Shuffle()
         {
             List<Tile> randomList = new List<Tile>();

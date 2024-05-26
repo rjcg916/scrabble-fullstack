@@ -15,8 +15,8 @@ namespace ScrabbleLibTest
 
             // Assert
             // start square correctly set
-            Assert.Equal(SquareType.start, b.GetSquare(new Coord(R._8, C._H)).SquareType);
-            Assert.Null(b.GetTile(new Coord(R._8, C._H)));
+            Assert.Equal(SquareType.start, b.GetSquare(new Coord(R._8, C.H)).SquareType);
+            Assert.Null(b.GetTile(new Coord(R._8, C.H)));
 
 
         }
@@ -27,7 +27,7 @@ namespace ScrabbleLibTest
             // Arrange
             var b = new Board();
             var t = new Tile("A");
-            var c = new Coord(R._8, C._H);
+            var c = new Coord(R._8, C.H);
 
             // Act
             b.PlaceTile(c, t);
@@ -46,7 +46,7 @@ namespace ScrabbleLibTest
             var t1 = new Tile("A");
             var t2 = new Tile("B");
 
-            var c = new Coord(R._8, C._H);
+            var c = new Coord(R._8, C.H);
 
             // Act
             var result1 = b.PlaceTile(c, t1);
@@ -70,8 +70,8 @@ namespace ScrabbleLibTest
             var t1 = new Tile("A");
             var t2 = new Tile("B");
 
-            var c1 = new Coord(R._8, C._H);
-            var c2 = new Coord(R._9, C._H);
+            var c1 = new Coord(R._8, C.H);
+            var c2 = new Coord(R._9, C.H);
 
             // Act
             var result1 = b.PlaceTile(c1, t1);

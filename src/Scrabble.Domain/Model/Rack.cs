@@ -5,14 +5,9 @@ using System.Text;
 namespace Scrabble.Domain.Model
 {
 
-    public class Slot
+    public class Slot(Tile tile = null)
     {
-        public Tile tile { get; set; }
-
-        public Slot(Tile tile = null)
-        {
-            this.tile = tile;
-        }
+        public Tile tile { get; set; } = tile;
     }
     public class Rack
     {
