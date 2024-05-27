@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Scrabble.Domain
 {
@@ -8,8 +9,38 @@ namespace Scrabble.Domain
         public ushort Row { get; set; } = row;
         public string RowName { get; set; } = ((R)row).ToString()[1..];
         public ushort Col { get; set; } = col;
-        public string ColName { get; set; } = ((C)col).ToString()[1..];
+        public string ColName { get; set; } = ((C)col).ToString()[0..];
     }
+
+    public static class BoardHelper
+    {
+        public static IEnumerable<R> GetRows()
+        {
+            foreach (R row in Enum.GetValues(typeof(R)))
+            {
+                yield return row;
+            }
+        }
+
+        public static IEnumerable<C> GetColumns()
+        {
+            foreach (C col in Enum.GetValues(typeof(C)))
+            {
+                yield return col;
+            }
+        }
+
+        public static string GetRowName(R row)
+        {
+            return row.ToString().Replace("_", "");
+        }
+
+        public static string GetColumnName(C col)
+        {
+            return col.ToString();
+        }
+    }
+
 
     public class Board
     {
@@ -29,6 +60,18 @@ namespace Scrabble.Domain
                     board[r, c] = new Square();
 
             SetAllSquareTypes();
+        }
+
+        public Square[] GetHorizontalSlice(ushort row)
+        {
+            // Implementation for getting horizontal slice.
+            throw new NotImplementedException();
+        }
+
+        public Square[] GetVerticalSlice(ushort col)
+        {
+            // Implementation for getting vertical slice.
+            throw new NotImplementedException();
         }
 
         public List<EvaluatorAt<Square>> GetCoordSquares(bool filterForOccupied = false)

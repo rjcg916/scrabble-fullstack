@@ -1,7 +1,11 @@
-﻿using Xunit;
+﻿using Scrabble.Domain;
+using System.Collections.Generic;
+using System;
+using Xunit;
 
 namespace Scrabble.Domain.Tests
 {
+  
     public class BoardTests
     {
         [Fact]
@@ -11,9 +15,9 @@ namespace Scrabble.Domain.Tests
             var board = new Board();
 
             // Assert
-            for (ushort r = (ushort)R._1; r <= (ushort)R._15; r++)
+            foreach (var r in BoardHelper.GetRows() )
             {
-                for (ushort c = (ushort)C.A; c <= (ushort)C.O; c++)
+                foreach(var c in BoardHelper.GetColumns())
                 {
                     Assert.NotNull(board.GetSquare(new Coord((R)r, (C)c)));
                 }
