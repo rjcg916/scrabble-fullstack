@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Scrabble.Domain.Model
+namespace Scrabble.Domain
 {
     public class Game
     {
-        public Lexicon Lexicon { get; set; }
+        public ILexicon Lexicon { get; set; }
         public Board Board { get; set; }
         public TileBag TileBag { get; set; }
         public Dictionary<byte, Player> Players { get; set; } = [];
@@ -16,7 +16,7 @@ namespace Scrabble.Domain.Model
 
         private Game() { }
 
-        public class GameFactory
+        public class GameFactory(ILexicon lexicon)
         {
             private const byte MINPLAYERS = 2;
             private const byte MAXPLAYERS = 4;
@@ -26,7 +26,7 @@ namespace Scrabble.Domain.Model
             {
                 var numberOfPlayers = playerNames.Count;
 
-                bool validNumberOfPlayers = (numberOfPlayers >= MINPLAYERS) && (numberOfPlayers <= MAXPLAYERS);
+                bool validNumberOfPlayers = numberOfPlayers >= MINPLAYERS && numberOfPlayers <= MAXPLAYERS;
 
                 if (!validNumberOfPlayers)
                 {
@@ -35,7 +35,7 @@ namespace Scrabble.Domain.Model
 
                 var game = new Game
                 {
-                    Lexicon = new Lexicon(),
+                    Lexicon = lexicon,
                     TileBag = new TileBag(),
                     Board = new Board()
                 };
@@ -44,7 +44,7 @@ namespace Scrabble.Domain.Model
                 byte i = 1;
                 playerNames.ForEach(name =>
                 {
-                    var player = new Player(name, game.TileBag);                    
+                    var player = new Player(name, game.TileBag);
                     game.Players.Add(i++, player);
                 });
 

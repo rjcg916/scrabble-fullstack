@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Scrabble.Domain.Model
+namespace Scrabble.Domain
 {
     public class Rack
     {
@@ -13,7 +13,7 @@ namespace Scrabble.Domain.Model
         {
             get
             {
-                return this.tiles.Count;
+                return tiles.Count;
             }
         }
 
@@ -21,7 +21,7 @@ namespace Scrabble.Domain.Model
         {
             get
             {
-                return Capacity - this.tiles.Count;
+                return Capacity - tiles.Count;
             }
         }
 
@@ -38,7 +38,7 @@ namespace Scrabble.Domain.Model
 
         public List<Tile> AddTiles(List<Tile> tiles)
         {
-            if (tiles.Count > (Rack.Capacity - this.tiles.Count))
+            if (tiles.Count > Capacity - this.tiles.Count)
                 throw new Exception("Attempt to add tiles beyond rack capacity");
 
             this.tiles.AddRange(tiles);
@@ -46,6 +46,12 @@ namespace Scrabble.Domain.Model
             return this.tiles;
         }
 
+        public List<Tile> RemoveTiles(ushort count)
+        {
+            this.tiles.RemoveRange(0, count);
+            return this.tiles;
+        }
+        
         public List<Tile> RemoveTiles(List<Tile> tiles)
         {
 

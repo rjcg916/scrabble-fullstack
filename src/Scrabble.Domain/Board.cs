@@ -1,64 +1,64 @@
 ﻿using System.Collections.Generic;
 
-namespace Scrabble.Domain.Model
+namespace Scrabble.Domain
 {
+    public class EvaluatorAt<T>(ushort row, ushort col, T evaluator = default)
+    {
+        public T Evaluator { get; set; } = evaluator;
+        public ushort Row { get; set; } = row;
+        public string RowName { get; set; } = ((R)row).ToString()[1..];
+        public ushort Col { get; set; } = col;
+        public string ColName { get; set; } = ((C)col).ToString()[1..];
+    }
+
     public class Board
     {
+        static readonly R firstRow = R._1;
         static readonly R lastRow = R._15;
+        static readonly C firstCol = C.A;
         static readonly C lastCol = C.O;
         static readonly ushort rowCount = R._15 - R._1 + 1;
         static readonly ushort colCount = C.O - C.A + 1;
 
         readonly Square[,] board = new Square[rowCount, colCount];
 
-        public static List<string> GetRowLabels()
-        {
-            return ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"];
-        }
-
-        public static List<string> GetColLabels()
-        {
-            return ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"];
-        }
-
         public Board()
         {
-            for (ushort r = 0; r <= (ushort)lastRow; r++)
-                for (ushort c = 0; c <= (ushort)lastCol; c++)
+            for (ushort r = (ushort)firstRow; r <= (ushort)lastRow; r++)
+                for (ushort c = (ushort)firstCol; c <= (ushort)lastCol; c++)
                     board[r, c] = new Square();
 
-            this.SetAllSquareTypes();
+            SetAllSquareTypes();
         }
 
-        public List<CoordSquare> GetCoordSquares(bool filterForOccupied = false)
+        public List<EvaluatorAt<Square>> GetCoordSquares(bool filterForOccupied = false)
         {
-            List<CoordSquare> squares = [];
+            List<EvaluatorAt<Square>> squares = [];
 
-            for (ushort r = 0; r <= (ushort)lastRow; r++)
-                for (ushort c = 0; c <= (ushort)lastCol; c++)
-                    if ((board[r, c].IsOccupied && filterForOccupied) || !filterForOccupied)
-                        squares.Add(new CoordSquare(r, c, board[r, c]));
+            for (ushort r = (ushort)firstRow; r <= (ushort)lastRow; r++)
+                for (ushort c = (ushort)firstCol; c <= (ushort)lastCol; c++)
+                    if (board[r, c].IsOccupied && filterForOccupied || !filterForOccupied)
+                        squares.Add(new EvaluatorAt<Square>(r, c, board[r, c]));
 
             return squares;
         }
 
         public Square GetSquare(Coord loc) =>
             board[(ushort)loc.Row, (ushort)loc.Col];
-        
 
         public Tile GetTile(Coord loc) =>
             GetSquare(loc).Tile;
-        
+
         public bool IsOccupied(Coord coord) =>
-            this.board[(ushort)coord.Row, (ushort)coord.Col].IsOccupied;
+            board[(ushort)coord.Row, (ushort)coord.Col].IsOccupied;
 
         public bool PlaceTile(Coord coord, Tile tile)
         {
             bool isSuccessful;
 
-            var square = this.board[(ushort)coord.Row, (ushort)coord.Col];
+            var square = board[(ushort)coord.Row, (ushort)coord.Col];
 
-            if (this.IsOccupied(coord))
+            if (IsOccupied(coord))
                 isSuccessful = false;
             else
             {
@@ -73,7 +73,7 @@ namespace Scrabble.Domain.Model
         {
             foreach (Coord loc in locs)
             {
-                this.board[(ushort)loc.Row, (ushort)loc.Col].SquareType = t;
+                board[(ushort)loc.Row, (ushort)loc.Col].SquareType = t;
             }
         }
 
@@ -81,10 +81,10 @@ namespace Scrabble.Domain.Model
         {
 
             // start
-            this.board[(ushort)R._8, (ushort)C.H].SquareType = SquareType.start;
+            board[(ushort)R._8, (ushort)C.H].SquareType = SquareType.start;
 
             // triple letters
-            this.SetSquareTypes(SquareType.tl,
+            SetSquareTypes(SquareType.tl,
 
               [
                 new(R._2, C.F),
@@ -105,7 +105,7 @@ namespace Scrabble.Domain.Model
               ]);
 
             // double letters
-            this.SetSquareTypes(SquareType.dl,
+            SetSquareTypes(SquareType.dl,
                 [
               new(R._1, C.D),
               new(R._1, C.L),
@@ -143,7 +143,7 @@ namespace Scrabble.Domain.Model
             ]);
 
             // double word
-            this.SetSquareTypes(SquareType.dw,
+            SetSquareTypes(SquareType.dw,
 
               [
                 new(R._2, C.B),
@@ -174,7 +174,7 @@ namespace Scrabble.Domain.Model
 
 
             // triple word
-            this.SetSquareTypes(
+            SetSquareTypes(
               SquareType.tw,
 
               [

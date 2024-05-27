@@ -1,8 +1,6 @@
-﻿using Scrabble.Domain.Model;
+﻿using Xunit;
 
-using Xunit;
-
-namespace Scrabble.Domain.Test
+namespace Scrabble.Domain.Tests
 {
     public class TileTests
     {

@@ -1,105 +1,143 @@
-﻿using Scrabble.Domain.Model;
+﻿using Xunit;
 
-using Xunit;
-
-namespace Scrabble.Domain.Test
+namespace Scrabble.Domain.Tests
 {
     public class BoardTests
     {
         [Fact]
-        public void BoardDefaultsSaved()
+        public void Board_Constructor_InitializesBoardCorrectly()
         {
-            // Arrange
-            var b = new Board();
-
-            // Act
+            // Arrange & Act
+            var board = new Board();
 
             // Assert
-            // start square correctly set
-            Assert.Equal(SquareType.start, b.GetSquare(new Coord(R._8, C.H)).SquareType);
-            Assert.Null(b.GetTile(new Coord(R._8, C.H)));
-
-
+            for (ushort r = (ushort)R._1; r <= (ushort)R._15; r++)
+            {
+                for (ushort c = (ushort)C.A; c <= (ushort)C.O; c++)
+                {
+                    Assert.NotNull(board.GetSquare(new Coord((R)r, (C)c)));
+                }
+            }
         }
 
         [Fact]
-        public void PlaceTile()
+        public void GetCoordSquares_ReturnsAllSquares_WhenFilterForOccupiedIsFalse()
         {
             // Arrange
-            var b = new Board();
-            var t = new Tile('A');
-            var c = new Coord(R._8, C.H);
+            var board = new Board();
 
             // Act
-            b.PlaceTile(c, t);
+            var coordSquares = board.GetCoordSquares(false);
 
             // Assert
-            Assert.Equal<Tile>(t, b.GetTile(c));
-
-
+            Assert.Equal(225, coordSquares.Count); // 15x15 board
         }
 
         [Fact]
-        public void CantPlaceTileInOccupiedSquare()
+        public void GetCoordSquares_ReturnsOnlyOccupiedSquares_WhenFilterForOccupiedIsTrue()
         {
             // Arrange
-            var b = new Board();
-            var t1 = new Tile('A');
-            var t2 = new Tile('B');
-
-            var c = new Coord(R._8, C.H);
+            var board = new Board();
+            var coord = new Coord(R._9, C.E);
+            board.PlaceTile(coord, new Tile('A', 1));
 
             // Act
-            // var result1 = b.PlaceTile(c, t1);
-            var result2 = b.PlaceTile(c, t2);
+            var coordSquares = board.GetCoordSquares(true);
 
             // Assert
-            Assert.False(result2);
-            Assert.Equal<Tile>(t1, b.GetTile(c));
-
-
-
-        }
-
-
-
-        [Fact]
-        public void GetOccupiedSquareList()
-        {
-            // Arrange
-            var b = new Board();
-            //var t1 = new Tile("A");
-            //var t2 = new Tile("B");
-
-            //var c1 = new Coord(R._8, C.H);
-            //var c2 = new Coord(R._9, C.H);
-
-            // Act
-            //var result1 = b.PlaceTile(c1, t1);
-            //var result2 = b.PlaceTile(c2, t2);
-
-            // Assert
-            var list = b.GetCoordSquares(filterForOccupied: true);
-            Assert.Equal(2, list.Count);
-            var arrayList = list.ToArray();
-            Assert.Equal('A', arrayList[0].Square.Tile.Letter);
-            Assert.Equal('B', arrayList[1].Square.Tile.Letter);
-
-
+            Assert.Single(coordSquares);
+            Assert.Equal(((ushort)coord.Row), coordSquares[0].Row);
+            Assert.Equal(((ushort)coord.Col), coordSquares[0].Col);
+            Assert.Equal('A', coordSquares[0].Evaluator.Tile.Letter);
         }
 
         [Fact]
-        public void GetSquareList()
+        public void GetSquare_ReturnsCorrectSquare()
         {
             // Arrange
-            var b = new Board();
+            var board = new Board();
+            var coord = new Coord(R._1, C.B);
 
             // Act
+            var square = board.GetSquare(coord);
 
             // Assert
-            var list = b.GetCoordSquares();
-            Assert.Equal(15 * 15, list.Count);
+            Assert.NotNull(square);
+            Assert.Equal(SquareType.reg, square.SquareType);
+        }
 
+        [Fact]
+        public void GetTile_ReturnsCorrectTile()
+        {
+            // Arrange
+            var board = new Board();
+            var coord = new Coord(R._4, C.B);
+            var tile = new Tile('A', 1);
+            board.PlaceTile(coord, tile);
+
+            // Act
+            var retrievedTile = board.GetTile(coord);
+
+            // Assert
+            Assert.Equal(tile, retrievedTile);
+        }
+
+        [Fact]
+        public void IsOccupied_ReturnsTrue_WhenSquareIsOccupied()
+        {
+            // Arrange
+            var board = new Board();
+            var coord = new Coord(R._10, C.G);
+            board.PlaceTile(coord, new Tile('A', 1));
+
+            // Act
+            var isOccupied = board.IsOccupied(coord);
+
+            // Assert
+            Assert.True(isOccupied);
+        }
+
+        [Fact]
+        public void IsOccupied_ReturnsFalse_WhenSquareIsNotOccupied()
+        {
+            // Arrange
+            var board = new Board();
+            var coord = new Coord(R._1, C.A);
+
+            // Act
+            var isOccupied = board.IsOccupied(coord);
+
+            // Assert
+            Assert.False(isOccupied);
+        }
+
+        [Fact]
+        public void PlaceTile_ReturnsFalse_WhenSquareIsAlreadyOccupied()
+        {
+            // Arrange
+            var board = new Board();
+            var coord = new Coord(R._1, C.C);
+            board.PlaceTile(coord, new Tile('A', 1));
+
+            // Act
+            var result = board.PlaceTile(coord, new Tile('B', 3));
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void PlaceTile_ReturnsTrue_WhenSquareIsNotOccupied()
+        {
+            // Arrange
+            var board = new Board();
+            var coord = new Coord(R._1, C.C);
+
+            // Act
+            var result = board.PlaceTile(coord, new Tile('A', 1));
+
+            // Assert
+            Assert.True(result);
         }
     }
 }

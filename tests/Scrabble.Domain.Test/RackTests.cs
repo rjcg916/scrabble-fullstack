@@ -1,128 +1,126 @@
-﻿using Scrabble.Domain.Model;
+﻿using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Scrabble.Domain.Test
+namespace Scrabble.Domain.Tests
 {
     public class RackTests
     {
         [Fact]
-        public void RackDefaultsSaved()
+        public void Rack_Initialization_TileCountIsZero()
         {
             // Arrange
-            var r = new Rack();
+            var rack = new Rack();
 
             // Act
+            int tileCount = rack.TileCount;
 
             // Assert
-            Assert.Equal([], r.GetTiles());
-
-        }
-        [Fact]
-        public void RackAddTiles()
-        {
-            // Arrange
-            var r = new Rack();
-            //  var tb = new TileBag();
-
-            var tiles = new List<Tile>()
-            {
-                new('A'),
-                new('B'),
-                new('C'),
-                new('D'),
-                new('E'),
-                new('F'),
-                new('G')
-            };
-
-            // Act
-            r.AddTiles(tiles);
-
-            // Assert
-            Assert.NotNull(r.GetTiles());
-            Assert.Equal(7, r.TileCount);
-
+            Assert.Equal(0, tileCount);
         }
 
         [Fact]
-        public void RackRemoveTiles()
+        public void Rack_Initialization_SlotCountIsCapacity()
         {
             // Arrange
-            var r = new Rack();
-
-
-            var tiles = new List<Tile>()
-            {
-                new('A'),
-                new('B'),
-                new('C'),
-                new('D'),
-                new('E'),
-                new('F'),
-                new('G')
-            };
-            r.AddTiles(tiles);
-
-            var tilesToRemove = new List<Tile>()
-            {
-                new('A'),
-                new('C'),
-                new('E'),
-                new('G')
-            };
-
+            var rack = new Rack();
 
             // Act
-
-            r.RemoveTiles(tilesToRemove);
-
+            int slotCount = rack.SlotCount;
 
             // Assert
-            Assert.NotNull(r.GetTiles());
-            Assert.Equal(3, r.TileCount);
-
-
-
+            Assert.Equal(Rack.Capacity, slotCount);
         }
 
         [Fact]
-        public void GetEmptySlots()
+        public void Rack_AddTiles_IncreasesTileCount()
         {
             // Arrange
-            var r = new Rack();
+            var rack = new Rack();
+            var tilesToAdd = new List<Tile> { new('A', 1), new('B', 3) };
 
-            var slotCount = r.TileCount;
-            
-            Assert.Equal(0, slotCount);
+            // Act
+            rack.AddTiles(tilesToAdd);
 
+            // Assert
+            Assert.Equal(2, rack.TileCount);
         }
 
         [Fact]
-        public void GetSlotsWithTiles()
+        public void Rack_AddTiles_ThrowsException_WhenExceedingCapacity()
         {
             // Arrange
-            var r = new Rack();
-
-            // Act
-            var tiles = new List<Tile>()
+            var rack = new Rack();
+            var tilesToAdd = new List<Tile>
             {
-                new('A'),
-                new('B'),
-                new('C'),
-                new('D'),
-                new('E'),
-                new('F')
+                new('A', 1), new('B', 3), new('C', 3),
+                new('D', 2), new('E', 1), new('F', 4),
+                new('G', 2), new('H', 4)
             };
-            r.AddTiles(tiles);
 
-
-            // Assert
-            Assert.True(r.InRack('B'));
-            Assert.False(r.InRack('Z'));
-
+            // Act & Assert
+            var exception = Assert.Throws<Exception>(() => rack.AddTiles(tilesToAdd));
+            Assert.Equal("Attempt to add tiles beyond rack capacity", exception.Message);
         }
 
+        [Fact]
+        public void Rack_RemoveTiles_DecreasesTileCount()
+        {
+            // Arrange
+            var rack = new Rack();
+            var initialTiles = new List<Tile> { new('A', 1), new('B', 3) };
+            rack.AddTiles(initialTiles);
+            var tilesToRemove = new List<Tile> { new('A', 1) };
 
+            // Act
+            rack.RemoveTiles(tilesToRemove);
+
+            // Assert
+            Assert.Equal(1, rack.TileCount);
+        }
+
+        [Fact]
+        public void Rack_RemoveTiles_ThrowsException_WhenRemovingMoreThanExist()
+        {
+            // Arrange
+            var rack = new Rack();
+            var initialTiles = new List<Tile> { new('A', 1) };
+            rack.AddTiles(initialTiles);
+            var tilesToRemove = new List<Tile> { new('A', 1), new('B', 3) };
+
+            // Act & Assert
+            var exception = Assert.Throws<Exception>(() => rack.RemoveTiles(tilesToRemove));
+            Assert.Equal("Attempt to remove more tiles than existing in rack.", exception.Message);
+        }
+
+        [Fact]
+        public void Rack_InRack_ReturnsTrue_IfTileIsInRack()
+        {
+            // Arrange
+            var rack = new Rack();
+            var tilesToAdd = new List<Tile> { new('A', 1) };
+            rack.AddTiles(tilesToAdd);
+
+            // Act
+            bool inRack = rack.InRack('A');
+
+            // Assert
+            Assert.True(inRack);
+        }
+
+        [Fact]
+        public void Rack_InRack_ReturnsFalse_IfTileIsNotInRack()
+        {
+            // Arrange
+            var rack = new Rack();
+            var tilesToAdd = new List<Tile> { new('A', 1) };
+            rack.AddTiles(tilesToAdd);
+
+            // Act
+            bool inRack = rack.InRack('B');
+
+            // Assert
+            Assert.False(inRack);
+        }
     }
 }

@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Scrabble.Domain.Model
+namespace Scrabble.Domain
 {
     public class Player
     {
         public Rack Rack { get; set; } = new Rack();
         public string Name { get; set; }
 
-        public Player(string name, TileBag tileBag) { 
+        public Player(string name, TileBag tileBag)
+        {
             Name = name;
             DrawTiles(tileBag);
         }
@@ -20,18 +21,19 @@ namespace Scrabble.Domain.Model
             if (tilesAvailable == 0)
                 throw new Exception("No tiles available to draw.");
 
-            var tilesNeeded = Rack.Capacity - this.Rack.TileCount;
+            var tilesNeeded = Rack.Capacity - Rack.TileCount;
 
             var drawCount = tilesAvailable > tilesNeeded ? tilesNeeded : tilesAvailable;
 
             var tilesToAdd = tileBag.DrawTiles(drawCount);
-            this.Rack.AddTiles(tilesToAdd);
+            Rack.AddTiles(tilesToAdd);
 
             return tilesToAdd;
         }
 
-        public static bool PlaceTile(Board board, Coord coord, Tile tile)
+        public bool PlaceTile(Board board, Coord coord, Tile tile)
         {
+            Rack.RemoveTiles([tile]);
             return board.PlaceTile(coord, tile);
         }
     }

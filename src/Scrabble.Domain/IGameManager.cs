@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Scrabble.Domain.Model
+namespace Scrabble.Domain
 {
     public interface IGameManager
     {

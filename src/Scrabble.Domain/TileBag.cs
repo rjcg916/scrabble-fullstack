@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Scrabble.Domain.Model
+namespace Scrabble.Domain
 {
 
     public class TileBag : ITileBag
@@ -47,7 +47,8 @@ namespace Scrabble.Domain.Model
             get { return Tiles.Count; }
         }
 
-        public List<Tile> FindAll(Predicate<Tile> match) => Tiles.FindAll(match);
+        public List<Tile> FindAll(Predicate<Tile> match) =>
+            Tiles.FindAll(match);
 
 
         public TileBag()
@@ -55,12 +56,12 @@ namespace Scrabble.Domain.Model
 
             // add the tiles to the bag
 
-            this.Tiles.AddRange(
+            Tiles.AddRange(
                 letters.SelectMany(l => Enumerable.Repeat(new Tile(l.letter.Name, l.letter.Value), l.freq))
             );
 
             // shuffle the bag
-            this.Shuffle();
+            Shuffle();
         }
 
 
@@ -68,31 +69,29 @@ namespace Scrabble.Domain.Model
         {
 
             // can't draw more than available
-            if (drawCount > this.Tiles.Count)
+            if (drawCount > Tiles.Count)
                 throw new Exception(TOOMANYERROR);
 
             // Fetch the tiles to draw
-            var tiles = this.Tiles.GetRange(0, drawCount);
+            var tiles = Tiles.GetRange(0, drawCount);
 
             // Remove tiles from bag
-            this.Tiles.RemoveRange(0, drawCount);
+            Tiles.RemoveRange(0, drawCount);
 
             // return the list of drawn tiles
             return tiles;
         }
 
-        private void Shuffle()
+        public void Shuffle()
         {
             Random r = new();
-            int n = this.Tiles.Count;
+            int n = Tiles.Count;
 
             for (int i = n - 1; i > 0; i--)
             {
                 int j = r.Next(0, i + 1);
-                (this.Tiles[j], this.Tiles[i]) = (this.Tiles[i], this.Tiles[j]);
+                (Tiles[j], Tiles[i]) = (Tiles[i], Tiles[j]);
             }
         }
-
-
     }
 }

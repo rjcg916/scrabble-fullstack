@@ -1,4 +1,4 @@
-﻿namespace Scrabble.Domain.Model
+﻿namespace Scrabble.Domain
 {
     class Letter(char name, ushort value)
     {

@@ -1,4 +1,4 @@
-﻿namespace Scrabble.Domain.Model
+﻿namespace Scrabble.Domain
 {
     public enum SquareType
     {
@@ -18,15 +18,14 @@
             {
                 return Tile != null;
             }
-
         }
+
         public int LetterMultiplier => SquareType switch
         {
             SquareType.tl => 3,
             SquareType.dl => 2,
             _ => 1
         };
-
 
         public int WordMultiplier => SquareType switch
         {
@@ -35,14 +34,5 @@
             _ => 1
         };
 
-    }
-    public class CoordSquare(ushort row, ushort col, Square square = null)
-    {
-
-        public Square Square { get; set; } = square;
-        public ushort Row { get; set; } = row;
-        public string RowName { get; set; } = ((R)row).ToString()[1..];
-        public ushort Col { get; set; } = col;
-        public string ColName { get; set; } = ((C)col).ToString()[1..];
     }
 }
