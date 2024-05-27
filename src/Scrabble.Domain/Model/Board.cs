@@ -2,7 +2,6 @@
 
 namespace Scrabble.Domain.Model
 {
-
     public class Board
     {
         static readonly R lastRow = R._15;
@@ -43,15 +42,15 @@ namespace Scrabble.Domain.Model
             return squares;
         }
 
-        public Square GetSquare(Coord loc)
-        {
-            return board[(ushort)loc.Row, (ushort)loc.Col];
-        }
+        public Square GetSquare(Coord loc) =>
+            board[(ushort)loc.Row, (ushort)loc.Col];
+        
 
-        public Tile GetTile(Coord loc)
-        {
-            return GetSquare(loc).Tile;
-        }
+        public Tile GetTile(Coord loc) =>
+            GetSquare(loc).Tile;
+        
+        public bool IsOccupied(Coord coord) =>
+            this.board[(ushort)coord.Row, (ushort)coord.Col].IsOccupied;
 
         public bool PlaceTile(Coord coord, Tile tile)
         {
@@ -59,7 +58,7 @@ namespace Scrabble.Domain.Model
 
             var square = this.board[(ushort)coord.Row, (ushort)coord.Col];
 
-            if (square.IsOccupied)
+            if (this.IsOccupied(coord))
                 isSuccessful = false;
             else
             {
@@ -72,12 +71,10 @@ namespace Scrabble.Domain.Model
 
         private void SetSquareTypes(SquareType t, Coord[] locs)
         {
-
             foreach (Coord loc in locs)
             {
                 this.board[(ushort)loc.Row, (ushort)loc.Col].SquareType = t;
             }
-
         }
 
         private void SetAllSquareTypes()
