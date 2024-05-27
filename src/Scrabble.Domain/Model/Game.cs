@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Scrabble.Domain.Model
 {
-
     public class Game
     {
         public Lexicon Lexicon { get; set; }
@@ -12,11 +11,8 @@ namespace Scrabble.Domain.Model
         public Dictionary<byte, Player> Players { get; set; } = [];
 
         public int NumberOfPlayers => Players.Count;
-
         public byte TurnOfPlayer { get; set; } = 1;
-
         public bool GameDone { get; } = false;
-
 
         private Game() { }
 
@@ -48,8 +44,7 @@ namespace Scrabble.Domain.Model
                 byte i = 1;
                 playerNames.ForEach(name =>
                 {
-                    var player = new Player(name);
-                    player.DrawTiles(game.TileBag);
+                    var player = new Player(name, game.TileBag);                    
                     game.Players.Add(i++, player);
                 });
 

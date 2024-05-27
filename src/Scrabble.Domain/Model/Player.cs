@@ -3,10 +3,15 @@ using System.Collections.Generic;
 
 namespace Scrabble.Domain.Model
 {
-    public class Player(string name)
+    public class Player
     {
         public Rack Rack { get; set; } = new Rack();
-        public string Name { get; set; } = name;
+        public string Name { get; set; }
+
+        public Player(string name, TileBag tileBag) { 
+            Name = name;
+            DrawTiles(tileBag);
+        }
 
         public List<Tile> DrawTiles(TileBag tileBag)
         {

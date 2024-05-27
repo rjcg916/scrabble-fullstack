@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace Scrabble.Domain.Model
 {
-
     public class Rack
     {
         public readonly static int Capacity = 7;
@@ -20,7 +19,8 @@ namespace Scrabble.Domain.Model
 
         public int SlotCount
         {
-            get { 
+            get
+            {
                 return Capacity - this.tiles.Count;
             }
         }
@@ -32,12 +32,9 @@ namespace Scrabble.Domain.Model
 
         public List<Tile> GetTiles() =>
             tiles;
-        
-
 
         public bool InRack(char letter) =>
-            tiles.Select( t => t.Letter).First() == letter;
-        
+            tiles.Select(t => t.Letter).First() == letter;
 
         public List<Tile> AddTiles(List<Tile> tiles)
         {

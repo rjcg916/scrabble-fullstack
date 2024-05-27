@@ -9,13 +9,12 @@ namespace Scrabble.Domain.Test
         [Fact]
         public void PlayerInitialRack()
         {
-            // Arrange
-            var p = new Player("player 1");
+            // Arrange         
             var tb = new TileBag();
+            var p = new Player("player 1", tb);
 
             // Act
             p.DrawTiles(tb);
-
 
             // Assert            
             Assert.Equal(7, p.Rack.TileCount);
