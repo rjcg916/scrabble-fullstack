@@ -22,12 +22,30 @@ namespace Scrabble.Domain
             }
         }
 
+        public static IEnumerable<ushort> GetRowsAsUshort()
+        {
+            foreach (R row in Enum.GetValues(typeof(R)))
+            {
+                yield return (ushort) row;
+            }
+        }
+
         public static IEnumerable<C> GetColumns()
         {
             foreach (C col in Enum.GetValues(typeof(C)))
             {
                 yield return col;
             }
+            
+        }
+
+        public static IEnumerable<ushort> GetColumnsAsUshort()
+        {
+            foreach (C col in Enum.GetValues(typeof(C)))
+            {
+                yield return (ushort)col;
+            }
+
         }
 
         public static string GetRowName(R row)
@@ -44,10 +62,10 @@ namespace Scrabble.Domain
 
     public class Board
     {
-        static readonly R firstRow = R._1;
-        static readonly R lastRow = R._15;
-        static readonly C firstCol = C.A;
-        static readonly C lastCol = C.O;
+      //  static readonly R firstRow = R._1;
+      //  static readonly R lastRow = R._15;
+      //  static readonly C firstCol = C.A;
+      //  static readonly C lastCol = C.O;
         static readonly ushort rowCount = R._15 - R._1 + 1;
         static readonly ushort colCount = C.O - C.A + 1;
 
@@ -55,8 +73,12 @@ namespace Scrabble.Domain
 
         public Board()
         {
-            for (ushort r = (ushort)firstRow; r <= (ushort)lastRow; r++)
-                for (ushort c = (ushort)firstCol; c <= (ushort)lastCol; c++)
+            //for (ushort r = (ushort)firstRow; r <= (ushort)lastRow; r++)
+            //    for (ushort c = (ushort)firstCol; c <= (ushort)lastCol; c++)
+            //        board[r, c] = new Square();
+
+            foreach (var r in BoardHelper.GetRowsAsUshort())
+                foreach (var c in BoardHelper.GetColumnsAsUshort())
                     board[r, c] = new Square();
 
             SetAllSquareTypes();
@@ -78,8 +100,8 @@ namespace Scrabble.Domain
         {
             List<EvaluatorAt<Square>> squares = [];
 
-            for (ushort r = (ushort)firstRow; r <= (ushort)lastRow; r++)
-                for (ushort c = (ushort)firstCol; c <= (ushort)lastCol; c++)
+            foreach (var r in BoardHelper.GetRowsAsUshort())
+                foreach (var c in BoardHelper.GetColumnsAsUshort())
                     if (board[r, c].IsOccupied && filterForOccupied || !filterForOccupied)
                         squares.Add(new EvaluatorAt<Square>(r, c, board[r, c]));
 

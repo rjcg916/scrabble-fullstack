@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Scrabble.Domain
 {
@@ -12,7 +13,7 @@ namespace Scrabble.Domain
 
     public abstract class Move(Board board, Coord start, string letters)
     {
-        protected List<Tile> Tiles = Util.LettersToTiles(letters);
+        protected List<Tile> Tiles = letters.LettersToTiles();
         protected ushort Length = (ushort)letters.Length;
         protected Coord StartCoord = start;
         protected Coord EndCoord;
@@ -122,13 +123,13 @@ namespace Scrabble.Domain
         }
     }
 
-    // Assuming these classes are already defined in your project:
-    public class Util
+    public static class Util
     {
-        public static List<Tile> LettersToTiles(string letters)
+        public static List<Tile> LettersToTiles(this string letters)
         {
-            // Implementation for converting letters to tiles.
-            throw new NotImplementedException();
+            ArgumentNullException.ThrowIfNull(letters);
+
+            return letters.Select(letter => new Tile(letter)).ToList();
         }
 
         public static (ushort Start, ushort End)? GenerateRun(Square[] slice, ushort start, ushort end)
