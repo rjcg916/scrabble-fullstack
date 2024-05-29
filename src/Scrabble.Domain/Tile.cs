@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Scrabble.Domain
+﻿namespace Scrabble.Domain
 {
     public class Tile(char letter, ushort Value = 1)
     {

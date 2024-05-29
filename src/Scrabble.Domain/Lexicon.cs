@@ -5,7 +5,6 @@ namespace Scrabble.Domain
 {
     public class Lexicon : ILexicon
     {
-
         readonly List<string> words =
         [
             "Car",
@@ -13,10 +12,7 @@ namespace Scrabble.Domain
             "Dog",
             "Talent"
         ];
-
-
         public bool IsWordValid(string word) =>
             words.FindIndex(w => w.Equals(word, StringComparison.OrdinalIgnoreCase)) > -1;
-
     }
 }

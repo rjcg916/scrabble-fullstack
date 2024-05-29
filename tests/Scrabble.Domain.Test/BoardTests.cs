@@ -1,11 +1,9 @@
-﻿using Scrabble.Domain;
-using System.Collections.Generic;
-using System;
-using Xunit;
+﻿using Xunit;
+using System.Linq;
 
 namespace Scrabble.Domain.Tests
 {
-  
+
     public class BoardTests
     {
         [Fact]
@@ -15,9 +13,9 @@ namespace Scrabble.Domain.Tests
             var board = new Board();
 
             // Assert
-            foreach (var r in BoardHelper.GetRows() )
+            foreach (var r in Enumerable.Range(0,15) )
             {
-                foreach(var c in BoardHelper.GetColumns())
+                foreach(var c in Enumerable.Range(0,15))
                 {
                     Assert.NotNull(board.GetSquare(new Coord((R)r, (C)c)));
                 }

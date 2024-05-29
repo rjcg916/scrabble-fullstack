@@ -1,152 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Scrabble.Domain
 {
-    public class EvaluatorAt<T>(ushort row, ushort col, T evaluator = default)
+    public class EvaluatorFor<T>(int row, int col, T evaluator = default)
     {
         public T Evaluator { get; set; } = evaluator;
-        public ushort Row { get; set; } = row;
+        public int Row { get; set; } = row;
         public string RowName { get; set; } = ((R)row).ToString()[1..];
-        public ushort Col { get; set; } = col;
+        public int Col { get; set; } = col;
         public string ColName { get; set; } = ((C)col).ToString()[0..];
     }
 
-    public static class BoardHelper
-    {
-        public static IEnumerable<R> GetRows()
-        {
-            foreach (R row in Enum.GetValues(typeof(R)))
-            {
-                yield return row;
-            }
-        }
-
-        public static IEnumerable<ushort> GetRowsAsUshort()
-        {
-            foreach (R row in Enum.GetValues(typeof(R)))
-            {
-                yield return (ushort) row;
-            }
-        }
-
-        public static IEnumerable<C> GetColumns()
-        {
-            foreach (C col in Enum.GetValues(typeof(C)))
-            {
-                yield return col;
-            }
-            
-        }
-
-        public static IEnumerable<ushort> GetColumnsAsUshort()
-        {
-            foreach (C col in Enum.GetValues(typeof(C)))
-            {
-                yield return (ushort)col;
-            }
-
-        }
-
-        public static string GetRowName(R row)
-        {
-            return row.ToString().Replace("_", "");
-        }
-
-        public static string GetColumnName(C col)
-        {
-            return col.ToString();
-        }
-    }
-
-
     public class Board
     {
-      //  static readonly R firstRow = R._1;
-      //  static readonly R lastRow = R._15;
-      //  static readonly C firstCol = C.A;
-      //  static readonly C lastCol = C.O;
-        static readonly ushort rowCount = R._15 - R._1 + 1;
-        static readonly ushort colCount = C.O - C.A + 1;
+
+        static readonly int rowCount = R._15 - R._1 + 1;
+        static readonly int colCount = C.O - C.A + 1;
 
         readonly Square[,] board = new Square[rowCount, colCount];
 
         public Board()
         {
-            //for (ushort r = (ushort)firstRow; r <= (ushort)lastRow; r++)
-            //    for (ushort c = (ushort)firstCol; c <= (ushort)lastCol; c++)
-            //        board[r, c] = new Square();
 
-            foreach (var r in BoardHelper.GetRowsAsUshort())
-                foreach (var c in BoardHelper.GetColumnsAsUshort())
+            foreach (var r in Enumerable.Range(0, rowCount))
+                foreach (var c in Enumerable.Range(0, colCount))
                     board[r, c] = new Square();
 
             SetAllSquareTypes();
         }
-
-        public Square[] GetHorizontalSlice(ushort row)
-        {
-            // Implementation for getting horizontal slice.
-            throw new NotImplementedException();
-        }
-
-        public Square[] GetVerticalSlice(ushort col)
-        {
-            // Implementation for getting vertical slice.
-            throw new NotImplementedException();
-        }
-
-        public List<EvaluatorAt<Square>> GetCoordSquares(bool filterForOccupied = false)
-        {
-            List<EvaluatorAt<Square>> squares = [];
-
-            foreach (var r in BoardHelper.GetRowsAsUshort())
-                foreach (var c in BoardHelper.GetColumnsAsUshort())
-                    if (board[r, c].IsOccupied && filterForOccupied || !filterForOccupied)
-                        squares.Add(new EvaluatorAt<Square>(r, c, board[r, c]));
-
-            return squares;
-        }
-
-        public Square GetSquare(Coord loc) =>
-            board[(ushort)loc.Row, (ushort)loc.Col];
-
-        public Tile GetTile(Coord loc) =>
-            GetSquare(loc).Tile;
-
-        public bool IsOccupied(Coord coord) =>
-            board[(ushort)coord.Row, (ushort)coord.Col].IsOccupied;
-
-        public bool PlaceTile(Coord coord, Tile tile)
-        {
-            bool isSuccessful;
-
-            var square = board[(ushort)coord.Row, (ushort)coord.Col];
-
-            if (IsOccupied(coord))
-                isSuccessful = false;
-            else
-            {
-                square.Tile = tile;
-                isSuccessful = true;
-            }
-
-            return isSuccessful;
-        }
-
-        private void SetSquareTypes(SquareType t, Coord[] locs)
-        {
-            foreach (Coord loc in locs)
-            {
-                board[(ushort)loc.Row, (ushort)loc.Col].SquareType = t;
-            }
-        }
-
         private void SetAllSquareTypes()
         {
 
             // start
-            board[(ushort)R._8, (ushort)C.H].SquareType = SquareType.start;
+            board[(int)R._8, (int)C.H].SquareType = SquareType.start;
 
             // triple letters
             SetSquareTypes(SquareType.tl,
@@ -256,6 +144,97 @@ namespace Scrabble.Domain
               ]
             );
 
+        }
+
+        public List<Square> GetRowSlice(int row)
+        {
+            List<Square> slice = [];
+            for (int col = 0; col < colCount; col++)
+            {
+                slice.Add(board[row, col]);
+            }
+            return slice;
+        }
+
+        public List<Square> GetColumnSlice(int col)
+        {
+            List<Square> slice = [];
+            for (int row = 0; row < rowCount; row++)
+            {
+                slice.Add(board[row, col]);
+            }
+            return slice;
+        }
+
+        public List<EvaluatorFor<Square>> GetCoordSquares(bool filterForOccupied = false)
+        {
+            List<EvaluatorFor<Square>> squares = [];
+
+            foreach (var r in Enumerable.Range(0, rowCount))
+                foreach (var c in Enumerable.Range(0, colCount))
+                    if (board[r, c].IsOccupied && filterForOccupied || !filterForOccupied)
+                        squares.Add(new EvaluatorFor<Square>(r, c, board[r, c]));
+
+            return squares;
+        }
+
+        public Square GetSquare(Coord loc) =>
+            board[loc.RowToValue(), loc.ColToValue()];
+
+
+        public Tile GetTile(Coord loc) =>
+            GetSquare(loc).Tile;
+
+        public bool IsOccupied(Coord coord) =>
+            board[coord.RowToValue(), coord.ColToValue()].IsOccupied;
+
+        public bool PlaceTile(Coord coord, Tile tile)
+        {
+            bool isSuccessful;
+
+            var square = board[coord.RowToValue(), coord.ColToValue()];
+
+            if (IsOccupied(coord))
+                isSuccessful = false;
+            else
+            {
+                square.Tile = tile;
+                isSuccessful = true;
+            }
+
+            return isSuccessful;
+        }
+
+        private void SetSquareTypes(SquareType t, Coord[] locs)
+        {
+            foreach (Coord loc in locs)
+            {
+                board[(int)loc.Row, (int)loc.Col].SquareType = t;
+            }
+        }
+
+        static public (bool valid, char invalidChar) ValidSequence(List<char> charArray, Func<string, bool> IsWordValid)
+        {
+            char[] separator = [' ', '\t', '\n', '\r'];
+
+            // Convert char array to string for easier manipulation
+            string input = charArray.ToString();
+
+            // Split the input string by whitespace
+            var words = input.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+
+            // Check each word using the IsWordValid function
+            foreach (var word in words)
+            {
+                if (!IsWordValid(word))
+                {
+                    // Return false and the first invalid character
+                    return (false, word.First());
+                }
+            }
+
+            // If all words are valid, return true
+            return (true, '\0'); // '\0' is the null character indicating no invalid character
         }
     }
 }
