@@ -4,60 +4,71 @@ using System.Linq;
 
 namespace Scrabble.Domain
 {
-    public abstract class Move(string letters, Func<string, bool> IsWordValid)
+    public abstract class Move(Board board, string letters, Func<string, bool> IsWordValid)
     {
         protected List<Tile> Tiles = letters.LettersToTiles();
         protected int Length = letters.Length;
-        protected int start;
-        protected int end;
+        protected Board board = board;
 
-        protected void ValidateSlices(Func<int, List<Square>> sliceFunc, int startIdx, int endIdx)
+        static protected int LowerBound(int i) => Math.Max(0, i);
+        protected int UpperBound(int i) => Math.Min(Length - 1, i);
+
+        protected bool AreSlicesValid(Func<int, List<Square>> sliceFunc, int startIdx, int endIdx)
         {
-            for (int i = startIdx; i <= endIdx; i++)
-            {
-                var slice = sliceFunc(i);
-                var sequence = slice.Select(s => s.Tile?.Letter ?? ' ').ToList();
 
-                var (valid, invalidChar) = sequence.ValidSequence(IsWordValid);
-                   
-                if (!valid)
-                {
-                    throw new InvalidOperationException($"Invalid sequence found in: {sequence} at: {invalidChar}");
-                }
+            var invalidSequence = Enumerable
+                .Range(LowerBound(startIdx), UpperBound(endIdx) - LowerBound(startIdx) + 1)
+                .Select(sliceFunc)
+                .Select(slice => slice.Select(s => s.Tile?.Letter ?? ' ').ToList())
+                .Select(sequence => (sequence, result: sequence.IsValidSequence(IsWordValid)))
+                .FirstOrDefault(t => !t.result.valid);
+
+            if (invalidSequence != default)
+            {
+                throw new InvalidOperationException($"Invalid sequence found in: {invalidSequence.sequence} at: {invalidSequence.result.invalidWord}");
             }
+
+            return true;
         }
     }
+
     public class HorizontalMove : Move
     {
+        readonly int row;
+        readonly int colStart;
+        readonly int colEnd;
+
         public HorizontalMove(Board board, string letters, Func<string, bool> IsWordValid, Coord startFrom)
-            : base(letters, IsWordValid)
+            : base(board, letters, IsWordValid)
         {
-            var row = startFrom.RowToValue();
-            start = startFrom.ColToValue();
-            end = start + Length;
-
-            // Validate the rows
-            ValidateSlices(board.GetRowSlice, Math.Max(0, row - 1), Math.Min(row + 1, Length - 1));
-
-            // Validate the columns
-            ValidateSlices(board.GetColumnSlice, Math.Max(0, start - 1), Math.Min(end + 1, Length - 1));
+            row = startFrom.RowToValue();
+            colStart = startFrom.ColToValue();
+            colEnd = colStart + Length;
         }
+
+        public bool IsValid() =>
+            AreSlicesValid(board.GetRowSlice, LowerBound(row - 1), UpperBound(row + 1))
+                &&
+            AreSlicesValid(board.GetColumnSlice, LowerBound(colStart - 1), UpperBound(colEnd + 1));
     }
-    
+
     public class VerticalMove : Move
     {
+        readonly int col;
+        readonly int rowStart;
+        readonly int rowEnd;
+
         public VerticalMove(Board board, string letters, Func<string, bool> IsWordValid, Coord startFrom)
-            : base(letters, IsWordValid)
+            : base(board, letters, IsWordValid)
         {
-            var col = startFrom.ColToValue();
-            start = startFrom.RowToValue();
-            end = start + Length;
-
-            // Validate the columns
-            ValidateSlices(board.GetColumnSlice, Math.Max(0, col - 1), Math.Min(col + 1, Length - 1));
-
-            // Validate the rows
-            ValidateSlices(board.GetRowSlice, Math.Max(0, start - 1), Math.Min(end + 1, Length - 1));
+            col = startFrom.ColToValue();
+            rowStart = startFrom.RowToValue();
+            rowEnd = rowStart + Length;
         }
+
+        public bool IsValid() =>
+            AreSlicesValid(board.GetColumnSlice, LowerBound(col - 1), UpperBound(col + 1))
+                &&
+            AreSlicesValid(board.GetRowSlice, LowerBound(rowStart - 1), UpperBound(rowEnd + 1));
     }
 }

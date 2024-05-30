@@ -7,7 +7,7 @@ namespace Scrabble.Domain.Tests
     {
 
         [Fact]
-        public void ValidSequence_ReturnsCorrectValidation()
+        public void IValidSequence_ReturnsCorrectValidation()
         {
             var validWordList = new List<string> { "Hello", "World" };
             bool isWordValid(string word) => validWordList.Contains(word);
@@ -15,11 +15,11 @@ namespace Scrabble.Domain.Tests
             var validSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };
             var invalidSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'X', 'y', 'z' };
 
-            var (valid, blankWord) = validSequence.ValidSequence(isWordValid);
+            var (valid, blankWord) = validSequence.IsValidSequence(isWordValid);
             Assert.True(valid);
             Assert.Equal("", blankWord);
 
-            var (validFalse, invalidWord) = invalidSequence.ValidSequence(isWordValid);
+            var (validFalse, invalidWord) = invalidSequence.IsValidSequence(isWordValid);
             Assert.False(validFalse);
             Assert.Equal("Xyz", invalidWord);
         }

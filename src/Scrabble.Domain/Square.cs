@@ -1,4 +1,8 @@
-﻿namespace Scrabble.Domain
+﻿using System.Collections.Generic;
+using System.Linq;
+using System;
+
+namespace Scrabble.Domain
 {
     public enum SquareType
     {
@@ -7,6 +11,7 @@
 
     public class Square(SquareType squareType = SquareType.reg)
     {
+
         public SquareType SquareType { get; set; } = squareType;
 
         public bool IsFinal { get; set; } = false;

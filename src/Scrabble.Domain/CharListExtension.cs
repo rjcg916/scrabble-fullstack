@@ -7,27 +7,26 @@ namespace Scrabble.Domain
     public static class CharListExtension
     {
 
-        static public (bool valid, string invalidWord) ValidSequence(this List<char> charArray, Func<string, bool> IsWordValid)
+        public static (bool valid, string invalidWord) IsValidSequence(this List<char> charArray, Func<string, bool> IsWordValid)
         {
             char[] separator = [' ', '\t', '\n', '\r'];
 
-            var input = new String(charArray.ToArray());
+            var input = new string(charArray.ToArray());
 
             // Split the input string by whitespace
             var words = input.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 
-            // Check each word using the IsWordValid function
-            foreach (var word in words)
+            // Find the first invalid word using LINQ
+            var invalidWord = words.FirstOrDefault(word => !IsWordValid(word));
+
+            // If there is an invalid word, return false and the invalid word
+            if (invalidWord != null)
             {
-                if (!IsWordValid(word))
-                {
-                    // Return false and the first invalid character
-                    return (false, word);
-                }
+                return (false, invalidWord);
             }
 
             // If all words are valid, return true
-            return (true, ""); // '\0' is the null character indicating no invalid character
+            return (true, string.Empty); // no invalid word
         }
     }
 }
