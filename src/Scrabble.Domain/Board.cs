@@ -133,29 +133,28 @@ namespace Scrabble.Domain
         }
 
  
-        static public (bool valid, char invalidChar) ValidSequence(List<char> charArray, Func<string, bool> IsWordValid)
-        {
-            char[] separator = [' ', '\t', '\n', '\r'];
+        //static public (bool valid, char invalidChar) ValidSequence(List<char> charArray, Func<string, bool> IsWordValid)
+        //{
+        //    char[] separator = [' ', '\t', '\n', '\r'];
 
-            var input = new String(charArray.ToArray());
+        //    var input = new String(charArray.ToArray());
 
-            // Split the input string by whitespace
-            var words = input.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+        //    // Split the input string by whitespace
+        //    var words = input.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 
-            // Check each word using the IsWordValid function
-            foreach (var word in words)
-            {
-                if (!IsWordValid(word))
-                {
-                    // Return false and the first invalid character
-                    return (false, word.First());
-                }
-            }
+        //    // Check each word using the IsWordValid function
+        //    foreach (var word in words)
+        //    {
+        //        if (!IsWordValid(word))
+        //        {
+        //            // Return false and the first invalid character
+        //            return (false, word.First());
+        //        }
+        //    }
 
-            // If all words are valid, return true
-            return (true, '\0'); // '\0' is the null character indicating no invalid character
-        }
-
+        //    // If all words are valid, return true
+        //    return (true, '\0'); // '\0' is the null character indicating no invalid character
+        //}
 
         private void SetAllSquareTypes()
         {

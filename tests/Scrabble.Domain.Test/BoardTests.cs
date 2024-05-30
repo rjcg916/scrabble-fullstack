@@ -135,23 +135,5 @@ namespace Scrabble.Domain.Tests
             Assert.True(_board.PlaceTile(coord, tile));
             Assert.False(_board.PlaceTile(coord, new Tile('B', 2)));
         }
-
-        [Fact]
-        public void ValidSequence_ReturnsCorrectValidation()
-        {
-            var validWordList = new List<string> { "Hello", "World" };
-            bool isWordValid(string word) => validWordList.Contains(word);
-
-            var validSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };
-            var invalidSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'X', 'y', 'z' };
-
-            var result = Board.ValidSequence(validSequence, isWordValid);
-            Assert.True(result.valid);
-            Assert.Equal('\0', result.invalidChar);
-
-            result = Board.ValidSequence(invalidSequence, isWordValid);
-            Assert.False(result.valid);
-            Assert.Equal('X', result.invalidChar);
-        }
     }
 }

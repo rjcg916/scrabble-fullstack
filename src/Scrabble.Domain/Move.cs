@@ -18,8 +18,8 @@ namespace Scrabble.Domain
                 var slice = sliceFunc(i);
                 var sequence = slice.Select(s => s.Tile?.Letter ?? ' ').ToList();
 
-                var (valid, invalidChar) = Board.ValidSequence(sequence, IsWordValid);
-
+                var (valid, invalidChar) = sequence.ValidSequence(IsWordValid);
+                   
                 if (!valid)
                 {
                     throw new InvalidOperationException($"Invalid sequence found in: {sequence} at: {invalidChar}");
