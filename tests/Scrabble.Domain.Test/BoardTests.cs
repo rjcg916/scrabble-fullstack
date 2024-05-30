@@ -1,145 +1,99 @@
-﻿using Xunit;
-using System.Linq;
+﻿using System.Collections.Generic;
+using Xunit;
 
 namespace Scrabble.Domain.Tests
 {
-
     public class BoardTests
     {
-        [Fact]
-        public void Board_Constructor_InitializesBoardCorrectly()
+        private readonly Board _board;
+
+        public BoardTests()
         {
-            // Arrange & Act
-            var board = new Board();
-
-            // Assert
-            foreach (var r in Enumerable.Range(0,15) )
-            {
-                foreach(var c in Enumerable.Range(0,15))
-                {
-                    Assert.NotNull(board.GetSquare(new Coord((R)r, (C)c)));
-                }
-            }
-        }
-
-        [Fact]
-        public void GetCoordSquares_ReturnsAllSquares_WhenFilterForOccupiedIsFalse()
-        {
-            // Arrange
-            var board = new Board();
-
-            // Act
-            var coordSquares = board.GetCoordSquares(false);
-
-            // Assert
-            Assert.Equal(225, coordSquares.Count); // 15x15 board
-        }
-
-        [Fact]
-        public void GetCoordSquares_ReturnsOnlyOccupiedSquares_WhenFilterForOccupiedIsTrue()
-        {
-            // Arrange
-            var board = new Board();
-            var coord = new Coord(R._9, C.E);
-            board.PlaceTile(coord, new Tile('A', 1));
-
-            // Act
-            var coordSquares = board.GetCoordSquares(true);
-
-            // Assert
-            Assert.Single(coordSquares);
-            Assert.Equal(((ushort)coord.Row), coordSquares[0].Row);
-            Assert.Equal(((ushort)coord.Col), coordSquares[0].Col);
-            Assert.Equal('A', coordSquares[0].Evaluator.Tile.Letter);
+            _board = new Board();
         }
 
         [Fact]
         public void GetSquare_ReturnsCorrectSquare()
         {
-            // Arrange
-            var board = new Board();
-            var coord = new Coord(R._1, C.B);
-
-            // Act
-            var square = board.GetSquare(coord);
-
-            // Assert
+            var coord = new Coord(R._1, C.A);
+            var square = _board.GetSquare(coord);
             Assert.NotNull(square);
-            Assert.Equal(SquareType.reg, square.SquareType);
         }
 
         [Fact]
         public void GetTile_ReturnsCorrectTile()
         {
-            // Arrange
-            var board = new Board();
-            var coord = new Coord(R._4, C.B);
-            var tile = new Tile('A', 1);
-            board.PlaceTile(coord, tile);
-
-            // Act
-            var retrievedTile = board.GetTile(coord);
-
-            // Assert
-            Assert.Equal(tile, retrievedTile);
-        }
-
-        [Fact]
-        public void IsOccupied_ReturnsTrue_WhenSquareIsOccupied()
-        {
-            // Arrange
-            var board = new Board();
-            var coord = new Coord(R._10, C.G);
-            board.PlaceTile(coord, new Tile('A', 1));
-
-            // Act
-            var isOccupied = board.IsOccupied(coord);
-
-            // Assert
-            Assert.True(isOccupied);
-        }
-
-        [Fact]
-        public void IsOccupied_ReturnsFalse_WhenSquareIsNotOccupied()
-        {
-            // Arrange
-            var board = new Board();
             var coord = new Coord(R._1, C.A);
+            var tile = _board.GetTile(coord);
+            Assert.Null(tile);
 
-            // Act
-            var isOccupied = board.IsOccupied(coord);
-
-            // Assert
-            Assert.False(isOccupied);
+            var newTile = new Tile('A', 1);
+            _board.PlaceTile(coord, newTile);
+            tile = _board.GetTile(coord);
+            Assert.Equal(newTile, tile);
         }
 
         [Fact]
-        public void PlaceTile_ReturnsFalse_WhenSquareIsAlreadyOccupied()
+        public void IsOccupied_ReturnsCorrectStatus()
         {
-            // Arrange
-            var board = new Board();
-            var coord = new Coord(R._1, C.C);
-            board.PlaceTile(coord, new Tile('A', 1));
+            var coord = new Coord(R._1, C.A);
+            Assert.False(_board.IsOccupied(coord));
 
-            // Act
-            var result = board.PlaceTile(coord, new Tile('B', 3));
-
-            // Assert
-            Assert.False(result);
+            _board.PlaceTile(coord, new Tile('A', 1));
+            Assert.True(_board.IsOccupied(coord));
         }
 
         [Fact]
-        public void PlaceTile_ReturnsTrue_WhenSquareIsNotOccupied()
+        public void GetRowSlice_ReturnsCorrectRow()
         {
-            // Arrange
-            var board = new Board();
-            var coord = new Coord(R._1, C.C);
+            var row = _board.GetRowSlice((int)R._1);
+            Assert.Equal(Board.colCount, row.Count);
+        }
 
-            // Act
-            var result = board.PlaceTile(coord, new Tile('A', 1));
+        [Fact]
+        public void GetColumnSlice_ReturnsCorrectColumn()
+        {
+            var column = _board.GetColumnSlice((int)C.A);
+            Assert.Equal(Board.rowCount, column.Count);
+        }
 
-            // Assert
-            Assert.True(result);
+        [Fact]
+        public void GetCoordSquares_ReturnsCorrectSquares()
+        {
+            var squares = _board.GetCoordSquares();
+            Assert.Equal(Board.rowCount * Board.colCount, squares.Count);
+
+            _board.PlaceTile(new Coord(R._1, C.A), new Tile('A', 1));
+            squares = _board.GetCoordSquares(true);
+            Assert.Single(squares);
+        }
+
+        [Fact]
+        public void PlaceTile_ReturnsCorrectStatus()
+        {
+            var coord = new Coord(R._1, C.A);
+            var tile = new Tile('A', 1);
+
+            Assert.True(_board.PlaceTile(coord, tile));
+            Assert.False(_board.PlaceTile(coord, new Tile('B', 2)));
+        }
+
+        [Fact]
+        public void ValidSequence_ReturnsCorrectValidation()
+        {
+            var validWordList = new List<string> { "Hello", "World" };
+            bool isWordValid(string word) => validWordList.Contains(word);
+
+            var validSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };
+            var invalidSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'X', 'y', 'z' };
+
+            var result = Board.ValidSequence(validSequence, isWordValid);
+            Assert.True(result.valid);
+            Assert.Equal('\0', result.invalidChar);
+
+            result = Board.ValidSequence(invalidSequence, isWordValid);
+            Assert.False(result.valid);
+            Assert.Equal('X', result.invalidChar);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Scrabble.Domain
 {
-    
+
     public abstract class Move(string letters, Func<string, bool> IsWordValid)
     {
         protected List<Tile> Tiles = letters.LettersToTiles();
@@ -28,41 +28,38 @@ namespace Scrabble.Domain
             }
         }
     }
-
     public class HorizontalMove : Move
     {
         public HorizontalMove(Board board, string letters, Func<string, bool> IsWordValid, Coord startFrom)
             : base(letters, IsWordValid)
         {
-            var row = startFrom.RowToValue(); 
+            var row = startFrom.RowToValue();
             start = startFrom.ColToValue();
-            end =  start + Length;
+            end = start + Length;
 
             // Validate the rows
-            ValidateSlices(board.GetRowSlice, row - 1, row + 1);
+            ValidateSlices(board.GetRowSlice, Math.Max(0, row - 1), Math.Min(row + 1, Length - 1));
 
             // Validate the columns
-            ValidateSlices(board.GetColumnSlice, start - 1, end + 1);
+            ValidateSlices(board.GetColumnSlice, Math.Max(0, start - 1), Math.Min(end + 1, Length -1));
         }
 
-        public class VerticalMove : Move
+    }
+    public class VerticalMove : Move
+    {
+        public VerticalMove(Board board, string letters, Func<string, bool> IsWordValid, Coord startFrom)
+            : base(letters, IsWordValid)
         {
-            
-            public VerticalMove(Board board, string letters, Func<string, bool> IsWordValid, Coord startFrom)
-                : base(letters, IsWordValid)
-            {
-                var col = startFrom.ColToValue();
-                start = startFrom.RowToValue();
-                end = start + Length;
-                
-                // Validate the columns
-                ValidateSlices(board.GetColumnSlice, col - 1, col + 1);
+            var col = startFrom.ColToValue();
+            start = startFrom.RowToValue();
+            end = start + Length;
 
-                // Validate the rows
-                ValidateSlices(board.GetRowSlice, start - 1, end + 1);
+            // Validate the columns
+            ValidateSlices(board.GetColumnSlice, Math.Max(0, col - 1), Math.Min( col + 1, Length - 1));
 
-            }
-        } 
+            // Validate the rows
+            ValidateSlices(board.GetRowSlice, Math.Max(0, start - 1), Math.Min(end + 1, Length - 1));
+
+        }
     }
 }
- 

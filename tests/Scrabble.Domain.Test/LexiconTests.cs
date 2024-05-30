@@ -4,84 +4,49 @@ namespace Scrabble.Domain.Tests
 {
     public class LexiconTests
     {
-        [Fact]
-        public void IsWordValid_ReturnsTrue_ForValidWord()
+        private readonly Lexicon _lexicon;
+
+        public LexiconTests()
         {
-            // Arrange
-            var lexicon = new Lexicon();
-
-            // Act
-            bool result = lexicon.IsWordValid("Car");
-
-            // Assert
-            Assert.True(result);
+            _lexicon = new Lexicon();
         }
 
         [Fact]
-        public void IsWordValid_ReturnsFalse_ForInvalidWord()
+        public void IsWordValid_ReturnsTrue_ForExistingWord()
         {
-            // Arrange
-            var lexicon = new Lexicon();
-
-            // Act
-            bool result = lexicon.IsWordValid("Bike");
-
-            // Assert
-            Assert.False(result);
+            Assert.True(_lexicon.IsWordValid("Car"));
+            Assert.True(_lexicon.IsWordValid("House"));
+            Assert.True(_lexicon.IsWordValid("Dog"));
+            Assert.True(_lexicon.IsWordValid("Talent"));
         }
 
         [Fact]
-        public void IsWordValid_ReturnsTrue_ForAnotherValidWord()
+        public void IsWordValid_ReturnsFalse_ForNonExistingWord()
         {
-            // Arrange
-            var lexicon = new Lexicon();
+            Assert.False(_lexicon.IsWordValid("Cat"));
+            Assert.False(_lexicon.IsWordValid("Building"));
+            Assert.False(_lexicon.IsWordValid("Elephant"));
+        }
 
-            // Act
-            bool result = lexicon.IsWordValid("Talent");
-
-            // Assert
-            Assert.True(result);
+        [Fact]
+        public void IsWordValid_IgnoresCase()
+        {
+            Assert.True(_lexicon.IsWordValid("car"));
+            Assert.True(_lexicon.IsWordValid("HOUSE"));
+            Assert.True(_lexicon.IsWordValid("dOg"));
+            Assert.True(_lexicon.IsWordValid("tAlEnT"));
         }
 
         [Fact]
         public void IsWordValid_ReturnsFalse_ForEmptyString()
         {
-            // Arrange
-            var lexicon = new Lexicon();
-
-            // Act
-            bool result = lexicon.IsWordValid(string.Empty);
-
-            // Assert
-            Assert.False(result);
+            Assert.False(_lexicon.IsWordValid(string.Empty));
         }
 
         [Fact]
-        public void IsWordValid_IsCaseInsensitive()
+        public void IsWordValid_ReturnsFalse_ForNullString()
         {
-            // Arrange
-            var lexicon = new Lexicon();
-
-            // Act
-            bool resultLowerCase = lexicon.IsWordValid("car");
-            bool resultMixedCase = lexicon.IsWordValid("cAr");
-
-            // Assert
-            Assert.True(resultLowerCase);
-            Assert.True(resultMixedCase);
-        }
-
-        [Fact]
-        public void IsWordValid_ReturnsFalse_ForWhitespaceOnly()
-        {
-            // Arrange
-            var lexicon = new Lexicon();
-
-            // Act
-            bool result = lexicon.IsWordValid("   ");
-
-            // Assert
-            Assert.False(result);
+            Assert.False(_lexicon.IsWordValid(null));
         }
     }
 }

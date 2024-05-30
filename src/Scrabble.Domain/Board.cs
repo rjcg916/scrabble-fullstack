@@ -16,8 +16,8 @@ namespace Scrabble.Domain
     public class Board
     {
 
-        static readonly int rowCount = R._15 - R._1 + 1;
-        static readonly int colCount = C.O - C.A + 1;
+        public static readonly int rowCount = R._15 - R._1 + 1;
+        public static readonly int colCount = C.O - C.A + 1;
 
         readonly Square[,] board = new Square[rowCount, colCount];
 
@@ -93,7 +93,7 @@ namespace Scrabble.Domain
         {
             char[] separator = [' ', '\t', '\n', '\r'];
 
-            string input = charArray.ToString();
+            var input = new String(charArray.ToArray());
 
             // Split the input string by whitespace
             var words = input.Split(separator, StringSplitOptions.RemoveEmptyEntries);
