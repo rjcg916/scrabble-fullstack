@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Xunit;
 
-namespace Scrabble.Domain.Test
+namespace Scrabble.Domain.Tests
 {
     public class HorizontalMoveTests
     {

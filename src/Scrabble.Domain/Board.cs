@@ -13,6 +13,8 @@ namespace Scrabble.Domain
         public string ColName { get; set; } = ((C)col).ToString()[0..];
     }
 
+
+
     public class Board
     {
 
@@ -37,7 +39,49 @@ namespace Scrabble.Domain
             GetSquare(loc).Tile;
 
         public bool IsOccupied(Coord coord) =>
-            board[coord.RowToValue(), coord.ColToValue()].IsOccupied;
+        //    board[coord.RowToValue(), coord.ColToValue()].IsOccupied;
+            IsOccupied(coord, coord);
+
+        public bool IsOccupied(Coord startCoord, Coord endCoord)
+        {
+            int startRow = startCoord.RowToValue();
+            int endRow = endCoord.RowToValue();
+            int startCol = startCoord.ColToValue();
+            int endCol = endCoord.ColToValue();
+
+            if (startRow == endRow)     // If checking a row
+            {
+                return IsOccupiedRange(startRow, startCol, endCol, true);
+            }
+            else if (startCol == endCol) // If checking a column
+            {
+                return IsOccupiedRange(startCol, startRow, endRow, false);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+        }
+
+        private bool IsOccupiedRange(int fixedValue, int start, int end, bool isRow)
+        {
+            for (int i = start; i <= end; i++)
+            {
+                if (isRow)
+                {
+                    if (board[fixedValue, i].IsOccupied)
+                        return true;
+                }
+                else
+                {
+                    if (board[i, fixedValue].IsOccupied)
+                        return true;
+                }
+            }
+            return false;
+        }
+
 
         public List<Square> GetRowSlice(int row)
         {

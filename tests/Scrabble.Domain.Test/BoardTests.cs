@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Scrabble.Domain.Tests
@@ -33,14 +34,71 @@ namespace Scrabble.Domain.Tests
             Assert.Equal(newTile, tile);
         }
 
+
+
         [Fact]
-        public void IsOccupied_ReturnsCorrectStatus()
+        public void IsOccupied_SingleUnoccupiedCoord_ReturnsFalse()
         {
             var coord = new Coord(R._1, C.A);
-            Assert.False(_board.IsOccupied(coord));
+            bool result = _board.IsOccupied(coord);
+            Assert.False(result);
+        }
 
+        [Fact]
+        public void IsOccupied_SingleOccupiedCoord_ReturnsTrue()
+        {
+            var coord = new Coord(R._1, C.A);
             _board.PlaceTile(coord, new Tile('A', 1));
-            Assert.True(_board.IsOccupied(coord));
+            bool result = _board.IsOccupied(coord);
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void IsOccupied_RowRange_Unoccupied_ReturnsFalse()
+        {
+            var startCoord = new Coord(R._1, C.A);
+            var endCoord = new Coord(R._1, C.E);
+            _board.PlaceTile(new Coord(R._1, C.F), new Tile('A', 1));
+            bool result = _board.IsOccupied(startCoord, endCoord);
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void IsOccupied_RowRange_Occupied_ReturnsTrue()
+        {
+            var startCoord = new Coord(R._1, C.A);
+            var endCoord = new Coord(R._1, C.E);
+            _board.PlaceTile(new Coord(R._1, C.C), new Tile('A', 1));
+            bool result = _board.IsOccupied(startCoord, endCoord);
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void IsOccupied_ColumnRange_Unoccupied_ReturnsFalse()
+        {
+            var startCoord = new Coord(R._1, C.A);
+            var endCoord = new Coord(R._5, C.A);
+            _board.PlaceTile(new Coord(R._6, C.A), new Tile('A', 1));
+            bool result = _board.IsOccupied(startCoord, endCoord);
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void IsOccupied_ColumnRange_Occupied_ReturnsTrue()
+        {
+            var startCoord = new Coord(R._1, C.A);
+            var endCoord = new Coord(R._5, C.A);
+            _board.PlaceTile(new Coord(R._3, C.A), new Tile('A', 1));
+            bool result = _board.IsOccupied(startCoord, endCoord);
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void IsOccupied_NonRowNonColumn_ThrowsNotImplementedException()
+        {
+            var startCoord = new Coord(R._1, C.A);
+            var endCoord = new Coord(R._5, C.E);
+            Assert.Throws<NotImplementedException>(() => _board.IsOccupied(startCoord, endCoord));
         }
 
         [Fact]

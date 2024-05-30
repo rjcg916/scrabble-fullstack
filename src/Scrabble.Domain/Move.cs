@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace Scrabble.Domain
 {
-
     public abstract class Move(string letters, Func<string, bool> IsWordValid)
     {
         protected List<Tile> Tiles = letters.LettersToTiles();
@@ -41,10 +40,10 @@ namespace Scrabble.Domain
             ValidateSlices(board.GetRowSlice, Math.Max(0, row - 1), Math.Min(row + 1, Length - 1));
 
             // Validate the columns
-            ValidateSlices(board.GetColumnSlice, Math.Max(0, start - 1), Math.Min(end + 1, Length -1));
+            ValidateSlices(board.GetColumnSlice, Math.Max(0, start - 1), Math.Min(end + 1, Length - 1));
         }
-
     }
+    
     public class VerticalMove : Move
     {
         public VerticalMove(Board board, string letters, Func<string, bool> IsWordValid, Coord startFrom)
@@ -55,11 +54,10 @@ namespace Scrabble.Domain
             end = start + Length;
 
             // Validate the columns
-            ValidateSlices(board.GetColumnSlice, Math.Max(0, col - 1), Math.Min( col + 1, Length - 1));
+            ValidateSlices(board.GetColumnSlice, Math.Max(0, col - 1), Math.Min(col + 1, Length - 1));
 
             // Validate the rows
             ValidateSlices(board.GetRowSlice, Math.Max(0, start - 1), Math.Min(end + 1, Length - 1));
-
         }
     }
 }
