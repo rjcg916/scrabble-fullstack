@@ -50,10 +50,8 @@ namespace Scrabble.Domain
         public List<Tile> FindAll(Predicate<Tile> match) =>
             Tiles.FindAll(match);
 
-
         public TileBag()
         {
-
             // add the tiles to the bag
 
             Tiles.AddRange(
