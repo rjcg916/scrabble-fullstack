@@ -35,40 +35,40 @@ namespace Scrabble.Domain
     public class HorizontalMove : Move
     {
         readonly int row;
-        readonly int colStart;
-        readonly int colEnd;
+        readonly int colStartIdx;
+        readonly int colEndIdx;
 
         public HorizontalMove(Board board, string letters, Func<string, bool> IsWordValid, Coord startFrom)
             : base(board, letters, IsWordValid)
         {
             row = startFrom.RowToValue();
-            colStart = startFrom.ColToValue();
-            colEnd = colStart + Length;
+            colStartIdx = startFrom.ColToValue();
+            colEndIdx = colStartIdx + Length;
         }
 
         public bool IsValid() =>
             AreSlicesValid(board.GetRowSlice, LowerBound(row - 1), UpperBound(row + 1))
                 &&
-            AreSlicesValid(board.GetColumnSlice, LowerBound(colStart - 1), UpperBound(colEnd + 1));
+            AreSlicesValid(board.GetColumnSlice, LowerBound(colStartIdx - 1), UpperBound(colEndIdx + 1));
     }
 
     public class VerticalMove : Move
     {
         readonly int col;
-        readonly int rowStart;
-        readonly int rowEnd;
+        readonly int rowStartIdx;
+        readonly int rowEndIdx;
 
         public VerticalMove(Board board, string letters, Func<string, bool> IsWordValid, Coord startFrom)
             : base(board, letters, IsWordValid)
         {
             col = startFrom.ColToValue();
-            rowStart = startFrom.RowToValue();
-            rowEnd = rowStart + Length;
+            rowStartIdx = startFrom.RowToValue();
+            rowEndIdx = rowStartIdx + Length;
         }
 
         public bool IsValid() =>
             AreSlicesValid(board.GetColumnSlice, LowerBound(col - 1), UpperBound(col + 1))
                 &&
-            AreSlicesValid(board.GetRowSlice, LowerBound(rowStart - 1), UpperBound(rowEnd + 1));
+            AreSlicesValid(board.GetRowSlice, LowerBound(rowStartIdx - 1), UpperBound(rowEndIdx + 1));
     }
 }
