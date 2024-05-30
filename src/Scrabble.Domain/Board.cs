@@ -14,7 +14,6 @@ namespace Scrabble.Domain
     }
 
 
-
     public class Board
     {
 
@@ -39,9 +38,8 @@ namespace Scrabble.Domain
             GetSquare(loc).Tile;
 
         public bool IsOccupied(Coord coord) =>
-        //    board[coord.RowToValue(), coord.ColToValue()].IsOccupied;
-            IsOccupied(coord, coord);
-
+            board[coord.RowToValue(), coord.ColToValue()].IsOccupied;
+       
         public bool IsOccupied(Coord startCoord, Coord endCoord)
         {
             int startRow = startCoord.RowToValue();
@@ -131,30 +129,6 @@ namespace Scrabble.Domain
 
             return isSuccessful;
         }
-
- 
-        //static public (bool valid, char invalidChar) ValidSequence(List<char> charArray, Func<string, bool> IsWordValid)
-        //{
-        //    char[] separator = [' ', '\t', '\n', '\r'];
-
-        //    var input = new String(charArray.ToArray());
-
-        //    // Split the input string by whitespace
-        //    var words = input.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-
-        //    // Check each word using the IsWordValid function
-        //    foreach (var word in words)
-        //    {
-        //        if (!IsWordValid(word))
-        //        {
-        //            // Return false and the first invalid character
-        //            return (false, word.First());
-        //        }
-        //    }
-
-        //    // If all words are valid, return true
-        //    return (true, '\0'); // '\0' is the null character indicating no invalid character
-        //}
 
         private void SetAllSquareTypes()
         {
