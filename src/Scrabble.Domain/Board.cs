@@ -18,7 +18,7 @@ namespace Scrabble.Domain
         public static readonly int rowCount = R._15 - R._1 + 1;
         public static readonly int colCount = C.O - C.A + 1;
 
-        readonly Square[,] squares = new Square[rowCount, colCount];
+        public readonly Square[,] squares = new Square[rowCount, colCount];
 
         public Board()
         {
@@ -85,7 +85,6 @@ namespace Scrabble.Domain
             return false;
         }
 
-
         public List<Square> GetRowSlice(int row)
         {
             List<Square> slice = [];
@@ -134,25 +133,55 @@ namespace Scrabble.Domain
             return isSuccessful;
         }
 
-        protected Board PlaceTiles(int fixedValue, int start, string letters, bool isRow)
+        public Board PlaceTiles(int fixedValue, int start, string letters, bool isRow)
         {
             var charLength = letters.Length;
 
-            for (int i = start; i <= start + charLength; i++)
+            for (int i = start; i < start + charLength; i++)
             {
+                var theLetter = letters[i - 1];
+
                 if (isRow)
-                    this.squares[fixedValue, i].Tile = new Tile(letters[i]); 
-                
+                {
+                    this.squares[fixedValue, i].Tile = new Tile(theLetter);
+                }
+                else
+                    this.squares[i, fixedValue].Tile = new Tile(theLetter);
             }            
 
             return this;
         }
 
-        public Board PlaceTilesInRow(Coord startFrom, string letters)
-        {
+        public Board PlaceTilesInARow(Coord startFrom, string letters)
+        {        
+            var startCol = startFrom.ColToValue();
+            var endCol = startCol + letters.Length - 1;
+            var theRow = startFrom.RowToValue();
+
+            if (this.IsOccupiedRange(theRow, startCol, endCol, true))
+            {
+                throw new InvalidOperationException("The specified row is already occupied.");
+            }
+
             Board boardCopy = this.Copy();
-            var start = startFrom.ColToValue();
-            return boardCopy.PlaceTiles(startFrom.RowToValue(), start, letters, true);            
+
+            return boardCopy.PlaceTiles(theRow, startCol, letters, true);            
+        }
+
+        public Board PlaceTilesInACol(Coord startFrom, string letters)
+        {
+            var startRow = startFrom.RowToValue();
+            var endRow = startRow + letters.Length - 1;
+            int theCol = startFrom.ColToValue();
+   
+            if (this.IsOccupiedRange(theCol, startRow, endRow, false))
+            {
+                throw new InvalidOperationException("The specified col is already occupied.");
+            }
+
+            Board boardCopy = this.Copy();
+
+            return boardCopy.PlaceTiles(theCol, startRow, letters, false);
         }
 
         private void Initialize()

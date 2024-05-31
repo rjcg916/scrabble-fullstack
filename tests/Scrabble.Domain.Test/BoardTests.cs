@@ -134,7 +134,7 @@ namespace Scrabble.Domain.Tests
             Assert.True(_board.PlaceTile(coord, tile));
             Assert.False(_board.PlaceTile(coord, new Tile('B')));
         }
-    
+
 
         [Fact]
         public void Copy_CreatesDeepCopyOfBoard()
@@ -180,7 +180,7 @@ namespace Scrabble.Domain.Tests
             var copiedBoard = originalBoard.Copy();
 
             var coord = new Coord(R._8, C.H);
-            var tile = new Tile('a'); 
+            var tile = new Tile('a');
 
             // Act
             copiedBoard.PlaceTile(coord, tile);
@@ -193,5 +193,115 @@ namespace Scrabble.Domain.Tests
             Assert.True(copiedBoard.IsOccupied(coord));
             Assert.Equal(tile, copiedBoard.GetTile(coord));
         }
+
+
+        [Fact]
+        public void PlaceTiles_ShouldPlaceTilesHorizontally_WhenIsRowIsTrue()
+        {
+            // Arrange
+            var board = new Board();
+            var letters = "TEST";
+            var fixedValue = 0;
+            var start = 0;
+            bool isRow = true;
+
+            // Act
+            board.PlaceTiles(fixedValue, start, letters, isRow);
+
+            // Assert
+            for (int i = 0; i < letters.Length; i++)
+            {
+                Assert.Equal(letters[i], board.squares[fixedValue, start + i].Tile.Letter);
+            }
+        }
+
+        [Fact]
+        public void PlaceTiles_ShouldPlaceTilesVertically_WhenIsRowIsFalse()
+        {
+            // Arrange
+            var board = new Board();
+            var letters = "TEST";
+            var fixedValue = 0;
+            var start = 0;
+            bool isRow = false;
+
+            // Act
+            board.PlaceTiles(fixedValue, start, letters, isRow);
+
+            // Assert
+            for (int i = 0; i < letters.Length; i++)
+            {
+                Assert.Equal(letters[i], board.squares[start + i, fixedValue].Tile.Letter);
+            }
+        }
+
+        [Fact]
+        public void PlaceTilesInARow_ShouldPlaceTilesInSpecifiedRow()
+        {
+            // Arrange
+            var board = new Board();
+            var letters = "ROWTEST";
+            var startFrom = new Coord(R._1, C.A);
+
+            // Act
+            var resultBoard = board.PlaceTilesInARow(startFrom, letters);
+
+            // Assert
+            for (int i = 0; i < letters.Length; i++)
+            {
+                Assert.Equal(letters[i], resultBoard.squares[0, i].Tile.Letter);
+            }
+        }
+
+
+        [Fact]
+        public void PlaceTilesInARow_RangeOccupied_ThrowsException()
+        {
+            // Arrange
+            var board = new Board();
+            var startFrom = new Coord(0, 0); 
+            var letters = "HELLO";
+
+            // Pre-occupy the range
+            board.PlaceTiles(0, 0, "HELLO", true);
+
+            // Act & Assert
+            Assert.Throws<InvalidOperationException>(() => board.PlaceTilesInARow(startFrom, letters));
+        }
+
+        [Fact]
+        public void PlaceTilesInACol_ShouldPlaceTilesInSpecifiedColumn()
+        {
+            // Arrange
+            var board = new Board();
+            var letters = "COLTEST";
+            var startFrom = new Coord(R._1, C.A);
+
+            // Act
+            var resultBoard = board.PlaceTilesInACol(startFrom, letters);
+
+            // Assert
+            for (int i = 0; i < letters.Length; i++)
+            {
+                Assert.Equal(letters[i], resultBoard.squares[i, 0].Tile.Letter);
+            }
+        }
+
+
+        [Fact]
+        public void PlaceTilesInACol_RangeOccupied_ThrowsException()
+        {
+            // Arrange
+            var board = new Board();
+            var startFrom = new Coord(0, 0);
+            var letters = "HELLO";
+
+            // Pre-occupy the range
+            board.PlaceTiles(0, 0, "HELLO", false);
+
+            // Act & Assert
+            Assert.Throws<InvalidOperationException>(() => board.PlaceTilesInACol(startFrom, letters));
+        }
+
     }
 }
