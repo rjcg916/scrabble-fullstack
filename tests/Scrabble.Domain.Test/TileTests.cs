@@ -34,7 +34,7 @@ namespace Scrabble.Domain.Tests
         public void ExplictValueStored()
         {
             // Arrange
-            var t = new Tile('B', 3);
+            var t = new Tile('B');
 
             // Act
 

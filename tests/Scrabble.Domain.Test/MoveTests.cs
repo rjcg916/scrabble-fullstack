@@ -32,7 +32,7 @@ namespace Scrabble.Domain.Tests
             bool isWordValid(string word) => validWordList.Contains(word.ToLower());
 
             var startCoord = new Coord(R._1, C.A);
-            _board.PlaceTile(new Coord(R._1, C.B), new Tile('x', 1));
+            _board.PlaceTile(new Coord(R._1, C.B), new Tile('x'));
 
             Assert.Throws<InvalidOperationException>(() =>
             {
@@ -69,7 +69,7 @@ namespace Scrabble.Domain.Tests
             bool isWordValid(string word) => validWordList.Contains(word.ToLower());
 
             var startCoord = new Coord(R._1, C.A);
-            _board.PlaceTile(new Coord(R._2, C.A), new Tile('x', 1));
+            _board.PlaceTile(new Coord(R._2, C.A), new Tile('x'));
 
             Assert.Throws<InvalidOperationException>(() =>
             {

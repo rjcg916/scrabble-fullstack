@@ -77,7 +77,7 @@ namespace Scrabble.Domain.Tests
             var player = new Player("TestPlayer", tileBag);
             var board = new Board();
             var coord = new Coord(R._1, C.A);
-            var tile = new Tile('A', 1);
+            var tile = new Tile('A');
 
             // Act
             var result = player.PlaceTile(board, coord, tile);
@@ -95,8 +95,8 @@ namespace Scrabble.Domain.Tests
             var player = new Player("TestPlayer", tileBag);
             var board = new Board();
             var coord = new Coord(R._1, C.A);
-            var tile1 = new Tile('A', 1);
-            var tile2 = new Tile('B', 3);
+            var tile1 = new Tile('A');
+            var tile2 = new Tile('B');
 
             board.PlaceTile(coord, tile1); // Place the first tile
 

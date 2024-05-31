@@ -48,7 +48,7 @@ namespace Scrabble.Domain.Tests
             // Arrange
             var square = new Square
             {
-                Tile = new Tile('A', 1)
+                Tile = new Tile('A')
             };
 
             // Act

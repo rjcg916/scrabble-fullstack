@@ -12,6 +12,15 @@ namespace Scrabble.Domain
     public class Square(SquareType squareType = SquareType.reg)
     {
 
+        public Square Copy()
+        {
+            return new Square
+            {
+                Tile = this.Tile, 
+                SquareType = this.SquareType
+            };
+        }
+
         public SquareType SquareType { get; set; } = squareType;
 
         public bool IsFinal { get; set; } = false;

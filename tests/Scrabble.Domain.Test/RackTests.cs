@@ -37,7 +37,7 @@ namespace Scrabble.Domain.Tests
         {
             // Arrange
             var rack = new Rack();
-            var tilesToAdd = new List<Tile> { new('A', 1), new('B', 3) };
+            var tilesToAdd = new List<Tile> { new('A'), new('B') };
 
             // Act
             rack.AddTiles(tilesToAdd);
@@ -53,9 +53,9 @@ namespace Scrabble.Domain.Tests
             var rack = new Rack();
             var tilesToAdd = new List<Tile>
             {
-                new('A', 1), new('B', 3), new('C', 3),
-                new('D', 2), new('E', 1), new('F', 4),
-                new('G', 2), new('H', 4)
+                new('A'), new('B'), new('C'),
+                new('D'), new('E'), new('F'),
+                new('G'), new('H')
             };
 
             // Act & Assert
@@ -68,9 +68,9 @@ namespace Scrabble.Domain.Tests
         {
             // Arrange
             var rack = new Rack();
-            var initialTiles = new List<Tile> { new('A', 1), new('B', 3) };
+            var initialTiles = new List<Tile> { new('A'), new('B') };
             rack.AddTiles(initialTiles);
-            var tilesToRemove = new List<Tile> { new('A', 1) };
+            var tilesToRemove = new List<Tile> { new('A') };
 
             // Act
             rack.RemoveTiles(tilesToRemove);
@@ -84,9 +84,9 @@ namespace Scrabble.Domain.Tests
         {
             // Arrange
             var rack = new Rack();
-            var initialTiles = new List<Tile> { new('A', 1) };
+            var initialTiles = new List<Tile> { new('A') };
             rack.AddTiles(initialTiles);
-            var tilesToRemove = new List<Tile> { new('A', 1), new('B', 3) };
+            var tilesToRemove = new List<Tile> { new('A'), new('B') };
 
             // Act & Assert
             var exception = Assert.Throws<Exception>(() => rack.RemoveTiles(tilesToRemove));
@@ -98,7 +98,7 @@ namespace Scrabble.Domain.Tests
         {
             // Arrange
             var rack = new Rack();
-            var tilesToAdd = new List<Tile> { new('A', 1) };
+            var tilesToAdd = new List<Tile> { new('A') };
             rack.AddTiles(tilesToAdd);
 
             // Act
@@ -113,7 +113,7 @@ namespace Scrabble.Domain.Tests
         {
             // Arrange
             var rack = new Rack();
-            var tilesToAdd = new List<Tile> { new('A', 1) };
+            var tilesToAdd = new List<Tile> { new('A') };
             rack.AddTiles(tilesToAdd);
 
             // Act

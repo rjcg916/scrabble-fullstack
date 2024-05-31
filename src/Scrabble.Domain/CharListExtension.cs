@@ -13,13 +13,10 @@ namespace Scrabble.Domain
 
             var input = new string(charArray.ToArray());
 
-            // Split the input string by whitespace
             var words = input.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 
-            // Find the first invalid word using LINQ
             var invalidWord = words.FirstOrDefault(word => !IsWordValid(word));
 
-            // If there is an invalid word, return false and the invalid word
             if (invalidWord != null)
             {
                 return (false, invalidWord);

@@ -13,32 +13,44 @@ namespace Scrabble.Domain
         public string ColName { get; set; } = ((C)col).ToString()[0..];
     }
 
-
     public class Board
     {
-
         public static readonly int rowCount = R._15 - R._1 + 1;
         public static readonly int colCount = C.O - C.A + 1;
 
-        readonly Square[,] board = new Square[rowCount, colCount];
+        readonly Square[,] squares = new Square[rowCount, colCount];
 
         public Board()
         {
             foreach (var r in Enumerable.Range(0, rowCount))
                 foreach (var c in Enumerable.Range(0, colCount))
-                    board[r, c] = new Square();
+                    squares[r, c] = new Square();
 
-            SetAllSquareTypes();
+            Initialize();
         }
 
+        public Board(Board other)
+        {
+            for (int r = 0; r < rowCount; r++)
+            {
+                for (int c = 0; c < colCount; c++)
+                {
+                    squares[r, c] = other.squares[r, c].Copy();
+                }
+            }
+        }
+
+        public Board Copy() =>
+            new (this);
+        
         public Square GetSquare(Coord loc) =>
-            board[loc.RowToValue(), loc.ColToValue()];
+            squares[loc.RowToValue(), loc.ColToValue()];
 
         public Tile GetTile(Coord loc) =>
             GetSquare(loc).Tile;
 
         public bool IsOccupied(Coord coord) =>
-            board[coord.RowToValue(), coord.ColToValue()].IsOccupied;
+            squares[coord.RowToValue(), coord.ColToValue()].IsOccupied;
        
         public bool IsOccupied(Coord startCoord, Coord endCoord)
         {
@@ -59,23 +71,16 @@ namespace Scrabble.Domain
             {
                 throw new NotImplementedException();
             }
-
         }
 
         private bool IsOccupiedRange(int fixedValue, int start, int end, bool isRow)
         {
             for (int i = start; i <= end; i++)
             {
-                if (isRow)
-                {
-                    if (board[fixedValue, i].IsOccupied)
-                        return true;
-                }
-                else
-                {
-                    if (board[i, fixedValue].IsOccupied)
-                        return true;
-                }
+                var squareValue = isRow ? squares[fixedValue, i] : squares[i, fixedValue];
+                if (squareValue.IsOccupied)
+                    return true;
+
             }
             return false;
         }
@@ -86,7 +91,7 @@ namespace Scrabble.Domain
             List<Square> slice = [];
             for (int col = 0; col < colCount; col++)
             {
-                slice.Add(board[row, col]);
+                slice.Add(squares[row, col]);
             }
             return slice;
         }
@@ -96,28 +101,28 @@ namespace Scrabble.Domain
             List<Square> slice = [];
             for (int row = 0; row < rowCount; row++)
             {
-                slice.Add(board[row, col]);
+                slice.Add(squares[row, col]);
             }
             return slice;
         }
 
         public List<EvaluatorFor<Square>> GetCoordSquares(bool filterForOccupied = false)
         {
-            List<EvaluatorFor<Square>> squares = [];
+            List<EvaluatorFor<Square>> squareList = [];
 
             foreach (var r in Enumerable.Range(0, rowCount))
                 foreach (var c in Enumerable.Range(0, colCount))
-                    if (board[r, c].IsOccupied && filterForOccupied || !filterForOccupied)
-                        squares.Add(new EvaluatorFor<Square>(r, c, board[r, c]));
+                    if (squares[r, c].IsOccupied && filterForOccupied || !filterForOccupied)
+                        squareList.Add(new EvaluatorFor<Square>(r, c, squares[r, c]));
 
-            return squares;
+            return squareList;
         }
 
         public bool PlaceTile(Coord coord, Tile tile)
         {
             bool isSuccessful;
 
-            var square = board[coord.RowToValue(), coord.ColToValue()];
+            var square = squares[coord.RowToValue(), coord.ColToValue()];
 
             if (IsOccupied(coord))
                 isSuccessful = false;
@@ -126,14 +131,34 @@ namespace Scrabble.Domain
                 square.Tile = tile;
                 isSuccessful = true;
             }
-
             return isSuccessful;
         }
 
-        private void SetAllSquareTypes()
+        protected Board PlaceTiles(int fixedValue, int start, string letters, bool isRow)
+        {
+            var charLength = letters.Length;
+
+            for (int i = start; i <= start + charLength; i++)
+            {
+                if (isRow)
+                    this.squares[fixedValue, i].Tile = new Tile(letters[i]); 
+                
+            }            
+
+            return this;
+        }
+
+        public Board PlaceTilesInRow(Coord startFrom, string letters)
+        {
+            Board boardCopy = this.Copy();
+            var start = startFrom.ColToValue();
+            return boardCopy.PlaceTiles(startFrom.RowToValue(), start, letters, true);            
+        }
+
+        private void Initialize()
         {
             // start
-            board[(int)R._8, (int)C.H].SquareType = SquareType.start;
+            squares[(int)R._8, (int)C.H].SquareType = SquareType.start;
 
             // triple letters
             SetSquareTypes(SquareType.tl,
@@ -211,7 +236,7 @@ namespace Scrabble.Domain
         {
             foreach (Coord loc in locs)
             {
-                board[(int)loc.Row, (int)loc.Col].SquareType = t;
+                squares[(int)loc.Row, (int)loc.Col].SquareType = t;
             }
         }
 

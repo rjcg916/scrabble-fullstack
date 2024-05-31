@@ -9,35 +9,35 @@ namespace Scrabble.Domain
     {
         readonly string TOOMANYERROR = "Attempt to draw more tiles than present in TileBag";
 
-        private static readonly List<(Letter letter, ushort freq)> letters =
+        private static readonly List<(Tile tile, ushort freq)> tiles =
         [
-            new( new Letter('A', 1), 9),
-            new( new Letter('B', 3), 2),
-            new( new Letter('C', 3), 2),
-            new( new Letter('D', 2), 4),
-            new( new Letter('E', 1), 12),
-            new( new Letter('F', 4), 2),
-            new( new Letter('G', 2), 3),
-            new( new Letter('H', 4), 2),
-            new( new Letter('I', 1), 9),
-            new( new Letter('J', 8), 1),
-            new( new Letter('K', 5), 1),
-            new( new Letter('L', 1), 4),
-            new( new Letter('M', 3), 2),
-            new( new Letter('N', 1), 6),
-            new( new Letter('O', 1), 8),
-            new( new Letter('P', 3), 2),
-            new( new Letter('Q', 10), 1),
-            new( new Letter('R', 1), 6),
-            new( new Letter('S', 1), 4),
-            new( new Letter('T', 1), 6),
-            new( new Letter('U', 1), 4),
-            new( new Letter('V', 4), 2),
-            new( new Letter('W', 4), 2),
-            new( new Letter('X', 8), 1),
-            new( new Letter('Y', 4), 2),
-            new( new Letter('Z', 10), 1),
-            new( new Letter(' ', 0), 2)
+            new( new Tile('A'), 9),
+            new( new Tile('B'), 2),
+            new( new Tile('C'), 2),
+            new( new Tile('D'), 4),
+            new( new Tile('E'), 12),
+            new( new Tile('F'), 2),
+            new( new Tile('G'), 3),
+            new( new Tile('H'), 2),
+            new( new Tile('I'), 9),
+            new( new Tile('J'), 1),
+            new( new Tile('K'), 1),
+            new( new Tile('L'), 4),
+            new( new Tile('M'), 2),
+            new( new Tile('N'), 6),
+            new( new Tile('O'), 8),
+            new( new Tile('P'), 2),
+            new( new Tile('Q'), 1),
+            new( new Tile('R'), 6),
+            new( new Tile('S'), 4),
+            new( new Tile('T'), 6),
+            new( new Tile('U'), 4),
+            new( new Tile('V'), 2),
+            new( new Tile('W'), 2),
+            new( new Tile('X'), 1),
+            new( new Tile('Y'), 2),
+            new( new Tile('Z'), 1),
+            new( new Tile(' '), 2)
         ];
 
         private List<Tile> Tiles { get; set; } = [];
@@ -55,13 +55,12 @@ namespace Scrabble.Domain
             // add the tiles to the bag
 
             Tiles.AddRange(
-                letters.SelectMany(l => Enumerable.Repeat(new Tile(l.letter.Name, l.letter.Value), l.freq))
+                tiles.SelectMany(tf => Enumerable.Repeat(new Tile(tf.tile.Letter), tf.freq))
             );
 
             // shuffle the bag
             Shuffle();
         }
-
 
         public List<Tile> DrawTiles(int drawCount)
         {
