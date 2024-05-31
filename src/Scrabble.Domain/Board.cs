@@ -40,10 +40,9 @@ namespace Scrabble.Domain
             }
         }
 
-        public Board Copy() =>
-            new (this);
+        public Board Copy() => new (this);
         
-        public Square GetSquare(Coord loc) =>
+        public Square GetSquare(Coord loc) => 
             squares[loc.RowToValue(), loc.ColToValue()];
 
         public Tile GetTile(Coord loc) =>
@@ -135,19 +134,20 @@ namespace Scrabble.Domain
 
         public Board PlaceTiles(int fixedValue, int start, string letters, bool isRow)
         {
-            var charLength = letters.Length;
 
-            for (int i = start; i < start + charLength; i++)
+            var tiles = letters.LettersToTiles();
+
+            for (int i = 0; i < tiles.Count; i++)
             {
-                var theLetter = letters[i - 1];
-
                 if (isRow)
                 {
-                    this.squares[fixedValue, i].Tile = new Tile(theLetter);
+                    this.squares[fixedValue, start + i].Tile = tiles[i];
                 }
                 else
-                    this.squares[i, fixedValue].Tile = new Tile(theLetter);
-            }            
+                {
+                    this.squares[start + i, fixedValue].Tile = tiles[i];
+                }
+            }
 
             return this;
         }
