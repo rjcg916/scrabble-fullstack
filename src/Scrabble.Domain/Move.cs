@@ -13,10 +13,13 @@ namespace Scrabble.Domain
 
         static protected int LowerBound(int i) => Math.Max(0, i);
         protected int UpperBound(int i) => Math.Min(Length - 1, i);
+        protected bool TouchesStart(int lower, int upper, int start) => start >= lower && start <= upper;
 
         public abstract bool IsValid();
+
         public abstract (Board, bool) GetNextBoard();
 
+   
         protected bool AreSlicesValid(Func<int, List<Square>> getSliceFunc, int startIdx, int endIdx)
         {
 
@@ -42,6 +45,7 @@ namespace Scrabble.Domain
         readonly int colStart;
         readonly int colEnd;
         readonly Coord startFrom;
+        readonly bool touchesGameStart;
 
         public HorizontalMove(Board board, string letters, Func<string, bool> IsWordValid, Coord startFrom)
             : base(board, letters, IsWordValid)
@@ -50,9 +54,12 @@ namespace Scrabble.Domain
             this.startFrom = startFrom;
             colStart = startFrom.ColToValue();
             colEnd = colStart + Length;
+            touchesGameStart = TouchesStart(colStart, colEnd, Board.GameStartCol()); 
         }
 
         public override bool IsValid() =>
+            !board.IsFirstMove() || touchesGameStart
+                &&
             AreSlicesValid(board.GetRowSlice, LowerBound(row - 1), UpperBound(row + 1))
                 &&
             AreSlicesValid(board.GetColumnSlice, LowerBound(colStart - 1), UpperBound(colEnd + 1));
@@ -67,6 +74,7 @@ namespace Scrabble.Domain
         readonly int rowStart;
         readonly int rowEnd;
         readonly Coord startFrom;
+        readonly bool touchesGameStart;
 
         public VerticalMove(Board board, string letters, Func<string, bool> IsWordValid, Coord startFrom)
             : base(board, letters, IsWordValid)
@@ -75,9 +83,12 @@ namespace Scrabble.Domain
             this.startFrom = startFrom;
             rowStart = startFrom.RowToValue();
             rowEnd = rowStart + Length;
+            touchesGameStart = TouchesStart(rowStart, rowEnd, Board.GameStartRow());
         }
 
         public override bool IsValid() =>
+            !board.IsFirstMove() || touchesGameStart
+                &&
             AreSlicesValid(board.GetColumnSlice, LowerBound(col - 1), UpperBound(col + 1))
                 &&
             AreSlicesValid(board.GetRowSlice, LowerBound(rowStart - 1), UpperBound(rowEnd + 1));

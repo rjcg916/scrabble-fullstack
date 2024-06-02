@@ -56,14 +56,14 @@ app.MapGet("/api/Games/{Id}/Board/Squares", (Guid Id, IGameManager GameManager) 
 {
     var game = GameManager.GetGame(Id);
     var board = game.Board;
-    return Results.Ok(board.GetCoordSquares());
+    return Results.Ok(board.GetLocationSquares());
 });
 
 app.MapGet("/api/Games/{Id}/Board/Tiles", (Guid Id, IGameManager GameManager) =>
 {
     var game = GameManager.GetGame(Id);
     var board = game.Board;
-    return Results.Ok(board.GetCoordSquares(filterForOccupied: true));
+    return Results.Ok(board.GetLocationSquares(filterForOccupied: true));
 });
 
 app.Run();

@@ -11,6 +11,8 @@ namespace Scrabble.Domain
 
         public readonly Square[,] squares = new Square[rowCount, colCount];
 
+        private int MovesMadeCount = 0;
+
         public Board()
         {
             foreach (var r in Enumerable.Range(0, rowCount))
@@ -19,7 +21,7 @@ namespace Scrabble.Domain
 
             Initialize();
         }
-
+        
         public Board(Coord startFrom, List<Tile> tiles, bool inRow) : this() {
             if (inRow)
                 this.PlaceTilesInARow(startFrom, tiles);
@@ -48,7 +50,17 @@ namespace Scrabble.Domain
 
         public bool IsOccupied(Coord coord) =>
             squares[coord.RowToValue(), coord.ColToValue()].IsOccupied;
-       
+        public static Coord GetStartCoord() =>
+            new(R._8, C.H);
+        public static int GameStartRow() =>
+            GetStartCoord().RowToValue();
+        public static int GameStartCol() =>
+         GetStartCoord().ColToValue();
+
+
+        public bool IsFirstMove() =>
+                MovesMadeCount == 1;            
+      
         public bool IsOccupied(Coord startCoord, Coord endCoord)
         {
             int startRow = startCoord.RowToValue();
@@ -132,7 +144,7 @@ namespace Scrabble.Domain
             return board;
         }
 
-        private Board PlaceTiles(int fixedValue, int start, List<Tile> tiles, bool isRow)
+        private Board PlaceTiles(int fixedCoord, int start, List<Tile> tiles, bool isRow)
         {
             Board board = this.Copy();
 
@@ -140,11 +152,11 @@ namespace Scrabble.Domain
             {
                 if (isRow)
                 {
-                    board.squares[fixedValue, start + i].Tile = tiles[i];
+                    board.squares[fixedCoord, start + i].Tile = tiles[i];
                 }
                 else
                 {
-                    board.squares[start + i, fixedValue].Tile = tiles[i];
+                    board.squares[start + i, fixedCoord].Tile = tiles[i];
                 }
             }
 
