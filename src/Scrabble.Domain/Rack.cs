@@ -7,65 +7,56 @@ namespace Scrabble.Domain
     public class Rack
     {
         public readonly static int Capacity = 7;
-        readonly List<Tile> tiles;
+        List<Tile> Tiles { get; init; }
 
-        public int TileCount
-        {
-            get
-            {
-                return tiles.Count;
-            }
-        }
+        public int TileCount => Tiles.Count;
 
-        public int SlotCount
-        {
-            get
-            {
-                return Capacity - tiles.Count;
-            }
-        }
+        public int SlotCount => Capacity - Tiles.Count;
 
         public Rack()
         {
-            tiles = [];
+            Tiles = [];
         }
 
-        public List<Tile> GetTiles() =>
-            tiles;
+        public List<Tile> GetTiles() => new(Tiles);
 
-        public bool InRack(char letter) =>
-            tiles.Select(t => t.Letter).First() == letter;
+        public bool InRack(char letter) => Tiles.Any(t => t.Letter == letter);
 
-        public List<Tile> AddTiles(List<Tile> tiles)
+        public Rack AddTiles(List<Tile> newTiles)
         {
-            if (tiles.Count > Capacity - this.tiles.Count)
+            if (newTiles.Count > SlotCount)
                 throw new Exception("Attempt to add tiles beyond rack capacity");
 
-            this.tiles.AddRange(tiles);
+            var updatedTiles = new List<Tile>(Tiles);
+            updatedTiles.AddRange(newTiles);
 
-            return this.tiles;
+            return new Rack { Tiles = updatedTiles };
         }
 
-        public List<Tile> RemoveTiles(ushort count)
+        public Rack RemoveTiles(int count)
         {
-            this.tiles.RemoveRange(0, count);
-            return this.tiles;
-        }
-        
-        public List<Tile> RemoveTiles(List<Tile> tiles)
-        {
-
-            if (tiles.Count > this.tiles.Count)
+            if (count > TileCount)
                 throw new Exception("Attempt to remove more tiles than existing in rack.");
 
-            tiles.ForEach(r =>
-           {
-               var index = this.tiles.FindIndex(t => t.Letter == r.Letter);
-               if (index > -1)
-                   this.tiles.RemoveAt(index);
-           });
+            var updatedTiles = new List<Tile>(Tiles);
+            updatedTiles.RemoveRange(0, count);
 
-            return this.tiles;
+            return new Rack { Tiles = updatedTiles };
+        }
+
+        public Rack RemoveTiles(List<Tile> tilesToRemove)
+        {
+            var updatedTiles = new List<Tile>(Tiles);
+
+           
+            tilesToRemove.ForEach(tileToRemove =>
+            {
+                var index = updatedTiles.FindIndex(t => t.Letter == tileToRemove.Letter);
+                if (index > -1)
+                    updatedTiles.RemoveAt(index);
+            });
+
+            return new Rack { Tiles = updatedTiles };
         }
     }
 }

@@ -4,16 +4,7 @@ using System.Linq;
 
 namespace Scrabble.Domain
 {
-    public class EvaluatorFor<T>(int row, int col, T evaluator = default)
-    {
-        public T Evaluator { get; set; } = evaluator;
-        public int Row { get; set; } = row;
-        public string RowName { get; set; } = ((R)row).ToString()[1..];
-        public int Col { get; set; } = col;
-        public string ColName { get; set; } = ((C)col).ToString()[0..];
-    }
-
-    public class Board
+    public partial class Board
     {
         public static readonly int rowCount = R._15 - R._1 + 1;
         public static readonly int colCount = C.O - C.A + 1;
@@ -29,6 +20,13 @@ namespace Scrabble.Domain
             Initialize();
         }
 
+        public Board(Coord startFrom, List<Tile> tiles, bool inRow) : this() {
+            if (inRow)
+                this.PlaceTilesInARow(startFrom, tiles);
+            else
+                this.PlaceTilesInACol(startFrom, tiles);
+        }
+        
         public Board(Board other)
         {
             for (int r = 0; r < rowCount; r++)
@@ -104,58 +102,59 @@ namespace Scrabble.Domain
             return slice;
         }
 
-        public List<EvaluatorFor<Square>> GetCoordSquares(bool filterForOccupied = false)
+        public List<LocationEvaluator<Square>> GetCoordSquares(bool filterForOccupied = false)
         {
-            List<EvaluatorFor<Square>> squareList = [];
+            List<LocationEvaluator<Square>> squareList = [];
 
             foreach (var r in Enumerable.Range(0, rowCount))
                 foreach (var c in Enumerable.Range(0, colCount))
                     if (squares[r, c].IsOccupied && filterForOccupied || !filterForOccupied)
-                        squareList.Add(new EvaluatorFor<Square>(r, c, squares[r, c]));
+                        squareList.Add(new LocationEvaluator<Square>(r, c, squares[r, c]));
 
             return squareList;
         }
 
-        public bool PlaceTile(Coord coord, Tile tile)
+
+        public Board PlaceTile(Coord coord, Tile tile)
         {
-            bool isSuccessful;
+            var col = coord.ColToValue();
+            var row = coord.RowToValue();
 
-            var square = squares[coord.RowToValue(), coord.ColToValue()];
-
-            if (IsOccupied(coord))
-                isSuccessful = false;
-            else
+            if (this.IsOccupiedRange(row, col, col, true))
             {
-                square.Tile = tile;
-                isSuccessful = true;
+                throw new InvalidOperationException("The specified space is already occupied.");
             }
-            return isSuccessful;
+
+            Board board = this.Copy();
+
+            board.squares[row, col].Tile = tile; 
+
+            return board;
         }
 
-        public Board PlaceTiles(int fixedValue, int start, string letters, bool isRow)
+        private Board PlaceTiles(int fixedValue, int start, List<Tile> tiles, bool isRow)
         {
-
-            var tiles = letters.LettersToTiles();
+            Board board = this.Copy();
 
             for (int i = 0; i < tiles.Count; i++)
             {
                 if (isRow)
                 {
-                    this.squares[fixedValue, start + i].Tile = tiles[i];
+                    board.squares[fixedValue, start + i].Tile = tiles[i];
                 }
                 else
                 {
-                    this.squares[start + i, fixedValue].Tile = tiles[i];
+                    board.squares[start + i, fixedValue].Tile = tiles[i];
                 }
             }
 
-            return this;
+            return board;
         }
 
-        public Board PlaceTilesInARow(Coord startFrom, string letters)
+        public Board PlaceTilesInARow(Coord startFrom, List<Tile> tiles)
         {        
             var startCol = startFrom.ColToValue();
-            var endCol = startCol + letters.Length - 1;
+            var endCol = startCol + tiles.Count - 1;
             var theRow = startFrom.RowToValue();
 
             if (this.IsOccupiedRange(theRow, startCol, endCol, true))
@@ -163,15 +162,13 @@ namespace Scrabble.Domain
                 throw new InvalidOperationException("The specified row is already occupied.");
             }
 
-            Board boardCopy = this.Copy();
-
-            return boardCopy.PlaceTiles(theRow, startCol, letters, true);            
+            return PlaceTiles(theRow, startCol, tiles, true);            
         }
 
-        public Board PlaceTilesInACol(Coord startFrom, string letters)
+        public Board PlaceTilesInACol(Coord startFrom, List<Tile> tiles)
         {
             var startRow = startFrom.RowToValue();
-            var endRow = startRow + letters.Length - 1;
+            var endRow = startRow + tiles.Count - 1;
             int theCol = startFrom.ColToValue();
    
             if (this.IsOccupiedRange(theCol, startRow, endRow, false))
@@ -179,94 +176,7 @@ namespace Scrabble.Domain
                 throw new InvalidOperationException("The specified col is already occupied.");
             }
 
-            Board boardCopy = this.Copy();
-
-            return boardCopy.PlaceTiles(theCol, startRow, letters, false);
-        }
-
-        private void Initialize()
-        {
-            // start
-            squares[(int)R._8, (int)C.H].SquareType = SquareType.start;
-
-            // triple letters
-            SetSquareTypes(SquareType.tl,
-
-              [
-                new(R._2, C.F), new(R._2, C.J),
-
-                new(R._6, C.B), new(R._6, C.F), new(R._6, C.J), new(R._6, C.N),
-
-                new(R._10, C.B), new(R._10, C.F), new(R._10, C.J), new(R._10, C.N),
-
-                new(R._14, C.F), new(R._14, C.J)
-              ]);
-
-            // double letters
-            SetSquareTypes(SquareType.dl,
-                [
-              new(R._1, C.D), new(R._1, C.L),
-
-              new(R._3, C.G), new(R._3, C.I),
-
-              new(R._4, C.A), new(R._4, C.H), new(R._4, C.O),
-
-              new(R._7, C.C), new(R._7, C.G), new(R._7, C.I), new(R._7, C.M),
-
-              new(R._8, C.D), new(R._8, C.L),
-
-              new(R._9, C.C), new(R._9, C.G), new(R._9, C.I), new(R._9, C.M),
-
-              new(R._12, C.A), new(R._12, C.H), new(R._12, C.O),
-
-              new(R._13, C.G), new(R._13, C.I),
-
-              new(R._15, C.D), new(R._15, C.L)
-
-            ]);
-
-            // double word
-            SetSquareTypes(SquareType.dw,
-
-              [
-                new(R._2, C.B), new(R._2, C.N),
-
-                new(R._3, C.C), new(R._3, C.M),
-
-                new(R._4, C.D), new(R._4, C.L),
-
-                new(R._5, C.E), new(R._5, C.K),
-
-                new(R._11, C.E), new(R._11, C.K),
-
-                new(R._12, C.D), new(R._12, C.L),
-
-                new(R._13, C.C), new(R._13, C.M),
-
-                new(R._14, C.B), new(R._14, C.N)
-
-              ]);
-
-
-            // triple word
-            SetSquareTypes(
-              SquareType.tw,
-
-              [
-                new(R._1, C.A), new(R._1, C.H), new(R._1, C.O),
-
-                new(R._8, C.A), new(R._8, C.O),
-
-                new(R._15, C.A), new(R._15, C.H), new(R._15, C.O)
-              ]
-            );
-        }
-        private void SetSquareTypes(SquareType t, Coord[] locs)
-        {
-            foreach (Coord loc in locs)
-            {
-                squares[(int)loc.Row, (int)loc.Col].SquareType = t;
-            }
+            return PlaceTiles(theCol, startRow, tiles, false);
         }
 
     }

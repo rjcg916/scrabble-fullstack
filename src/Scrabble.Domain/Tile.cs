@@ -5,7 +5,7 @@ namespace Scrabble.Domain
 {
     public class Tile(char character)
     {
-        public char Letter = character;
+        public char Letter = Char.ToUpper(character);
 
         private static readonly Dictionary<char, int> LetterValues = new()
         {
@@ -21,7 +21,7 @@ namespace Scrabble.Domain
         {
             get
             {
-                if (LetterValues.TryGetValue(Char.ToUpper(Letter), out int value))
+                if (LetterValues.TryGetValue(character, out int value))
                 {
                     return value;
                 }

@@ -27,11 +27,11 @@ namespace Scrabble.Domain.Tests
             int initialCount = tileBag.Count;
 
             // Act
-            var drawnTiles = tileBag.DrawTiles(5);
+            var (drawnTiles, nextTileBag) = tileBag.DrawTiles(5);
 
             // Assert
             Assert.Equal(5, drawnTiles.Count);
-            Assert.Equal(initialCount - 5, tileBag.Count);
+            Assert.Equal(initialCount - 5, nextTileBag.Count);
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace Scrabble.Domain.Tests
             tileBag.Shuffle(); 
 
             // Act
-            var drawnTiles = tileBag.DrawTiles(7);
+            var (drawnTiles, _) = tileBag.DrawTiles(7);
 
             // Assert
             Assert.Equal(7, drawnTiles.Count);

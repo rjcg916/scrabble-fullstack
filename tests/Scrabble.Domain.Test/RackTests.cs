@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Scrabble.Domain.Tests
@@ -40,10 +41,10 @@ namespace Scrabble.Domain.Tests
             var tilesToAdd = new List<Tile> { new('A'), new('B') };
 
             // Act
-            rack.AddTiles(tilesToAdd);
+            var addedToRack = rack.AddTiles(tilesToAdd);
 
             // Assert
-            Assert.Equal(2, rack.TileCount);
+            Assert.Equal(2, addedToRack.TileCount);
         }
 
         [Fact]
@@ -69,28 +70,33 @@ namespace Scrabble.Domain.Tests
             // Arrange
             var rack = new Rack();
             var initialTiles = new List<Tile> { new('A'), new('B') };
-            rack.AddTiles(initialTiles);
+            var addedToRack = rack.AddTiles(initialTiles);
             var tilesToRemove = new List<Tile> { new('A') };
 
             // Act
-            rack.RemoveTiles(tilesToRemove);
+            var removedFromRack = addedToRack.RemoveTiles(tilesToRemove);
 
             // Assert
-            Assert.Equal(1, rack.TileCount);
+            Assert.Equal(1, removedFromRack.TileCount);
         }
 
         [Fact]
-        public void Rack_RemoveTiles_ThrowsException_WhenRemovingMoreThanExist()
+        public void Rack_RemoveTiles_IgnoresMissingTileInRemovalRequest()
         {
             // Arrange
-            var rack = new Rack();
-            var initialTiles = new List<Tile> { new('A') };
-            rack.AddTiles(initialTiles);
+            var emptyRack = new Rack();
+            var initialTiles = new List<Tile> { new('A'), new('C') };
+            var rack = emptyRack.AddTiles(initialTiles);
             var tilesToRemove = new List<Tile> { new('A'), new('B') };
 
-            // Act & Assert
-            var exception = Assert.Throws<Exception>(() => rack.RemoveTiles(tilesToRemove));
-            Assert.Equal("Attempt to remove more tiles than existing in rack.", exception.Message);
+            // Act 
+            var rackAfterRemoval = rack.RemoveTiles(tilesToRemove);
+
+            // Assert
+            Assert.Equal(1, rackAfterRemoval.TileCount);
+            var aTile = rackAfterRemoval.GetTiles().FirstOrDefault(t => t == new Tile('C'));
+            Assert.Null(aTile);
+
         }
 
         [Fact]
@@ -99,10 +105,10 @@ namespace Scrabble.Domain.Tests
             // Arrange
             var rack = new Rack();
             var tilesToAdd = new List<Tile> { new('A') };
-            rack.AddTiles(tilesToAdd);
+            var nextRack = rack.AddTiles(tilesToAdd);
 
             // Act
-            bool inRack = rack.InRack('A');
+            bool inRack = nextRack.InRack('A');
 
             // Assert
             Assert.True(inRack);
@@ -114,10 +120,10 @@ namespace Scrabble.Domain.Tests
             // Arrange
             var rack = new Rack();
             var tilesToAdd = new List<Tile> { new('A') };
-            rack.AddTiles(tilesToAdd);
+            var nextRack = rack.AddTiles(tilesToAdd);
 
             // Act
-            bool inRack = rack.InRack('B');
+            bool inRack = nextRack.InRack('B');
 
             // Assert
             Assert.False(inRack);

@@ -62,7 +62,7 @@ namespace Scrabble.Domain
             Shuffle();
         }
 
-        public List<Tile> DrawTiles(int drawCount)
+        public (List<Tile>, TileBag) DrawTiles(int drawCount)
         {
 
             // can't draw more than available
@@ -70,13 +70,16 @@ namespace Scrabble.Domain
                 throw new Exception(TOOMANYERROR);
 
             // Fetch the tiles to draw
-            var tiles = Tiles.GetRange(0, drawCount);
+            var drawnTiles = Tiles.GetRange(0, drawCount);
 
-            // Remove tiles from bag
-            Tiles.RemoveRange(0, drawCount);
+            // Create a new instance of TileBag with remaining tiles
+            var remainingTiles = new List<Tile>(Tiles);
+            remainingTiles.RemoveRange(0, drawCount);
+            var newTileBag = new TileBag { Tiles = remainingTiles };
 
-            // return the list of drawn tiles
-            return tiles;
+            // Return the drawn tiles and the new instance of TileBag
+            return (drawnTiles, newTileBag);
+
         }
 
         public void Shuffle()

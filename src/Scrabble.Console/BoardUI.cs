@@ -3,7 +3,7 @@
 
 namespace Scrabble.Console
 {
-    class BoardHelper(Board board)
+    class BoardUI(Board board)
     {
         Board Board { get; set; } = board;
 

@@ -79,11 +79,11 @@ namespace Scrabble.Domain.Tests
             var coord = new Coord(R._1, C.A);
             var tile = new Tile('A');
 
-            // Act
-            var result = player.PlaceTile(board, coord, tile);
+            // Act             
+            var exception = Record.Exception(() => player.PlaceTile(board, coord, tile));
 
             // Assert
-            Assert.True(result);
+            Assert.Null(exception); // Ensures no exception was thrown
             Assert.Equal(tile, board.GetTile(coord));
         }
 
@@ -98,14 +98,15 @@ namespace Scrabble.Domain.Tests
             var tile1 = new Tile('A');
             var tile2 = new Tile('B');
 
-            board.PlaceTile(coord, tile1); // Place the first tile
+            var newBoard = board.PlaceTile(coord, tile1); // Place the first tile
 
-            // Act
-            var result = player.PlaceTile(board, coord, tile2); // Attempt to place another tile on the same square
+            // Act 
+            Board nextBoard = null;
+            var exception = Record.Exception(() => nextBoard = player.PlaceTile(newBoard, coord, tile2));
 
-            // Assert
-            Assert.False(result);
-            Assert.Equal(tile1, board.GetTile(coord)); // Ensure the original tile is still there
+            // Assert             
+            Assert.NotNull(exception); 
+            Assert.Equal(tile1, newBoard.GetTile(coord)); // Ensure the original tile is still there
         }
     }
 }

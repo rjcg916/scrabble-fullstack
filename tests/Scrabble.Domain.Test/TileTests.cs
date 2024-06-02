@@ -18,20 +18,7 @@ namespace Scrabble.Domain.Tests
         }
 
         [Fact]
-        public void DefaultValueStored()
-        {
-            // Arrange
-            var t = new Tile('B');
-
-            // Act
-
-            // Assert
-            Assert.Equal(1, t.Value);
-
-        }
-
-        [Fact]
-        public void ExplictValueStored()
+        public void ValueStored()
         {
             // Arrange
             var t = new Tile('B');

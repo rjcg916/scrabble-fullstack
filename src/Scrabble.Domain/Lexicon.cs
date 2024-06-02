@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Scrabble.Domain
 {
     public class Lexicon : ILexicon
     {
-        readonly List<string> words =
-        [
-            "Car",
-            "House",
-            "Dog",
-            "Talent"
-        ];
+        private readonly HashSet<string> words;
+
+        public Lexicon() { 
+            this.words = ["car", "house", "dog", "talent"];
+        }
+        public Lexicon(IEnumerable<string> list) {
+            this.words = new(list);            
+        }
+
         public bool IsWordValid(string word) =>
-            words.FindIndex(w => w.Equals(word, StringComparison.OrdinalIgnoreCase)) > -1;
+            !(word == null) && words.Contains(word.ToLower());
     }
 }

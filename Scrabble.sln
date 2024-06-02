@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A8259792
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AE8425AC-3C4B-446B-B207-84EE923B07CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scrabble.Console", "src\Scrabble.Console\Scrabble.Console.csproj", "{C0E39479-7F9F-4707-9EF0-BDB64D2AC51C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scrabble.Console", "src\Scrabble.Console\Scrabble.Console.csproj", "{C0E39479-7F9F-4707-9EF0-BDB64D2AC51C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
