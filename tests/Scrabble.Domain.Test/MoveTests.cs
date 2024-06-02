@@ -32,12 +32,12 @@ namespace Scrabble.Domain.Tests
             bool isWordValid(string word) => validWordList.Contains(word.ToLower());
 
             var startCoord = new Coord(R._1, C.A);
-            _board.PlaceTile(new Coord(R._1, C.B), new Tile('x'));
+            var board = _board.PlaceTile(new Coord(R._1, C.B), new Tile('x'));
 
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                var move = new HorizontalMove(_board, "hello", isWordValid, startCoord);
-            });
+            
+            var move = new HorizontalMove(board, "hello", isWordValid, startCoord);
+           
+            Assert.Throws<InvalidOperationException>(() => move.IsValid());
         }
     }
 
@@ -69,12 +69,11 @@ namespace Scrabble.Domain.Tests
             bool isWordValid(string word) => validWordList.Contains(word.ToLower());
 
             var startCoord = new Coord(R._1, C.A);
-            _board.PlaceTile(new Coord(R._2, C.A), new Tile('x'));
+            var board = _board.PlaceTile(new Coord(R._2, C.A), new Tile('x'));
 
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                var move = new VerticalMove(_board, "hello", isWordValid, startCoord);
-            });
+            var move = new VerticalMove(board, "hello", isWordValid, startCoord);
+
+            Assert.Throws<InvalidOperationException>(() => move.IsValid());
         }
     }
 }

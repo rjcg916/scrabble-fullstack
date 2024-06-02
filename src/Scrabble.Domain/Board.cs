@@ -102,7 +102,7 @@ namespace Scrabble.Domain
             return slice;
         }
 
-        public List<LocationEvaluator<Square>> GetCoordSquares(bool filterForOccupied = false)
+        public List<LocationEvaluator<Square>> GetLocationSquares(bool filterForOccupied = false)
         {
             List<LocationEvaluator<Square>> squareList = [];
 

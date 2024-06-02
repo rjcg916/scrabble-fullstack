@@ -66,7 +66,7 @@ namespace Scrabble.Domain.Tests
             var game = gameFactory.CreateGame(playerNames);
 
             // Assert
-            Assert.Equal(2, game.NumberOfPlayers);
+            Assert.Equal(playerNames.Count, game.NumberOfPlayers);
             Assert.True(game.Players.ContainsKey(1));
             Assert.True(game.Players.ContainsKey(2));
             Assert.Equal("Alice", game.Players[1].Name);
