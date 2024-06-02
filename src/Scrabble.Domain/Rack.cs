@@ -54,6 +54,8 @@ namespace Scrabble.Domain
                 var index = updatedTiles.FindIndex(t => t.Letter == tileToRemove.Letter);
                 if (index > -1)
                     updatedTiles.RemoveAt(index);
+                else
+                    throw new InvalidOperationException("Attempt to remove tile not in rack.");
             });
 
             return new Rack { Tiles = updatedTiles };

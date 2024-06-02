@@ -14,7 +14,8 @@ namespace Scrabble.Domain
             DrawTiles(tileBag);
         }
 
-        public (List<Tile>, TileBag) DrawTiles(TileBag tileBag)
+
+        public TileBag DrawTiles(TileBag tileBag)
         {
             var tilesAvailable = tileBag.Count;
 
@@ -25,14 +26,16 @@ namespace Scrabble.Domain
 
             var drawCount = tilesAvailable > tilesNeeded ? tilesNeeded : tilesAvailable;
 
-            var (tilesToAdd, newBag) = tileBag.DrawTiles(drawCount);
-            Rack.AddTiles(tilesToAdd);
+            var (tilesToAddToRack, tileBagAfterRemoval) = tileBag.DrawTiles(drawCount);
+            
+            Rack = Rack.AddTiles(tilesToAddToRack);
 
-            return (tilesToAdd, newBag);
+            return tileBagAfterRemoval;
         }
-        
+
         public Board PlaceTile(Board board, Coord coord, Tile tile)
         {
+
             Rack =  Rack.RemoveTiles([tile]);
             
             return board.PlaceTile(coord, tile);

@@ -26,8 +26,8 @@ namespace Scrabble.Domain.Tests
         public void Player_DrawTiles_ThrowsException_WhenNoTilesAvailable()
         {
             // Arrange
-            var emptyTileBag = new TileBag();
-            emptyTileBag.DrawTiles(emptyTileBag.Count); // Empty the tile bag
+            var startingTileBag = new TileBag();
+            var (_,emptyTileBag) = startingTileBag.DrawTiles(startingTileBag.Count); // Empty the tile bag
 
             // Act & Assert
             var exception = Assert.Throws<Exception>(() => new Player("TestPlayer", emptyTileBag));
@@ -80,7 +80,7 @@ namespace Scrabble.Domain.Tests
             var tile = new Tile('A');
 
             // Act             
-            var exception = Record.Exception(() => player.PlaceTile(board, coord, tile));
+            var exception = Record.Exception(() => board = player.PlaceTile(board, coord, tile));
 
             // Assert
             Assert.Null(exception); // Ensures no exception was thrown
