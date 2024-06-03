@@ -5,21 +5,14 @@ namespace Scrabble.Domain
 {
     public class GameManager : IGameManager
     {
-        private readonly Game.GameFactory _gameFactory;
-        private readonly Dictionary<Guid, Game> _games;
+      
+        private readonly Dictionary<Guid, Game> _games = new Dictionary<Guid, Game>();
 
-        public GameManager()
+    
+        public Guid AddGame(Game game)
         {
-            var lexicon = new Lexicon();
-            _gameFactory = new Game.GameFactory(lexicon);
-            _games = [];
-        }
-
-        public Guid CreateGame(List<string> playerNames)
-        {
-            var game = _gameFactory.CreateGame(playerNames);
             var gameId = Guid.NewGuid();
-            _games[gameId] = game;
+            _games.Add(gameId, game);
             return gameId;
         }
 

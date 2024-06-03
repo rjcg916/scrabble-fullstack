@@ -1,6 +1,6 @@
 ﻿namespace Scrabble.Domain
 {
-    public class LocationEvaluator<T>(int row, int col, T evaluator = default)
+    public class EvaluateAt<T>(int row, int col, T evaluator = default)
     {
         public T Evaluator { get; set; } = evaluator;
         public int Row { get; set; } = row;

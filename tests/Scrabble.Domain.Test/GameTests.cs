@@ -11,12 +11,12 @@ namespace Scrabble.Domain.Tests
         public void GameFactory_CreateGame_ThrowsException_WhenPlayersLessThanMin()
         {
             // Arrange
-            var lexicon = new Lexicon();
-            var gameFactory = new Game.GameFactory(lexicon);
-            var playerNames = new List<string> { "Alice" }; // Only 1 player
+            var lexicon = new Lexicon();            
+            var tileBag = new TileBag();
+            var players = new List<Player> { new("A")};
 
             // Act & Assert
-            var exception = Assert.Throws<Exception>(() => gameFactory.CreateGame(playerNames));
+            var exception = Assert.Throws<Exception>(() => Game.GameFactory.CreateGame(lexicon, new PlayerList(players)));
             Assert.Equal("Game must have 2, 3 or 4 players.", exception.Message);
         }
 
@@ -25,11 +25,11 @@ namespace Scrabble.Domain.Tests
         {
             // Arrange
             var lexicon = new Lexicon();
-            var gameFactory = new Game.GameFactory(lexicon);
-            var playerNames = new List<string> { "Alice", "Bob", "Charlie", "Dave", "Eve" }; // 5 players
+            var tileBag = new TileBag();
+            var players = new List<Player> {  new("A"), new("B"), new("C"), new("D"), new("E"), new("Alice") }; // 5 players
 
             // Act & Assert
-            var exception = Assert.Throws<Exception>(() => gameFactory.CreateGame(playerNames));
+            var exception = Assert.Throws<Exception>(() => Game.GameFactory.CreateGame(lexicon, new PlayerList(players)));
             Assert.Equal("Game must have 2, 3 or 4 players.", exception.Message);
         }
 
@@ -38,11 +38,10 @@ namespace Scrabble.Domain.Tests
         {
             // Arrange
             var lexicon = new Lexicon();
-            var gameFactory = new Game.GameFactory(lexicon);
-            var playerNames = new List<string> { "Alice", "Bob", "Charlie" }; // 3 players
+            var players = new List<Player> { new("A"), new("B"), new("C") };
 
             // Act
-            var game = gameFactory.CreateGame(playerNames);
+            var game = Game.GameFactory.CreateGame(lexicon, new PlayerList( players));
 
             // Assert
             Assert.NotNull(game);
@@ -58,19 +57,18 @@ namespace Scrabble.Domain.Tests
         public void GameFactory_CreateGame_InitializesPlayersCorrectly()
         {
             // Arrange
-            var lexicon = new Lexicon();
-            var gameFactory = new Game.GameFactory(lexicon);
-            var playerNames = new List<string> { "Alice", "Bob" }; // 2 players
+            var lexicon = new Lexicon();            
+            var players = new List<Player> { new("A"), new("B") };
 
             // Act
-            var game = gameFactory.CreateGame(playerNames);
+            var game = Game.GameFactory.CreateGame(lexicon, new PlayerList(players));
 
             // Assert
-            Assert.Equal(playerNames.Count, game.NumberOfPlayers);
+            Assert.Equal(players.Count, game.NumberOfPlayers);
             Assert.True(game.Players.ContainsKey(1));
             Assert.True(game.Players.ContainsKey(2));
-            Assert.Equal("Alice", game.Players[1].Name);
-            Assert.Equal("Bob", game.Players[2].Name);
+            Assert.Equal("A", game.Players[1].Name);
+            Assert.Equal("B", game.Players[2].Name);
         }
 
         [Fact]
@@ -78,11 +76,10 @@ namespace Scrabble.Domain.Tests
         {
             // Arrange
             var lexicon = new Lexicon();
-            var gameFactory = new Game.GameFactory(lexicon);
-            var playerNames = new List<string> { "Alice", "Bob" }; // 2 players
+            var players = new List<Player> { new("A"), new("B") };
 
             // Act
-            var game = gameFactory.CreateGame(playerNames);
+            var game = Game.GameFactory.CreateGame(lexicon, new PlayerList(players));
 
             // Assert
             foreach (var player in game.Players.Values)

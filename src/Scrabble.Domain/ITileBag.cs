@@ -6,7 +6,7 @@ namespace Scrabble.Domain
     {
         int Count { get; }
 
-        (List<Tile>, TileBag) DrawTiles(int drawCount);
+        (List<Tile>, TileBag) DrawTiles(TileDrawCount drawCount);
 
     }
 }

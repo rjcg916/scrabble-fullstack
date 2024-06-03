@@ -11,7 +11,7 @@ namespace Scrabble.Domain
 
         public readonly Square[,] squares = new Square[rowCount, colCount];
 
-        private int MovesMadeCount = 0;
+        private readonly int MovesMadeCount = 0;
 
         public Board()
         {
@@ -24,9 +24,9 @@ namespace Scrabble.Domain
         
         public Board(Coord startFrom, List<Tile> tiles, bool inRow) : this() {
             if (inRow)
-                this.PlaceTilesInARow(startFrom, tiles);
+                PlaceTilesInARow(startFrom, tiles);
             else
-                this.PlaceTilesInACol(startFrom, tiles);
+                PlaceTilesInACol(startFrom, tiles);
         }
         
         public Board(Board other)
@@ -57,9 +57,8 @@ namespace Scrabble.Domain
         public static int GameStartCol() =>
          GetStartCoord().ColToValue();
 
-
         public bool IsFirstMove() =>
-                MovesMadeCount == 1;            
+                MovesMadeCount == 0;            
       
         public bool IsOccupied(Coord startCoord, Coord endCoord)
         {
@@ -114,25 +113,25 @@ namespace Scrabble.Domain
             return slice;
         }
 
-        public List<LocationEvaluator<Square>> GetLocationSquares(bool filterForOccupied = false)
+        public List<EvaluateAt<Square>> GetLocationSquares(bool filterForOccupied = false)
         {
-            List<LocationEvaluator<Square>> squareList = [];
+            List<EvaluateAt<Square>> squareList = [];
 
             foreach (var r in Enumerable.Range(0, rowCount))
                 foreach (var c in Enumerable.Range(0, colCount))
                     if (squares[r, c].IsOccupied && filterForOccupied || !filterForOccupied)
-                        squareList.Add(new LocationEvaluator<Square>(r, c, squares[r, c]));
+                        squareList.Add(new EvaluateAt<Square>(r, c, squares[r, c]));
 
             return squareList;
         }
 
-
+ 
         public Board PlaceTile(Coord coord, Tile tile)
         {
             var col = coord.ColToValue();
             var row = coord.RowToValue();
 
-            if (this.IsOccupiedRange(row, col, col, true))
+            if (IsOccupiedRange(row, col, col, true))
             {
                 throw new InvalidOperationException("The specified space is already occupied.");
             }
@@ -169,7 +168,7 @@ namespace Scrabble.Domain
             var endCol = startCol + tiles.Count - 1;
             var theRow = startFrom.RowToValue();
 
-            if (this.IsOccupiedRange(theRow, startCol, endCol, true))
+            if (IsOccupiedRange(theRow, startCol, endCol, true))
             {
                 throw new InvalidOperationException("The specified row is already occupied.");
             }
@@ -183,7 +182,7 @@ namespace Scrabble.Domain
             var endRow = startRow + tiles.Count - 1;
             int theCol = startFrom.ColToValue();
    
-            if (this.IsOccupiedRange(theCol, startRow, endRow, false))
+            if (IsOccupiedRange(theCol, startRow, endRow, false))
             {
                 throw new InvalidOperationException("The specified col is already occupied.");
             }

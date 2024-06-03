@@ -4,6 +4,21 @@ using System.Linq;
 
 namespace Scrabble.Domain
 {
+    public readonly struct TileDrawCount
+    {
+        public int Value { get; }
+
+        public TileDrawCount(int count)
+        {
+            if (!IsValid(count))
+                throw new ArgumentException($"{count} is not a valid tile draw count");
+
+            Value = count;
+        }
+
+        private static bool IsValid(int count)
+            => 0 <= count && count <= Rack.Capacity;
+    }
 
     public class TileBag : ITileBag
     {
@@ -62,8 +77,10 @@ namespace Scrabble.Domain
             Shuffle();
         }
 
-        public (List<Tile>, TileBag) DrawTiles(int drawCount)
+        public (List<Tile>, TileBag) DrawTiles(TileDrawCount count)
         {
+
+            var drawCount = count.Value;
 
             // can't draw more than available
             if (drawCount > Tiles.Count)

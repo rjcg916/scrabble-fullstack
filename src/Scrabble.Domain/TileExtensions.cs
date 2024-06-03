@@ -13,6 +13,5 @@ namespace Scrabble.Domain
 
         public static string TilesToLetters(this List<Tile> tiles) =>
             string.Concat(tiles.Select(t => t.Letter));
-
     }
 }

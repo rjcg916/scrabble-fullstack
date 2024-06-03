@@ -4,6 +4,8 @@ using System.Linq;
 
 namespace Scrabble.Domain
 {
+
+
     public abstract class Move(Board board, string letters, Func<string, bool> IsWordValid)
     {
         protected List<Tile> Tiles = letters.LettersToTiles();
@@ -13,7 +15,7 @@ namespace Scrabble.Domain
 
         static protected int LowerBound(int i) => Math.Max(0, i);
         protected int UpperBound(int i) => Math.Min(Length - 1, i);
-        protected bool TouchesStart(int lower, int upper, int start) => start >= lower && start <= upper;
+        static protected bool TouchesStart(int lower, int upper, int start) => start >= lower && start <= upper;
 
         public abstract bool IsValid();
 

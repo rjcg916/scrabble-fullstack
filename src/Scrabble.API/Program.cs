@@ -26,7 +26,8 @@ app.MapGet("/api/Games/{Id}", (Guid Id, IGameManager GameManager) =>
 
 app.MapPost("/api/Games", (string names, IGameManager GameManager) =>
 {
-    var Id = GameManager.CreateGame([.. names.Split(",")]);
+    var game = Game.GameFactory.CreateGame(new Lexicon(), new PlayerList( names.Split(",", StringSplitOptions.RemoveEmptyEntries).Select( name => new Player(name) ).ToList()  ));
+    var Id = GameManager.AddGame(game);
     return Results.Ok(Id);
 });
 
@@ -48,7 +49,8 @@ app.MapPost("/api/Games/{Id}/{playerId}/Board/Tiles", (Guid Id, int playerId, Co
     var board = game.Board;
     var player = game.Players[(byte)playerId];
 
-    player.PlaceTile(board, coord, tile);
+    board.PlaceTile(coord, tile);
+
     return Results.Ok();
 });
 

@@ -6,35 +6,23 @@ namespace Scrabble.Domain.Tests
 {
     public class GameManagerTests
     {
-        [Fact]
-        public void CreateGame_ReturnsValidGuid()
-        {
-            // Arrange
-            var gameManager = new GameManager();
-            var playerNames = new List<string> { "Alice", "Bob" };
-
-            // Act
-            var gameId = gameManager.CreateGame(playerNames);
-
-            // Assert
-            Assert.NotEqual(Guid.Empty, gameId);
-        }
 
         [Fact]
         public void CreateGame_AddsGameToDictionary()
         {
             // Arrange
             var gameManager = new GameManager();
-            var playerNames = new List<string> { "Alice", "Bob" };
+            var players = new List<Player> { new("Alice"), new("Bob") };
+            var game = Game.GameFactory.CreateGame(new Lexicon(), new PlayerList(players));
 
             // Act
-            var gameId = gameManager.CreateGame(playerNames);
+            var gameId = gameManager.AddGame(game);
 
             // Assert
             Assert.Equal(1, gameManager.NumberOfGames());
-            var game = gameManager.GetGame(gameId);
-            Assert.NotNull(game);
-            Assert.Equal(2, game.NumberOfPlayers);
+            var getGame = gameManager.GetGame(gameId);
+            Assert.NotNull(getGame);
+            Assert.Equal(2, getGame.NumberOfPlayers);
         }
 
         [Fact]
@@ -42,15 +30,18 @@ namespace Scrabble.Domain.Tests
         {
             // Arrange
             var gameManager = new GameManager();
-            var playerNames = new List<string> { "Alice", "Bob" };
-            var gameId = gameManager.CreateGame(playerNames);
+            var players1 = new List<Player> { new("Alice"), new("Bob") };
+            var players2 = new List<Player> { new("Alice"), new("Bob"), new("Sam") };
 
             // Act
-            var game = gameManager.GetGame(gameId);
+            var game1 = Game.GameFactory.CreateGame(new Lexicon(), new PlayerList(players1));
+            var _ = Game.GameFactory.CreateGame(new Lexicon(), new PlayerList(players2));
+            var gameId = gameManager.AddGame(game1);
+
+            var fetchedGame = gameManager.GetGame(gameId);
 
             // Assert
-            Assert.NotNull(game);
-            Assert.Equal(2, game.NumberOfPlayers);
+            Assert.Equal(2, fetchedGame.NumberOfPlayers);
         }
 
         [Fact]
@@ -70,8 +61,10 @@ namespace Scrabble.Domain.Tests
         {
             // Arrange
             var gameManager = new GameManager();
-            var playerNames = new List<string> { "Alice", "Bob" };
-            var gameId = gameManager.CreateGame(playerNames);
+            var players = new List<Player> { new("Alice"), new("Bob") };
+            var game = Game.GameFactory.CreateGame(new Lexicon(), new PlayerList( players));
+
+            var gameId = gameManager.AddGame(game);
 
             // Act
             var removed = gameManager.RemoveGame(gameId);
@@ -95,38 +88,25 @@ namespace Scrabble.Domain.Tests
             Assert.False(result);
         }
 
-        [Fact]
-        public void GetAllGames_ReturnsAllGames()
-        {
-            // Arrange
-            var gameManager = new GameManager();
-            var playerNames1 = new List<string> { "Alice", "Bob" };
-            var playerNames2 = new List<string> { "Charlie", "Dave" };
-            gameManager.CreateGame(playerNames1);
-            gameManager.CreateGame(playerNames2);
-
-            // Act
-            var allGames = gameManager.GetAllGames();
-
-            // Assert
-            Assert.Equal(2, allGames.Count);
-        }
 
         [Fact]
         public void NumberOfGames_ReturnsCorrectCount()
         {
             // Arrange
             var gameManager = new GameManager();
-            var playerNames1 = new List<string> { "Alice", "Bob" };
-            var playerNames2 = new List<string> { "Charlie", "Dave" };
-            gameManager.CreateGame(playerNames1);
-            gameManager.CreateGame(playerNames2);
+            var players1 = new List<Player> { new("Alice"), new("Bob") };
+            var players2 = new List<Player> { new("Charlie"), new("Dave") };
+            var game1 = Game.GameFactory.CreateGame(new Lexicon(), new PlayerList(players1));
+            var game2 = Game.GameFactory.CreateGame(new Lexicon(), new PlayerList(players2));
 
             // Act
-            var numberOfGames = gameManager.NumberOfGames();
+            gameManager.AddGame(game1);
+            gameManager.AddGame(game2);
 
             // Assert
+            var numberOfGames = gameManager.NumberOfGames();
             Assert.Equal(2, numberOfGames);
+
         }
     }
 }

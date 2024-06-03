@@ -5,7 +5,7 @@ namespace Scrabble.Domain
 {
     public interface IGameManager
     {
-        public Guid CreateGame(List<string> playerNames);
+        public Guid AddGame(Game game);
 
         public Game GetGame(Guid gameId);
 

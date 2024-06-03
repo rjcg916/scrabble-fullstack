@@ -14,41 +14,53 @@ namespace Scrabble.Domain
         public byte TurnOfPlayer { get; set; } = 1;
         public bool GameDone { get; } = false;
 
-        private Game() { }
 
-        public class GameFactory(ILexicon lexicon)
-        {
-            private const byte MINPLAYERS = 2;
-            private const byte MAXPLAYERS = 4;
-            readonly string MINMAXPLAYERERROR = "Game must have 2, 3 or 4 players.";
+        private Game(Lexicon lexicon, PlayerList players) {
+            Lexicon = lexicon;
+            TileBag = new TileBag();
+            Board = new Board();
 
-            public Game CreateGame(List<string> playerNames)
+            // create each player, add to game and draw tiles from bag
+            byte i = 1;
+            players.List.ForEach(p =>
             {
-                var numberOfPlayers = playerNames.Count;
+                var player = new Player(p.Name);
+                this.Players.Add(i++, player);
+            });
+        }
 
-                bool validNumberOfPlayers = numberOfPlayers >= MINPLAYERS && numberOfPlayers <= MAXPLAYERS;
+        public TileBag DrawTiles(Player player)
+        {
+            var tilesAvailable = TileBag.Count;
 
-                if (!validNumberOfPlayers)
-                {
-                    throw new Exception(MINMAXPLAYERERROR);
-                }
+            if (tilesAvailable == 0)
+                throw new Exception("No tiles available to draw.");
 
-                var game = new Game
-                {
-                    Lexicon = lexicon,
-                    TileBag = new TileBag(),
-                    Board = new Board()
-                };
+            var tilesNeeded = Rack.Capacity - player.Rack.TileCount;
 
-                // create each player, add to game and draw tiles from bag
-                byte i = 1;
-                playerNames.ForEach(name =>
-                {
-                    var player = new Player(name, game.TileBag);
-                    game.Players.Add(i++, player);
-                });
+            var drawCount = tilesAvailable > tilesNeeded ? tilesNeeded : tilesAvailable;
 
-                return game;
+            var (tilesToAddToRack, tileBagAfterRemoval) = TileBag.DrawTiles(new TileDrawCount(drawCount));
+
+            player.Rack = player.Rack.AddTiles(tilesToAddToRack);
+
+            return tileBagAfterRemoval;
+        }
+
+        //public Board PlaceTile(Board board, Coord coord, Tile tile)
+        //{
+
+        //    Rack =  Rack.RemoveTiles([tile]);
+
+        //    return board.PlaceTile(coord, tile);
+        //}
+
+
+        public static class GameFactory
+        {
+            public static Game CreateGame(Lexicon lexicon, PlayerList players)
+            {
+                return new Game(lexicon, players);
             }
         }
     }

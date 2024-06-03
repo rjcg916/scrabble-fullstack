@@ -24,8 +24,7 @@ namespace Scrabble.Domain
 
         public Rack AddTiles(List<Tile> newTiles)
         {
-            if (newTiles.Count > SlotCount)
-                throw new Exception("Attempt to add tiles beyond rack capacity");
+            var _ = new TileDrawCount(newTiles.Count);
 
             var updatedTiles = new List<Tile>(Tiles);
             updatedTiles.AddRange(newTiles);

@@ -27,7 +27,7 @@ namespace Scrabble.Domain.Tests
             int initialCount = tileBag.Count;
 
             // Act
-            var (drawnTiles, nextTileBag) = tileBag.DrawTiles(5);
+            var (drawnTiles, nextTileBag) = tileBag.DrawTiles(new TileDrawCount(5));
 
             // Assert
             Assert.Equal(5, drawnTiles.Count);
@@ -41,7 +41,7 @@ namespace Scrabble.Domain.Tests
             var tileBag = new TileBag();
 
             // Act & Assert
-            var exception = Assert.Throws<Exception>(() => tileBag.DrawTiles(101));
+            var exception = Assert.Throws<Exception>(() => tileBag.DrawTiles(new TileDrawCount(101)));
             Assert.Equal("Attempt to draw more tiles than present in TileBag", exception.Message);
         }
 
@@ -53,7 +53,7 @@ namespace Scrabble.Domain.Tests
             tileBag.Shuffle(); 
 
             // Act
-            var (drawnTiles, _) = tileBag.DrawTiles(7);
+            var (drawnTiles, _) = tileBag.DrawTiles(new TileDrawCount( 7));
 
             // Assert
             Assert.Equal(7, drawnTiles.Count);
