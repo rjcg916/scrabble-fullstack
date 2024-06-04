@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace Scrabble.Domain
@@ -11,10 +12,32 @@ namespace Scrabble.Domain
 
         public readonly Square[,] squares = new Square[rowCount, colCount];
 
-        private readonly int MovesMadeCount = 0;
+        private int MovesMadeCount = 0;
 
-        public Board()
+
+        public Board Copy() => new(this);
+
+        public Square GetSquare(Coord loc) => squares[loc.RowValue, loc.ColValue];
+
+        public Tile GetTile(Coord loc) => GetSquare(loc).Tile;
+
+        public static Coord Start => new(R._8, C.H);
+
+        public static int GameStartRow => Start.RowValue;
+        public static int GameStartCol => Start.ColValue;
+
+        public bool IsFirstMove() => MovesMadeCount == 0;
+
+        public bool IsOccupied(Coord coord) => squares[coord.RowValue, coord.ColValue].IsOccupied;
+        public bool IsOccupied(List<Coord> locations) => locations.Select(l => IsOccupied(l)).Any();
+
+
+        Func<string, bool> IsWordValid;
+
+        public Board(Func<string, bool> IsWordValid)
         {
+            this.IsWordValid = IsWordValid;
+
             foreach (var r in Enumerable.Range(0, rowCount))
                 foreach (var c in Enumerable.Range(0, colCount))
                     squares[r, c] = new Square();
@@ -22,11 +45,23 @@ namespace Scrabble.Domain
             Initialize();
         }
         
-        public Board(Coord startFrom, List<Tile> tiles, bool inRow) : this() {
-            if (inRow)
-                PlaceTilesInARow(startFrom, tiles);
+        public Board(Func<string, bool> IsWordValid, Coord startFrom, List<Tile> tiles, Placement placement) : this(IsWordValid) {
+
+            if (placement == Placement.Horizontal)
+            {
+                PlaceTiles(tiles.Select((tile, index) =>
+                    (new Coord(startFrom.Row, (C)(startFrom.ColValue + index)), tile)).ToList());
+
+            }
+            else if (placement == Placement.Vertical)
+            {
+                PlaceTiles(tiles.Select((tile, index) =>
+                    (new Coord((R)(startFrom.RowValue + index), startFrom.Col), tile)).ToList());
+            }
             else
-                PlaceTilesInACol(startFrom, tiles);
+            {
+                throw new ArgumentOutOfRangeException(nameof(placement), placement, null);
+            }
         }
         
         public Board(Board other)
@@ -40,58 +75,6 @@ namespace Scrabble.Domain
             }
         }
 
-        public Board Copy() => new (this);
-        
-        public Square GetSquare(Coord loc) => 
-            squares[loc.RowToValue(), loc.ColToValue()];
-
-        public Tile GetTile(Coord loc) =>
-            GetSquare(loc).Tile;
-
-        public bool IsOccupied(Coord coord) =>
-            squares[coord.RowToValue(), coord.ColToValue()].IsOccupied;
-        public static Coord GetStartCoord() =>
-            new(R._8, C.H);
-        public static int GameStartRow() =>
-            GetStartCoord().RowToValue();
-        public static int GameStartCol() =>
-         GetStartCoord().ColToValue();
-
-        public bool IsFirstMove() =>
-                MovesMadeCount == 0;            
-      
-        public bool IsOccupied(Coord startCoord, Coord endCoord)
-        {
-            int startRow = startCoord.RowToValue();
-            int endRow = endCoord.RowToValue();
-            int startCol = startCoord.ColToValue();
-            int endCol = endCoord.ColToValue();
-
-            if (startRow == endRow)     // If checking a row
-            {
-                return IsOccupiedRange(startRow, startCol, endCol, true);
-            }
-            else if (startCol == endCol) // If checking a column
-            {
-                return IsOccupiedRange(startCol, startRow, endRow, false);
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        private bool IsOccupiedRange(int fixedValue, int start, int end, bool isRow)
-        {
-            for (int i = start; i <= end; i++)
-            {
-                var squareValue = isRow ? squares[fixedValue, i] : squares[i, fixedValue];
-                if (squareValue.IsOccupied)
-                    return true;
-
-            }
-            return false;
-        }
 
         public List<Square> GetRowSlice(int row)
         {
@@ -125,70 +108,105 @@ namespace Scrabble.Domain
             return squareList;
         }
 
+
+        public bool DoesMoveTouchStart(List<(Coord coord, Tile tile)> tileList) =>
+            tileList.Exists(t => (t.coord.Col == Board.Start.Col) && (t.coord.Row == Board.Start.Row));
+
  
-        public Board PlaceTile(Coord coord, Tile tile)
-        {
-            var col = coord.ColToValue();
-            var row = coord.RowToValue();
 
-            if (IsOccupiedRange(row, col, col, true))
-            {
-                throw new InvalidOperationException("The specified space is already occupied.");
-            }
+        public bool AreAllTilesContiguous(List<(Coord coord, Tile tile)> tileList)
+        {
+
+            // make a copy of board for testing
 
             Board board = this.Copy();
 
-            board.squares[row, col].Tile = tile; 
+            // place the new tiles
+            foreach (var (coord, tile) in tileList)
+            {
+                board.squares[coord.RowValue, coord.ColValue].Tile = tile;
+            }
 
-            return board;
+            // make sure each of the new tiles is contiguous with another tile
+            foreach (var (coord, tile) in tileList)
+            {
+                bool isContiguous = false;
+
+                // Check the four adjacent squares (up, down, left, right)
+                var adjacentCoords = new List<Coord>
+                    {
+                        new Coord((R)( Math.Max( coord.RowValue - 1, 0)), coord.Col), // Up
+                        new Coord((R)( Math.Min( coord.RowValue + 1, Board.rowCount - 1) ), coord.Col), // Down
+                        new Coord(coord.Row, (C)( Math.Max(coord.ColValue - 1, 0))), // Left
+                        new Coord(coord.Row, (C)( Math.Min(coord.ColValue + 1, Board.colCount - 1)))  // Right
+                    };
+
+                foreach (var adjCoord in adjacentCoords)
+                {
+                    if (adjCoord.RowValue >= 0 && adjCoord.RowValue < rowCount &&
+                        adjCoord.ColValue >= 0 && adjCoord.ColValue < colCount)
+                    {
+                        if (board.squares[adjCoord.RowValue, adjCoord.ColValue].IsOccupied)
+                        {
+                            isContiguous = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!isContiguous)
+                {
+                    return false; // The tile is not contiguous with another tile
+                }
+            }
+
+ 
+            return true;
+
         }
+    
+        public Board PlaceTiles(List<(Coord coord, Tile tile)> tileList)
+        {                  
 
-        private Board PlaceTiles(int fixedCoord, int start, List<Tile> tiles, bool isRow)
-        {
             Board board = this.Copy();
 
-            for (int i = 0; i < tiles.Count; i++)
+            foreach (var (coord, tile) in tileList)
             {
-                if (isRow)
-                {
-                    board.squares[fixedCoord, start + i].Tile = tiles[i];
-                }
-                else
-                {
-                    board.squares[start + i, fixedCoord].Tile = tiles[i];
-                }
-            }
-
+                board.squares[coord.RowValue, coord.ColValue].Tile = tile;
+            };
+       
             return board;
         }
 
-        public Board PlaceTilesInARow(Coord startFrom, List<Tile> tiles)
-        {        
-            var startCol = startFrom.ColToValue();
-            var endCol = startCol + tiles.Count - 1;
-            var theRow = startFrom.RowToValue();
-
-            if (IsOccupiedRange(theRow, startCol, endCol, true))
-            {
-                throw new InvalidOperationException("The specified row is already occupied.");
-            }
-
-            return PlaceTiles(theRow, startCol, tiles, true);            
-        }
-
-        public Board PlaceTilesInACol(Coord startFrom, List<Tile> tiles)
+        public (bool valid, string invalidWord) IsBoardValid()
         {
-            var startRow = startFrom.RowToValue();
-            var endRow = startRow + tiles.Count - 1;
-            int theCol = startFrom.ColToValue();
-   
-            if (IsOccupiedRange(theCol, startRow, endRow, false))
+            // Check that rows are valid
+            for (int row = 0; row < rowCount; row++)
             {
-                throw new InvalidOperationException("The specified col is already occupied.");
+                var rowSlice = GetRowSlice(row);
+                var charList = rowSlice.Select(square => square.Tile?.Letter ?? ' ').ToList();
+
+                var (valid, invalidWord) = charList.IsValidSequence(IsWordValid);
+                if (!valid)
+                {
+                    return (false, invalidWord);
+                }
             }
 
-            return PlaceTiles(theCol, startRow, tiles, false);
-        }
+            // Check that columns are valid
+            for (int col = 0; col < colCount; col++)
+            {
+                var colSlice = GetColumnSlice(col);
+                var charList = colSlice.Select(square => square.Tile?.Letter ?? ' ').ToList();
 
+                var (valid, invalidWord) = charList.IsValidSequence(IsWordValid);
+                if (!valid)
+                {
+                    return (false, invalidWord);
+                }
+            }
+
+            return (true, null);
+        }
     }
 }

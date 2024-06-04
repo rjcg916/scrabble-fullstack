@@ -18,7 +18,7 @@ namespace Scrabble.Domain
         private Game(Lexicon lexicon, PlayerList players) {
             Lexicon = lexicon;
             TileBag = new TileBag();
-            Board = new Board();
+            Board = new Board(lexicon.IsWordValid);
 
             // create each player, add to game and draw tiles from bag
             byte i = 1;
@@ -46,15 +46,6 @@ namespace Scrabble.Domain
 
             return tileBagAfterRemoval;
         }
-
-        //public Board PlaceTile(Board board, Coord coord, Tile tile)
-        //{
-
-        //    Rack =  Rack.RemoveTiles([tile]);
-
-        //    return board.PlaceTile(coord, tile);
-        //}
-
 
         public static class GameFactory
         {

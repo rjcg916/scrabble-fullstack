@@ -8,7 +8,6 @@ namespace Scrabble.Domain
     {
         public List<Player> List { get; }
 
-
         public PlayerList (List<Player> players) { 
             
             if (IsValid(players)) 
