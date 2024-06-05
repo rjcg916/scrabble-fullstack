@@ -17,7 +17,7 @@ namespace Scrabble.Domain
 
         private Game(Lexicon lexicon, PlayerList players) {
             Lexicon = lexicon;
-            TileBag = new TileBag();
+            TileBag = TileBag.TileBagFactory.Create();           
             Board = new Board(lexicon.IsWordValid);
 
             // create each player, add to game and draw tiles from bag
@@ -25,7 +25,8 @@ namespace Scrabble.Domain
             players.List.ForEach(p =>
             {
                 var player = new Player(p.Name);
-                this.Players.Add(i++, player);
+                TileBag = DrawTiles(player);
+                Players.Add(i++, player);
             });
         }
 

@@ -14,26 +14,25 @@ namespace Scrabble.Domain
 
         private int MovesMadeCount = 0;
 
-
         public Board Copy() => new(this);
 
         public Square GetSquare(Coord loc) => squares[loc.RowValue, loc.ColValue];
 
         public Tile GetTile(Coord loc) => GetSquare(loc).Tile;
 
-        public static Coord Start => new(R._8, C.H);
+        public static Coord Star => new(R._8, C.H);
 
-        public static int GameStartRow => Start.RowValue;
-        public static int GameStartCol => Start.ColValue;
+        public static int StarRow => Star.RowValue;
+        public static int StarCol => Star.ColValue;
 
         public bool IsFirstMove() => MovesMadeCount == 0;
 
         public bool IsOccupied(Coord coord) => squares[coord.RowValue, coord.ColValue].IsOccupied;
         public bool IsOccupied(List<Coord> locations) => locations.Select(l => IsOccupied(l)).Any();
 
+        private readonly Func<string, bool> IsWordValid;
 
-        Func<string, bool> IsWordValid;
-
+        // create a new Board
         public Board(Func<string, bool> IsWordValid)
         {
             this.IsWordValid = IsWordValid;
@@ -44,8 +43,13 @@ namespace Scrabble.Domain
 
             Initialize();
         }
-        
-        public Board(Func<string, bool> IsWordValid, Coord startFrom, List<Tile> tiles, Placement placement) : this(IsWordValid) {
+
+        // create a new Board with initial move
+        public Board(Func<string, bool> IsWordValid, Coord startFrom, List<Tile> tiles, Placement placement) :
+            this(IsWordValid)
+        {
+
+            //this.IsWordValid = IsWordValid; 
 
             if (placement == Placement.Horizontal)
             {
@@ -63,7 +67,8 @@ namespace Scrabble.Domain
                 throw new ArgumentOutOfRangeException(nameof(placement), placement, null);
             }
         }
-        
+
+        // clone a Board        
         public Board(Board other)
         {
             for (int r = 0; r < rowCount; r++)
@@ -73,6 +78,8 @@ namespace Scrabble.Domain
                     squares[r, c] = other.squares[r, c].Copy();
                 }
             }
+
+            IsWordValid = other.IsWordValid;
         }
 
 
@@ -109,14 +116,11 @@ namespace Scrabble.Domain
         }
 
 
-        public bool DoesMoveTouchStart(List<(Coord coord, Tile tile)> tileList) =>
-            tileList.Exists(t => (t.coord.Col == Board.Start.Col) && (t.coord.Row == Board.Start.Row));
-
- 
+        static public bool DoesMoveTouchStar(List<(Coord coord, Tile tile)> tileList) =>
+            tileList.Exists(t => (t.coord.Col == Board.Star.Col) && (t.coord.Row == Board.Star.Row));
 
         public bool AreAllTilesContiguous(List<(Coord coord, Tile tile)> tileList)
         {
-
             // make a copy of board for testing
 
             Board board = this.Copy();
@@ -128,17 +132,17 @@ namespace Scrabble.Domain
             }
 
             // make sure each of the new tiles is contiguous with another tile
-            foreach (var (coord, tile) in tileList)
+            foreach (var (coord, _) in tileList)
             {
                 bool isContiguous = false;
 
                 // Check the four adjacent squares (up, down, left, right)
                 var adjacentCoords = new List<Coord>
                     {
-                        new Coord((R)( Math.Max( coord.RowValue - 1, 0)), coord.Col), // Up
-                        new Coord((R)( Math.Min( coord.RowValue + 1, Board.rowCount - 1) ), coord.Col), // Down
-                        new Coord(coord.Row, (C)( Math.Max(coord.ColValue - 1, 0))), // Left
-                        new Coord(coord.Row, (C)( Math.Min(coord.ColValue + 1, Board.colCount - 1)))  // Right
+                        new((R)( Math.Max( coord.RowValue - 1, 0)), coord.Col), // Up
+                        new((R)( Math.Min( coord.RowValue + 1, Board.rowCount - 1) ), coord.Col), // Down
+                        new(coord.Row, (C)( Math.Max(coord.ColValue - 1, 0))), // Left
+                        new(coord.Row, (C)( Math.Min(coord.ColValue + 1, Board.colCount - 1)))  // Right
                     };
 
                 foreach (var adjCoord in adjacentCoords)
@@ -160,13 +164,12 @@ namespace Scrabble.Domain
                 }
             }
 
- 
             return true;
 
         }
-    
+
         public Board PlaceTiles(List<(Coord coord, Tile tile)> tileList)
-        {                  
+        {
 
             Board board = this.Copy();
 
@@ -174,7 +177,9 @@ namespace Scrabble.Domain
             {
                 board.squares[coord.RowValue, coord.ColValue].Tile = tile;
             };
-       
+
+            MovesMadeCount++;
+
             return board;
         }
 

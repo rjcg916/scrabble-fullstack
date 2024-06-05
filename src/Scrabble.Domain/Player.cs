@@ -4,21 +4,21 @@ using System.Collections.Generic;
 namespace Scrabble.Domain
 {
 
-    public readonly struct  PlayerList
+    public readonly struct PlayerList
     {
         public List<Player> List { get; }
 
         public PlayerList (List<Player> players) { 
             
-            if (IsValid(players)) 
-                throw new ArgumentOutOfRangeException($"{players} is not a valid players list size");
+            if (!IsValid(players)) 
+                throw new ArgumentException($"{players.Count} is not a valid players list size");
 
             List = players; 
         
         }
 
         private static bool IsValid(List<Player> players) =>
-            players.Count > 0 && players.Count <= 4;
+            players.Count > 1 && players.Count <= 4;
 
     }
 

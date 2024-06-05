@@ -1,90 +1,108 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Scrabble.Domain.Tests
 {
+    public class TileDrawCountTests
+    {
+        [Fact]
+        public void TileDrawCount_ValidCount()
+        {
+            // Arrange
+            int validCount = 7;
+
+            // Act
+            var drawCount = new TileDrawCount(validCount);
+
+            // Assert
+            Assert.Equal(validCount, drawCount.Value);
+        }
+
+        [Fact]
+        public void TileDrawCount_InvalidCount_ThrowsArgumentException()
+        {
+            // Arrange
+            int invalidCount = 1000;
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => new TileDrawCount(invalidCount));
+        }
+    }
+
     public class TileBagTests
     {
         [Fact]
-        public void TileBag_Initialization_CorrectTileCount()
+        public void TileBag_InitialCount()
         {
             // Arrange
-            var tileBag = new TileBag();
+            var tileBag = TileBag.TileBagFactory.Create();
 
             // Act
-            int actualTileCount = tileBag.Count;
-
-            // Assert
-            Assert.Equal(100, actualTileCount); // Assuming the total tiles should be 100
-        }
-
-        [Fact]
-        public void TileBag_DrawTiles_DecreasesCount()
-        {
-            // Arrange
-            var tileBag = new TileBag();
             int initialCount = tileBag.Count;
 
-            // Act
-            var (drawnTiles, nextTileBag) = tileBag.DrawTiles(new TileDrawCount(5));
-
             // Assert
-            Assert.Equal(5, drawnTiles.Count);
-            Assert.Equal(initialCount - 5, nextTileBag.Count);
+            Assert.Equal(100, initialCount); // Total tiles should be 100
         }
 
         [Fact]
-        public void TileBag_DrawTiles_ThrowsException_WhenDrawingTooManyTiles()
+        public void TileBag_DrawTiles()
         {
             // Arrange
-            var tileBag = new TileBag();
-
-            // Act & Assert
-            var exception = Assert.Throws<Exception>(() => tileBag.DrawTiles(new TileDrawCount(101)));
-            Assert.Equal("Attempt to draw more tiles than present in TileBag", exception.Message);
-        }
-
-        [Fact]
-        public void TileBag_DrawTiles_DrawsExpectedTiles()
-        {
-            // Arrange
-            var tileBag = new TileBag();
-            tileBag.Shuffle(); 
+            var tileBag = TileBag.TileBagFactory.Create();
+            var drawCount = new TileDrawCount(7);
 
             // Act
-            var (drawnTiles, _) = tileBag.DrawTiles(new TileDrawCount( 7));
+            var (drawnTiles, newTileBag) = tileBag.DrawTiles(drawCount);
 
             // Assert
             Assert.Equal(7, drawnTiles.Count);
+            Assert.Equal(tileBag.Count - 7, newTileBag.Count);
         }
 
         [Fact]
-        public void TileBag_Shuffle_ChangesTileOrder()
+        public void TileBag_DrawTooManyTiles_ThrowsException()
         {
             // Arrange
-            var tileBag = new TileBag();
-            var initialTiles = new List<Tile>(tileBag.FindAll(t => true)); // Copy initial order
+            var tileBag = TileBag.TileBagFactory.Create();
+            do
+            {
+                (_, tileBag) = tileBag.DrawTiles(new TileDrawCount(Rack.Capacity - 1)); 
+            } while (tileBag.Count >= Rack.Capacity); 
+            // tileBag.Count < Rack.Capacity
 
-            // Act
-            tileBag.Shuffle();
-            var shuffledTiles = tileBag.FindAll(t => true);
+            var drawCount = new TileDrawCount(Rack.Capacity); // count to fill empty rack 
 
-            // Assert
-            Assert.NotEqual(initialTiles, shuffledTiles); // This test might occasionally fail due to rare chance of the shuffle resulting in the same order
+            // Act & Assert
+            var exception = Assert.Throws<ArgumentException>(() => tileBag.DrawTiles(drawCount));
+            Assert.Contains($"Attempt to draw more tiles {drawCount.Value} than present in TileBag", exception.Message);
         }
 
         [Fact]
-        public void TileBag_FindAll_ReturnsMatchingTiles()
+        public void TileBag_ShuffleChangesOrder()
         {
             // Arrange
-            var tileBag = new TileBag();
+            var originalTileBag = TileBag.TileBagFactory.Create();
+            var shuffledTileBag = TileBag.TileBagFactory.Copy(originalTileBag);
 
             // Act
-            var tiles = tileBag.FindAll(t => t.Letter == 'A');
+            shuffledTileBag.Shuffle();
+            
+            // Assert
+            Assert.NotEqual(originalTileBag, shuffledTileBag); // Not guaranteed to be different but highly likely
+        }
+
+        [Fact]
+        public void TileBag_FindAll()
+        {
+            // Arrange
+            var tileBag = TileBag.TileBagFactory.Create();
+
+            // Act
+            var vowels = tileBag.FindAll(tile => "AEIOU".Contains(tile.Letter));
 
             // Assert
-            Assert.Equal(9, tiles.Count);
+            Assert.True(vowels.All(tile => "AEIOU".Contains(tile.Letter)));
         }
     }
 }

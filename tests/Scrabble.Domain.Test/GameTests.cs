@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using Xunit;
 
 
@@ -12,12 +13,12 @@ namespace Scrabble.Domain.Tests
         {
             // Arrange
             var lexicon = new Lexicon();            
-            var tileBag = new TileBag();
+            var tileBag = TileBag.TileBagFactory.Create();
             var players = new List<Player> { new("A")};
 
             // Act & Assert
-            var exception = Assert.Throws<Exception>(() => Game.GameFactory.CreateGame(lexicon, new PlayerList(players)));
-            Assert.Equal("Game must have 2, 3 or 4 players.", exception.Message);
+            var exception = Assert.Throws<ArgumentException>(() => Game.GameFactory.CreateGame(lexicon, new PlayerList(players)));
+            Assert.Contains("is not a valid players list size", exception.Message);
         }
 
         [Fact]
@@ -25,12 +26,12 @@ namespace Scrabble.Domain.Tests
         {
             // Arrange
             var lexicon = new Lexicon();
-            var tileBag = new TileBag();
+            var tileBag = TileBag.TileBagFactory.Create();
             var players = new List<Player> {  new("A"), new("B"), new("C"), new("D"), new("E"), new("Alice") }; // 5 players
 
             // Act & Assert
-            var exception = Assert.Throws<Exception>(() => Game.GameFactory.CreateGame(lexicon, new PlayerList(players)));
-            Assert.Equal("Game must have 2, 3 or 4 players.", exception.Message);
+            var exception = Assert.Throws<ArgumentException>(() => Game.GameFactory.CreateGame(lexicon, new PlayerList(players)));
+            Assert.Contains("is not a valid players list size", exception.Message);
         }
 
         [Fact]

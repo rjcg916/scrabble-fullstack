@@ -11,7 +11,7 @@ namespace Scrabble.Domain
         public TileDrawCount(int count)
         {
             if (!IsValid(count))
-                throw new ArgumentException($"{count} is not a valid tile draw count");
+                throw new ArgumentException($"Not a valid tile count {count}");
 
             Value = count;
         }
@@ -22,7 +22,7 @@ namespace Scrabble.Domain
 
     public class TileBag : ITileBag
     {
-        readonly string TOOMANYERROR = "Attempt to draw more tiles than present in TileBag";
+        // readonly string TOOMANYTILES = "Attempt to draw more tiles than present in TileBag";
 
         private static readonly List<(Tile tile, ushort freq)> tiles =
         [
@@ -65,16 +65,37 @@ namespace Scrabble.Domain
         public List<Tile> FindAll(Predicate<Tile> match) =>
             Tiles.FindAll(match);
 
-        public TileBag()
+
+        private TileBag() { }
+
+        public static class TileBagFactory
         {
-            // add the tiles to the bag
+            public static TileBag Create()
+            {
+                
+                // create empty bag
+                TileBag tileBag = new();
 
-            Tiles.AddRange(
-                tiles.SelectMany(tf => Enumerable.Repeat(new Tile(tf.tile.Letter), tf.freq))
-            );
+                // add starting tiles to the bag
+                tileBag.Tiles.AddRange(
+                   tiles.SelectMany(tf => Enumerable.Repeat(new Tile(tf.tile.Letter), tf.freq))
+                );
 
-            // shuffle the bag
-            Shuffle();
+                // shuffle
+                tileBag.Shuffle();
+
+                return tileBag;
+            }
+
+            public static TileBag Copy(TileBag tileBag)
+            {
+                TileBag copyTileBag = new ();
+
+                copyTileBag.Tiles.AddRange(tileBag.Tiles);
+
+                return copyTileBag;
+            }
+
         }
 
         public (List<Tile>, TileBag) DrawTiles(TileDrawCount count)
@@ -82,33 +103,35 @@ namespace Scrabble.Domain
 
             var drawCount = count.Value;
 
-            // can't draw more than available
             if (drawCount > Tiles.Count)
-                throw new Exception(TOOMANYERROR);
+            {
+                throw new ArgumentException($"Attempt to draw more tiles {drawCount} than present in TileBag");
+            }
 
-            // Fetch the tiles to draw
             var drawnTiles = Tiles.GetRange(0, drawCount);
 
-            // Create a new instance of TileBag with remaining tiles
             var remainingTiles = new List<Tile>(Tiles);
             remainingTiles.RemoveRange(0, drawCount);
             var newTileBag = new TileBag { Tiles = remainingTiles };
 
-            // Return the drawn tiles and the new instance of TileBag
             return (drawnTiles, newTileBag);
 
+        }
+
+        public List<Tile> Peek() { 
+            return Tiles; 
         }
 
         public void Shuffle()
         {
             Random r = new();
-            int n = Tiles.Count;
+            int n = this.Tiles.Count;
 
             for (int i = n - 1; i > 0; i--)
             {
                 int j = r.Next(0, i + 1);
-                (Tiles[j], Tiles[i]) = (Tiles[i], Tiles[j]);
+                (this.Tiles[j], this.Tiles[i]) = (this.Tiles[i], this.Tiles[j]);
             }
-        }
+        } 
     }
 }

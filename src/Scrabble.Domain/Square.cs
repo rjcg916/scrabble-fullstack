@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System;
-
-namespace Scrabble.Domain
+﻿namespace Scrabble.Domain
 {
     public enum SquareType
     {

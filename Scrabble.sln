@@ -12,6 +12,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7961B6D7-3F49-4780-B8E0-416049C0A2F6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A8259792-7C58-4F6E-9095-30AFD1B88FC3}"
+	ProjectSection(SolutionItems) = preProject
+		BoardTests.cs = BoardTests.cs
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AE8425AC-3C4B-446B-B207-84EE923B07CB}"
 EndProject

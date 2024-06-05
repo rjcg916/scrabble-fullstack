@@ -60,8 +60,8 @@ namespace Scrabble.Domain.Tests
             };
 
             // Act & Assert
-            var exception = Assert.Throws<Exception>(() => rack.AddTiles(tilesToAdd));
-            Assert.Equal("Attempt to add tiles beyond rack capacity", exception.Message);
+            var exception = Assert.Throws<ArgumentException>(() => rack.AddTiles(tilesToAdd));
+            Assert.Contains("Not a valid tile count", exception.Message);
         }
 
         [Fact]
