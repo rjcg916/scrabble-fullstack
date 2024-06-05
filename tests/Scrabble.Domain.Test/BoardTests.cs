@@ -106,7 +106,7 @@ namespace Scrabble.Domain.Tests
             };
 
             // Act
-            var newBoard = board.PlaceTiles(tiles);
+            var newBoard = board.NextBoard(tiles); 
 
             // Assert
             Assert.Equal('A', newBoard.squares[(int)R._8, (int)C.H].Tile.Letter);
@@ -118,7 +118,7 @@ namespace Scrabble.Domain.Tests
         public void Board_IsBoardValid()
         {
             // Arrange
-            Func<string, bool> wordValidator = word => word == "AB" || word == "A" || word == "B";
+            static bool wordValidator(string word) => word == "AB" || word == "A" || word == "B";
             var board = new Board(wordValidator);
 
             // Place valid words
@@ -127,7 +127,7 @@ namespace Scrabble.Domain.Tests
                 (new Coord(R._8, C.H), new Tile('A')),
                 (new Coord(R._8, C.I), new Tile('B'))
             };
-            board = board.PlaceTiles(tiles);
+            board = board.NextBoard(tiles);
 
             // Act
             var (isValid, invalidWord) = board.IsBoardValid();
@@ -141,7 +141,7 @@ namespace Scrabble.Domain.Tests
         public void Board_IsBoardInvalid()
         {
             // Arrange
-            Func<string, bool> wordValidator = word => word == "AB" || word == "A" || word == "B";
+            static bool wordValidator(string word) => word == "AB" || word == "A" || word == "B";
             var board = new Board(wordValidator);
 
             // Place an invalid word
@@ -150,7 +150,7 @@ namespace Scrabble.Domain.Tests
                 (new Coord(R._8, C.H), new Tile('A')),
                 (new Coord(R._8, C.I), new Tile('C'))
             };
-            board = board.PlaceTiles(tiles);
+            board = board.NextBoard(tiles);
 
             // Act
             var (isValid, invalidWord) = board.IsBoardValid();

@@ -9,10 +9,15 @@ namespace Scrabble.Domain
     {
         public static readonly int rowCount = R._15 - R._1 + 1;
         public static readonly int colCount = C.O - C.A + 1;
-
         public readonly Square[,] squares = new Square[rowCount, colCount];
 
         private int MovesMadeCount = 0;
+ 
+        private readonly Func<string, bool> IsWordValid;
+        
+        public static Coord Star => new(R._8, C.H);
+        public static int StarRow => Star.RowValue;
+        public static int StarCol => Star.ColValue;
 
         public Board Copy() => new(this);
 
@@ -20,17 +25,11 @@ namespace Scrabble.Domain
 
         public Tile GetTile(Coord loc) => GetSquare(loc).Tile;
 
-        public static Coord Star => new(R._8, C.H);
-
-        public static int StarRow => Star.RowValue;
-        public static int StarCol => Star.ColValue;
-
         public bool IsFirstMove() => MovesMadeCount == 0;
 
         public bool IsOccupied(Coord coord) => squares[coord.RowValue, coord.ColValue].IsOccupied;
         public bool IsOccupied(List<Coord> locations) => locations.Select(l => IsOccupied(l)).Any();
 
-        private readonly Func<string, bool> IsWordValid;
 
         // create a new Board
         public Board(Func<string, bool> IsWordValid)
@@ -48,8 +47,6 @@ namespace Scrabble.Domain
         public Board(Func<string, bool> IsWordValid, Coord startFrom, List<Tile> tiles, Placement placement) :
             this(IsWordValid)
         {
-
-            //this.IsWordValid = IsWordValid; 
 
             if (placement == Placement.Horizontal)
             {
@@ -168,7 +165,19 @@ namespace Scrabble.Domain
 
         }
 
-        public Board PlaceTiles(List<(Coord coord, Tile tile)> tileList)
+
+        public void PlaceTiles(List<(Coord coord, Tile tile)> tileList)
+        {
+            foreach (var (coord, tile) in tileList)
+            {
+                squares[coord.RowValue, coord.ColValue].Tile = tile;
+            };
+
+            MovesMadeCount++;
+            
+        }
+
+        public Board NextBoard(List<(Coord coord, Tile tile)> tileList)
         {
 
             Board board = this.Copy();
@@ -178,7 +187,7 @@ namespace Scrabble.Domain
                 board.squares[coord.RowValue, coord.ColValue].Tile = tile;
             };
 
-            MovesMadeCount++;
+            board.MovesMadeCount++;
 
             return board;
         }

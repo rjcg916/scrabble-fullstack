@@ -1,9 +1,14 @@
-﻿//var board = new Board();
+﻿using Scrabble.Domain;
+using Scrabble.Console;
 
-//var updateBoard = board.PlaceTilesInARow(new Coord(R._2, C.B), "HiBob".LettersToTiles());
+var lexicon = new Lexicon();
 
-//var helper = new BoardUI(updateBoard);
+var board = new Board(lexicon.IsWordValid, new Coord(R._7, C.G), 
+                        "AB".LettersToTiles(), 
+                        Placement.Horizontal  );
 
-//helper.DisplayBoard();
+var helper = new BoardUI(board);
 
-System.Console.WriteLine();
+helper.DisplayBoard();
+
+Console.WriteLine();
