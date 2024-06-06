@@ -7,13 +7,13 @@ namespace Scrabble.Tests
 {
     public class BoardTests
     {
-        private static bool DummyWordValidator(string word) => true;
+        private static bool MockWordValidator(string word) => true;
 
         [Fact]
         public void Board_Initialization()
         {
             // Arrange & Act
-            var board = new Board(DummyWordValidator);
+            var board = new Board(MockWordValidator);
 
             // Assert
             Assert.Equal(Board.rowCount, board.squares.GetLength(0));
@@ -24,7 +24,7 @@ namespace Scrabble.Tests
         public void Board_Copy()
         {
             // Arrange
-            var board = new Board(DummyWordValidator);
+            var board = new Board(MockWordValidator);
             var originalTile = new Tile('A');
             board.squares[0, 0].Tile = originalTile;
 
@@ -40,7 +40,7 @@ namespace Scrabble.Tests
         public void Board_IsFirstMove()
         {
             // Arrange
-            var board = new Board(DummyWordValidator);
+            var board = new Board(MockWordValidator);
 
             // Act & Assert
             Assert.True(board.IsFirstMove());
@@ -50,7 +50,7 @@ namespace Scrabble.Tests
         public void Board_IsOccupied()
         {
             // Arrange
-            var board = new Board(DummyWordValidator);
+            var board = new Board(MockWordValidator);
             var coord = new Coord(R._1, C.A);
             board.squares[coord.RowValue, coord.ColValue].Tile = new Tile('A');
 
@@ -78,7 +78,7 @@ namespace Scrabble.Tests
         public void Board_AreAllTilesContiguous()
         {
             // Arrange
-            var board = new Board(DummyWordValidator);
+            var board = new Board(MockWordValidator);
             var tiles = new List<(Coord, Tile)>
             {
                 (new Coord(R._8, C.H), new Tile('A')),
@@ -97,7 +97,7 @@ namespace Scrabble.Tests
         public void Board_PlaceTiles()
         {
             // Arrange
-            var board = new Board(DummyWordValidator);
+            var board = new Board(MockWordValidator);
             var tiles = new List<(Coord, Tile)>
             {
                 (new Coord(R._8, C.H), new Tile('A')),

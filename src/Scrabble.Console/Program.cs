@@ -12,8 +12,10 @@ var (isBoardValid, invalidWord)  = board.IsBoardValid();
 
 var helper = new BoardUI(board);
 
-Console.WriteLine($"Is Board Valid? {isBoardValid}");
-if (!isBoardValid) Console.WriteLine(invalidWord);
+Console.WriteLine(
+    $"Is Board Valid? {isBoardValid}\n{(isBoardValid ? string.Empty : invalidWord)}"
+);
+
 
 helper.DisplayBoard();
 

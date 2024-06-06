@@ -48,20 +48,19 @@ namespace Scrabble.Domain
             this(IsWordValid)
         {
 
-            if (placement == Placement.Horizontal)
+            switch (placement)
             {
-                PlaceTiles(tiles.Select((tile, index) =>
-                    (new Coord(startFrom.Row, (C)(startFrom.ColValue + index)), tile)).ToList());
+                case Placement.Horizontal:
+                    PlaceTiles(tiles.Select((tile, index) =>
+                        (new Coord(startFrom.Row, (C)(startFrom.ColValue + index)), tile)).ToList());
+                    break;
 
-            }
-            else if (placement == Placement.Vertical)
-            {
-                PlaceTiles(tiles.Select((tile, index) =>
-                    (new Coord((R)(startFrom.RowValue + index), startFrom.Col), tile)).ToList());
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException(nameof(placement), placement, null);
+                case Placement.Vertical:
+                    PlaceTiles(tiles.Select((tile, index) =>
+                        (new Coord((R)(startFrom.RowValue + index), startFrom.Col), tile)).ToList());
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(placement), placement, null);
             }
         }
 
@@ -90,7 +89,7 @@ namespace Scrabble.Domain
             return slice;
         }
 
-        public List<Square> GetColumnSlice(int col)
+        public List<Square> GetColSlice(int col)
         {
             List<Square> slice = [];
             for (int row = 0; row < rowCount; row++)
@@ -98,6 +97,12 @@ namespace Scrabble.Domain
                 slice.Add(squares[row, col]);
             }
             return slice;
+        }
+
+        public (bool valid, string invalidWord) SliceToValidatedString(List<Square> slice)
+        {
+            var charList = slice.Select(square => square.Tile?.Letter ?? ' ').ToList();
+            return charList.IsValidSequence(IsWordValid);
         }
 
         public List<EvaluateAt<Square>> GetLocationSquares(bool filterForOccupied = false)
@@ -161,7 +166,6 @@ namespace Scrabble.Domain
             }
 
             return true;
-
         }
 
         public void PlaceTiles(List<(Coord coord, Tile tile)> tileList)
@@ -176,7 +180,6 @@ namespace Scrabble.Domain
 
         public Board NextBoard(List<(Coord coord, Tile tile)> tileList)
         {
-
             Board board = this.Copy();
 
             foreach (var (coord, tile) in tileList)
@@ -189,46 +192,41 @@ namespace Scrabble.Domain
             return board;
         }
 
-        public (bool valid, string invalidWord) IsBoardValid()
+        public (bool valid, string invalidMessage) IsBoardValid()
         {
-            var invalidRows = new List<(int n, string s)>();
+            if (!IsOccupied(Star))
+               return (false, "STAR not occupied");
+
+            var invalidRowsMessages = new List<string>();
 
             // Check that rows are valid
             for (int row = 0; row < rowCount; row++)
             {
-                var rowSlice = GetRowSlice(row);
-                var charList = rowSlice.Select(square => square.Tile?.Letter ?? ' ').ToList();
+                var (valid, invalidWord) = SliceToValidatedString(GetRowSlice(row));
 
-                var (valid, invalidWord) = charList.IsValidSequence(IsWordValid);
                 if (!valid)
                 {
-                    // if it is a single character, just confirm it has neighbor
-                    invalidRows.Add((row, invalidWord));
+                    invalidRowsMessages.Add($"R:{row}={invalidWord}");
                 }
             }
 
-            var invalidColumns = new List<(int n, string s)>();
+            var invalidColumnsMessages = new List<string>();
 
             // Check that columns are valid
             for (int col = 0; col < colCount; col++)
             {
-                var colSlice = GetColumnSlice(col);
-                var charList = colSlice.Select(square => square.Tile?.Letter ?? ' ').ToList();
+                var (valid, invalidWord) = SliceToValidatedString(GetColSlice(col));
 
-                var (valid, invalidWord) = charList.IsValidSequence(IsWordValid);
                 if (!valid)
                 {
-                    // if it is a single character, just confirm it has neighbor
-                    invalidColumns.Add((col, invalidWord));
-                    
+                    invalidColumnsMessages.Add($"C:{col}={invalidWord}");
                 }
             }
 
-            if ((invalidRows.Count > 0) || (invalidColumns.Count > 0))
-            {
-                var invalidList = (invalidColumns.Concat(invalidRows)).Select(item => item.s);
-                var invalidString = String.Join("/", invalidList);
-                return (false,  invalidString);
+            if ((invalidRowsMessages.Count > 0) || (invalidColumnsMessages.Count > 0))
+            {               
+                var invalidMessage = string.Join(",", invalidColumnsMessages.Concat(invalidRowsMessages));
+                return (false,  invalidMessage);
             }
 
             return (true, null);
