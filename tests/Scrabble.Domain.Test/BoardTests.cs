@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using Xunit;
 using Scrabble.Domain;
 
-namespace Scrabble.Domain.Tests
+namespace Scrabble.Tests
 {
     public class BoardTests
     {
-        private static bool DummyWordValidator(string word) => true;
+        private static bool MockWordValidator(string word) => true;
 
         [Fact]
         public void Board_Initialization()
         {
             // Arrange & Act
-            var board = new Board(DummyWordValidator);
+            var board = new Board(MockWordValidator);
 
             // Assert
             Assert.Equal(Board.rowCount, board.squares.GetLength(0));
@@ -24,7 +24,7 @@ namespace Scrabble.Domain.Tests
         public void Board_Copy()
         {
             // Arrange
-            var board = new Board(DummyWordValidator);
+            var board = new Board(MockWordValidator);
             var originalTile = new Tile('A');
             board.squares[0, 0].Tile = originalTile;
 
@@ -40,7 +40,7 @@ namespace Scrabble.Domain.Tests
         public void Board_IsFirstMove()
         {
             // Arrange
-            var board = new Board(DummyWordValidator);
+            var board = new Board(MockWordValidator);
 
             // Act & Assert
             Assert.True(board.IsFirstMove());
@@ -50,7 +50,7 @@ namespace Scrabble.Domain.Tests
         public void Board_IsOccupied()
         {
             // Arrange
-            var board = new Board(DummyWordValidator);
+            var board = new Board(MockWordValidator);
             var coord = new Coord(R._1, C.A);
             board.squares[coord.RowValue, coord.ColValue].Tile = new Tile('A');
 
@@ -59,7 +59,7 @@ namespace Scrabble.Domain.Tests
         }
 
         [Fact]
-        public void Board_DoesMoveTouchStar()
+        public void Board_DoesMoveTouchStart()
         {
             // Arrange
             var tiles = new List<(Coord, Tile)>
@@ -78,7 +78,7 @@ namespace Scrabble.Domain.Tests
         public void Board_AreAllTilesContiguous()
         {
             // Arrange
-            var board = new Board(DummyWordValidator);
+            var board = new Board(MockWordValidator);
             var tiles = new List<(Coord, Tile)>
             {
                 (new Coord(R._8, C.H), new Tile('A')),
@@ -97,7 +97,7 @@ namespace Scrabble.Domain.Tests
         public void Board_PlaceTiles()
         {
             // Arrange
-            var board = new Board(DummyWordValidator);
+            var board = new Board(MockWordValidator);
             var tiles = new List<(Coord, Tile)>
             {
                 (new Coord(R._8, C.H), new Tile('A')),
@@ -106,19 +106,19 @@ namespace Scrabble.Domain.Tests
             };
 
             // Act
-            var newBoard = board.NextBoard(tiles); 
+            board.PlaceTiles(tiles);
 
             // Assert
-            Assert.Equal('A', newBoard.squares[(int)R._8, (int)C.H].Tile.Letter);
-            Assert.Equal('B', newBoard.squares[(int)R._8, (int)C.I].Tile.Letter);
-            Assert.Equal('C', newBoard.squares[(int)R._8, (int)C.J].Tile.Letter);
+            Assert.Equal('A', board.squares[(int)R._8, (int)C.H].Tile.Letter);
+            Assert.Equal('B', board.squares[(int)R._8, (int)C.I].Tile.Letter);
+            Assert.Equal('C', board.squares[(int)R._8, (int)C.J].Tile.Letter);
         }
 
         [Fact]
         public void Board_IsBoardValid()
         {
             // Arrange
-            static bool wordValidator(string word) => word == "AB" || word == "A" || word == "B";
+            static bool wordValidator(string word) => word == "AB" || word == "CD";
             var board = new Board(wordValidator);
 
             // Place valid words
@@ -127,7 +127,7 @@ namespace Scrabble.Domain.Tests
                 (new Coord(R._8, C.H), new Tile('A')),
                 (new Coord(R._8, C.I), new Tile('B'))
             };
-            board = board.NextBoard(tiles);
+            board.PlaceTiles(tiles);
 
             // Act
             var (isValid, invalidWord) = board.IsBoardValid();
@@ -141,7 +141,7 @@ namespace Scrabble.Domain.Tests
         public void Board_IsBoardInvalid()
         {
             // Arrange
-            static bool wordValidator(string word) => word == "AB" || word == "A" || word == "B";
+            static bool wordValidator(string word) => word == "AB";
             var board = new Board(wordValidator);
 
             // Place an invalid word
@@ -150,14 +150,14 @@ namespace Scrabble.Domain.Tests
                 (new Coord(R._8, C.H), new Tile('A')),
                 (new Coord(R._8, C.I), new Tile('C'))
             };
-            board = board.NextBoard(tiles);
+            board.PlaceTiles(tiles);
 
             // Act
             var (isValid, invalidWord) = board.IsBoardValid();
 
             // Assert
             Assert.False(isValid);
-            Assert.Equal("AC", invalidWord);
+            Assert.Equal("R(_8)=AC", invalidWord);
         }
     }
 }

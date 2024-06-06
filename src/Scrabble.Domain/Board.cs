@@ -206,7 +206,7 @@ namespace Scrabble.Domain
 
                 if (!valid)
                 {
-                    invalidRowsMessages.Add($"R:{row}={invalidWord}");
+                    invalidRowsMessages.Add($"R({(R)row})={invalidWord}");
                 }
             }
 
@@ -219,7 +219,7 @@ namespace Scrabble.Domain
 
                 if (!valid)
                 {
-                    invalidColumnsMessages.Add($"C:{col}={invalidWord}");
+                    invalidColumnsMessages.Add($"C({(C)col})={invalidWord}");
                 }
             }
 

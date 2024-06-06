@@ -157,7 +157,7 @@ namespace Scrabble.Tests
 
             // Assert
             Assert.False(isValid);
-            Assert.Equal("AC", invalidWord);
+            Assert.Equal("R(8)=AC", invalidWord);
         }
     }
 }
