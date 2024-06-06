@@ -112,7 +112,6 @@ namespace Scrabble.Domain
             return squareList;
         }
 
-
         static public bool DoesMoveTouchStar(List<(Coord coord, Tile tile)> tileList) =>
             tileList.Exists(t => (t.coord.Col == Board.Star.Col) && (t.coord.Row == Board.Star.Row));
 
@@ -150,21 +149,20 @@ namespace Scrabble.Domain
                         if (board.squares[adjCoord.RowValue, adjCoord.ColValue].IsOccupied)
                         {
                             isContiguous = true;
-                            break;
+                            break; // no need to search for another continguous tile
                         }
                     }
                 }
 
-                if (!isContiguous)
+                if (!isContiguous) // no need to examine other tiles
                 {
-                    return false; // The tile is not contiguous with another tile
+                    return false;
                 }
             }
 
             return true;
 
         }
-
 
         public void PlaceTiles(List<(Coord coord, Tile tile)> tileList)
         {
@@ -173,8 +171,7 @@ namespace Scrabble.Domain
                 squares[coord.RowValue, coord.ColValue].Tile = tile;
             };
 
-            MovesMadeCount++;
-            
+            MovesMadeCount++;            
         }
 
         public Board NextBoard(List<(Coord coord, Tile tile)> tileList)
@@ -194,6 +191,8 @@ namespace Scrabble.Domain
 
         public (bool valid, string invalidWord) IsBoardValid()
         {
+            var invalidRows = new List<(int n, string s)>();
+
             // Check that rows are valid
             for (int row = 0; row < rowCount; row++)
             {
@@ -203,9 +202,12 @@ namespace Scrabble.Domain
                 var (valid, invalidWord) = charList.IsValidSequence(IsWordValid);
                 if (!valid)
                 {
-                    return (false, invalidWord);
+                    // if it is a single character, just confirm it has neighbor
+                    invalidRows.Add((row, invalidWord));
                 }
             }
+
+            var invalidColumns = new List<(int n, string s)>();
 
             // Check that columns are valid
             for (int col = 0; col < colCount; col++)
@@ -216,8 +218,17 @@ namespace Scrabble.Domain
                 var (valid, invalidWord) = charList.IsValidSequence(IsWordValid);
                 if (!valid)
                 {
-                    return (false, invalidWord);
+                    // if it is a single character, just confirm it has neighbor
+                    invalidColumns.Add((col, invalidWord));
+                    
                 }
+            }
+
+            if ((invalidRows.Count > 0) || (invalidColumns.Count > 0))
+            {
+                var invalidList = (invalidColumns.Concat(invalidRows)).Select(item => item.s);
+                var invalidString = String.Join("/", invalidList);
+                return (false,  invalidString);
             }
 
             return (true, null);

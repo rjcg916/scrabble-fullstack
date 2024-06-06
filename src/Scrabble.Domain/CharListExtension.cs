@@ -14,15 +14,14 @@ namespace Scrabble.Domain
             var input = new string(charArray.ToArray());
 
             var words = input.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-
+            
             var invalidWord = words.FirstOrDefault(word => !IsWordValid(word));
 
-            if (invalidWord != null)
+            if (invalidWord?.Length > 1) // single char are valid
             {
                 return (false, invalidWord);
             }
 
-            // If all words are valid, return true
             return (true, string.Empty); // no invalid word
         }
     }
