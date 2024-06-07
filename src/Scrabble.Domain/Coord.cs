@@ -4,7 +4,7 @@ namespace Scrabble.Domain
 {
     public enum Placement
     {
-        Horizontal, Vertical
+        Horizontal, Vertical, Star
     }
 
     public enum R : int
@@ -63,8 +63,8 @@ namespace Scrabble.Domain
                     return Placement.Horizontal;
                 else if (vertical && verticalNumberOfTiles == numberOfTiles)
                     return Placement.Vertical;
-                else
-                    throw new System.Exception("Unknown Placement Type");
+                else 
+                    throw new System.Exception("Unsupported PlacementType");
             }
         }
     }

@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using Xunit;
-using Scrabble.Domain;
 
-namespace Scrabble.Tests
+namespace Scrabble.Domain.Tests
 {
     public class BoardTests
     {
@@ -130,11 +128,11 @@ namespace Scrabble.Tests
             board.PlaceTiles(tiles);
 
             // Act
-            var (isValid, invalidWord) = board.IsBoardValid();
+            var (isValid, invalidMessage) = board.IsBoardValid();
 
             // Assert
             Assert.True(isValid);
-            Assert.Null(invalidWord);
+            Assert.Null(invalidMessage);
         }
 
         [Fact]
@@ -153,11 +151,11 @@ namespace Scrabble.Tests
             board.PlaceTiles(tiles);
 
             // Act
-            var (isValid, invalidWord) = board.IsBoardValid();
+            var (isValid, invalidMessage) = board.IsBoardValid();
 
             // Assert
             Assert.False(isValid);
-            Assert.Equal("R(_8)=AC", invalidWord);
+            Assert.Equal([(Placement.Horizontal, (int)R._8, "AC")], invalidMessage);
         }
     }
 }

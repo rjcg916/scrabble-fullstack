@@ -7,16 +7,15 @@ var board = new Board(lexicon.IsWordValid, new Coord(R._8, C.G),
                         "cAr".LettersToTiles(), 
                         Placement.Horizontal);
 
-var (isBoardValid, invalidWord)  = board.IsBoardValid();
+var (isBoardValid, invalidMessage)  = board.IsBoardValid();
 
 
-var helper = new BoardUI(board);
+var boardUI = new BoardUI(board);
 
 Console.WriteLine(
-    $"Is Board Valid? {isBoardValid}\n{(isBoardValid ? string.Empty : invalidWord)}"
+    $"Is Board Valid? {isBoardValid}\n{(isBoardValid ? string.Empty : invalidMessage.ToString())}"
 );
 
-
-helper.DisplayBoard();
+boardUI.DisplayBoard();
 
 Console.WriteLine();

@@ -1,9 +1,7 @@
 ﻿namespace Scrabble.Domain
 {
-
     public partial class Board
     {
-
         private void Initialize()
         {
             // start
@@ -85,7 +83,10 @@
         {
             foreach (Coord loc in locs)
             {
-                squares[(int)loc.Row, (int)loc.Col].SquareType = t;
+                squares[(int)loc.Row, (int)loc.Col] = new Square
+                {
+                    SquareType = t
+                };
             }
         }
     }

@@ -13,10 +13,10 @@ namespace Scrabble.Console
             {
                 for (int c = 0; c < Board.colCount; c++)
                 {
-                    var tile = Board.squares[r, c].Tile;
-                    if (tile != null)
+                    var square = Board.squares[r, c];               
+                    if (square.IsOccupied)
                     {
-                        System.Console.Write(tile.Letter);
+                        System.Console.Write(square.Tile.Letter);
                     }
                     else
                     {

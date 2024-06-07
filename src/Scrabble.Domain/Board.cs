@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace Scrabble.Domain
 {
+
     public partial class Board
     {
         public static readonly int rowCount = R._15 - R._1 + 1;
@@ -28,7 +29,7 @@ namespace Scrabble.Domain
         public bool IsFirstMove() => MovesMadeCount == 0;
 
         public bool IsOccupied(Coord coord) => squares[coord.RowValue, coord.ColValue].IsOccupied;
-        public bool IsOccupied(List<Coord> locations) => locations.Select(l => IsOccupied(l)).Any();
+ //       public bool IsOccupied(List<Coord> locations) => locations.Select(l => IsOccupied(l)).Any();
 
 
         // create a new Board
@@ -99,7 +100,7 @@ namespace Scrabble.Domain
             return slice;
         }
 
-        public (bool valid, string invalidWord) SliceToValidatedString(List<Square> slice)
+        public (bool valid, string invalidWord) ToValidatedString(List<Square> slice)
         {
             var charList = slice.Select(square => square.Tile?.Letter ?? ' ').ToList();
             return charList.IsValidSequence(IsWordValid);
@@ -172,7 +173,7 @@ namespace Scrabble.Domain
         {
             foreach (var (coord, tile) in tileList)
             {
-                squares[coord.RowValue, coord.ColValue].Tile = tile;
+                squares[coord.RowValue, coord.ColValue].Tile = new Tile(tile.Letter);
             };
 
             MovesMadeCount++;            
@@ -192,44 +193,38 @@ namespace Scrabble.Domain
             return board;
         }
 
-        public (bool valid, string invalidMessage) IsBoardValid()
+
+        public (bool valid, List<(Placement errorType, int loc, string letters)> errorList) IsBoardValid()
         {
             if (!IsOccupied(Star))
-               return (false, "STAR not occupied");
+               return (false, [(Placement.Star, 0, "STAR not occupied")]);
 
-            var invalidRowsMessages = new List<string>();
+            var invalidMessages = new List<(Placement errorType, int location, string letters)>();
 
             // Check that rows are valid
+
             for (int row = 0; row < rowCount; row++)
             {
-                var (valid, invalidWord) = SliceToValidatedString(GetRowSlice(row));
+                var (valid, invalidWord) = ToValidatedString(GetRowSlice(row));
 
                 if (!valid)
                 {
-                    invalidRowsMessages.Add($"R({(R)row})={invalidWord}");
+                    invalidMessages.Add((Placement.Horizontal, row, invalidWord));
                 }
             }
-
-            var invalidColumnsMessages = new List<string>();
 
             // Check that columns are valid
+
             for (int col = 0; col < colCount; col++)
             {
-                var (valid, invalidWord) = SliceToValidatedString(GetColSlice(col));
-
+                var (valid, invalidWord) = ToValidatedString(GetColSlice(col));
                 if (!valid)
                 {
-                    invalidColumnsMessages.Add($"C({(C)col})={invalidWord}");
+                    invalidMessages.Add((Placement.Vertical, col, invalidWord));
                 }
             }
 
-            if ((invalidRowsMessages.Count > 0) || (invalidColumnsMessages.Count > 0))
-            {               
-                var invalidMessage = string.Join(",", invalidColumnsMessages.Concat(invalidRowsMessages));
-                return (false,  invalidMessage);
-            }
-
-            return (true, null);
+            return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, null);
         }
     }
 }
