@@ -1,6 +1,5 @@
 ﻿using Scrabble.Domain;
 
-
 namespace Scrabble.Console
 {
     class BoardUI(Board board)
@@ -26,5 +25,15 @@ namespace Scrabble.Console
                 System.Console.WriteLine();
             }
         }
+   
+        public void DisplayBoardStatus()
+        {
+            (bool IsBoardValid, List<(Placement pt, int loc, string letters)> InvalidMessage) = Board.IsBoardValid();
+
+            System.Console.WriteLine(
+               $"Is Board Valid? {IsBoardValid}\n{(IsBoardValid ? string.Empty : InvalidMessage.ToString())}");
+
+        }
+   
     }
 }
