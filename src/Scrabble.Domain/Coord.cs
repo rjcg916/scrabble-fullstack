@@ -17,7 +17,6 @@ namespace Scrabble.Domain
         A = 0, B, C, D, E, F, G, H, I, J, K, L, M, N, O
     }
 
-
     public class Coord(R row, C col)
     {
         public R Row { get; init; } = row;
@@ -56,7 +55,7 @@ namespace Scrabble.Domain
             int numberOfTiles = tiles.Count;
 
             if (horizontal && vertical && !oneTile)
-                throw new System.Exception("Unknown Placement Type");
+                throw new System.Exception("Unknown PlacementType");
             else
             {
                 if (horizontal && horizontalNumberOfTiles == numberOfTiles)

@@ -9,7 +9,6 @@ namespace Scrabble.Domain
         public Board Board { get; set; }
         public TileBag TileBag { get; set; }
         public Dictionary<byte, Player> Players { get; set; } = [];
-
         public int NumberOfPlayers => Players.Count;
         public byte TurnOfPlayer { get; set; } = 1;
         public bool GameDone { get; } = false;

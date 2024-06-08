@@ -3,24 +3,47 @@ using Scrabble.Console;
 
 var lexicon = new Lexicon();
 
-var board = new Board(lexicon.IsWordValid);
+var gameManager = new GameManager();
 
-var boardUI = new BoardUI(board);
+// create first game
+var game = Game.GameFactory.CreateGame(lexicon, 
+    new PlayerList( [new("A"), new("B")]));
+gameManager.AddGame(game);
 
-boardUI.DisplayBoard();
+// get current board for move
+var moveBoard = new Board(game.Board);
 
-Console.WriteLine(); Console.Write("Press RETURN"); Console.ReadLine();
+// display board
+var boardUI = new BoardUI(moveBoard);
+boardUI.DisplayBoard(false);
 
+// move list
+var moves = new List<List<(Coord, Tile)>>();
+
+// make moves
+
+// make first move
 var tiles = new List<(Coord, Tile)>
             {
                 (new Coord(R._8, C.G), new Tile('C')),
                 (new Coord(R._8, C.H), new Tile('A')),
                 (new Coord(R._8, C.I), new Tile('R'))
             };
-board.PlaceTiles(tiles);
-
-
+moveBoard.PlaceTiles(tiles);
+//moveBoard.ScoreMove(tiles); recording move, getting tiles, scoring ???
+moves.Add(tiles);
 boardUI.DisplayBoard();
-boardUI.DisplayBoardStatus();
 
-Console.WriteLine(); Console.Write("Press RETURN"); Console.ReadLine();
+
+// trial moves
+//   initialize trial move list
+// get move
+// if cells occupied
+//  reject move
+// else
+//  add move to move list
+//  display board/status/score
+// while (not done or board invalid) 
+// 
+// add trial move list to game move list
+//

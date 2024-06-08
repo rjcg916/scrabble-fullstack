@@ -7,7 +7,6 @@
 
     public class Square(SquareType squareType = SquareType.reg)
     {
-
         public Square Copy()
         {
             return new Square
@@ -16,11 +15,12 @@
                 SquareType = this.SquareType
             };
         }
-
         public SquareType SquareType { get; set; } = squareType;
 
         public bool IsFinal { get; set; } = false;
         public Tile Tile { get; set; }
+
+        public int MoveOfOccupation { get; set; } = 0;
 
         public bool IsOccupied
         {
@@ -43,6 +43,5 @@
             SquareType.dw => 2,
             _ => 1
         };
-
     }
 }

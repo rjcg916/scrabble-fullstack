@@ -12,7 +12,7 @@ namespace Scrabble.Domain
         public static readonly int colCount = C.O - C.A + 1;
         public readonly Square[,] squares = new Square[rowCount, colCount];
 
-        private int MovesMadeCount = 0;
+        private int MovesMade = 0;
  
         private readonly Func<string, bool> IsWordValid;
         
@@ -26,12 +26,29 @@ namespace Scrabble.Domain
 
         public Tile GetTile(Coord loc) => GetSquare(loc).Tile;
 
-        public bool IsFirstMove() => MovesMadeCount == 0;
+        public bool IsFirstMove() => MovesMade == 0;
 
         public bool IsOccupied(Coord coord) => squares[coord.RowValue, coord.ColValue].IsOccupied;
- //       public bool IsOccupied(List<Coord> locations) => locations.Select(l => IsOccupied(l)).Any();
+        public bool AreOccupied(List<Coord> locations) => locations.Select(l => IsOccupied(l)).Any();
 
 
+        static public (int fixedLocation, List<(int, Tile)> tileLocations) ToLocationsTile(List<(Coord coord, Tile tile)> tileList)
+        {
+            if (tileList.Select(c => c.coord.RowValue).Distinct().Count() == 1)
+            {
+                var fixedLocation = tileList.Select(c => c.coord.RowValue).First();
+                var tileLocations = tileList.Select(tl =>  (tl.coord.ColValue, tl.tile)).ToList();
+                return (fixedLocation, tileLocations);
+            } else if (tileList.Select(c => c.coord.ColValue).Distinct().Count() == 1) {
+                var fixedLocation = tileList.Select(c => c.coord.ColValue).First();
+                var tileLocations = tileList.Select(tl => (tl.coord.RowValue, tl.tile)).ToList();
+                return (fixedLocation, tileLocations);
+            } else
+            {
+                throw new Exception("Invalid Move");
+            }
+
+        }
         // create a new Board
         public Board(Func<string, bool> IsWordValid)
         {
@@ -48,7 +65,6 @@ namespace Scrabble.Domain
         public Board(Func<string, bool> IsWordValid, Coord startFrom, List<Tile> tiles, Placement placement) :
             this(IsWordValid)
         {
-
             switch (placement)
             {
                 case Placement.Horizontal:
@@ -75,32 +91,39 @@ namespace Scrabble.Domain
                     squares[r, c] = other.squares[r, c].Copy();
                 }
             }
-
             IsWordValid = other.IsWordValid;
         }
-
+        private List<Square> GetSlice(int index, bool isRow)
+        {
+            List<Square> slice = [];
+            if (isRow)
+            {
+                for (int col = 0; col < colCount; col++)
+                {
+                    slice.Add(squares[index, col]);
+                }
+            }
+            else
+            {
+                for (int row = 0; row < rowCount; row++)
+                {
+                    slice.Add(squares[row, index]);
+                }
+            }
+            return slice;
+        }
 
         public List<Square> GetRowSlice(int row)
         {
-            List<Square> slice = [];
-            for (int col = 0; col < colCount; col++)
-            {
-                slice.Add(squares[row, col]);
-            }
-            return slice;
+            return GetSlice(row, true);
         }
 
         public List<Square> GetColSlice(int col)
         {
-            List<Square> slice = [];
-            for (int row = 0; row < rowCount; row++)
-            {
-                slice.Add(squares[row, col]);
-            }
-            return slice;
+            return GetSlice(col, false);
         }
 
-        public (bool valid, string invalidWord) ToValidatedString(List<Square> slice)
+        public (bool valid, string invalidWord) IsSliceValid(List<Square> slice)
         {
             var charList = slice.Select(square => square.Tile?.Letter ?? ' ').ToList();
             return charList.IsValidSequence(IsWordValid);
@@ -169,62 +192,125 @@ namespace Scrabble.Domain
             return true;
         }
 
+        private (int start, int end) GetRun(int fixedLocation, List<int> locationList, bool isVertical)
+        {
+            var minMove = locationList.Min();
+            var maxMove = locationList.Max();
+            var minOccupied = minMove;
+            var maxOccupied = maxMove;
+
+            for (int pos = minMove - 1; pos >= 0; pos--)
+            {
+                if (!(isVertical ? squares[pos, fixedLocation].IsOccupied : squares[fixedLocation, pos].IsOccupied))
+                {
+                    break;
+                }
+                minOccupied--;
+            }
+
+            for (int pos = maxMove + 1; pos < (isVertical ? Board.rowCount : Board.colCount); pos++)
+            {
+                if (!(isVertical ? squares[pos, fixedLocation].IsOccupied : squares[fixedLocation, pos].IsOccupied))
+                {
+                    break;
+                }
+                maxOccupied++;
+            }
+
+            return (minOccupied, maxOccupied);
+        }
+
+        public (int start, int end) GetVerticalRun(List<Coord> coordList)
+        {
+            var fixedCol = coordList.Select(c => c.ColValue).First();
+            var locList = coordList.Select(c => c.RowValue).ToList();
+            return GetRun(fixedCol, locList, true);
+        }
+
+        public (int start, int end) GetHorizontalRun(List<Coord> coordList)
+        {
+            var fixedRow = coordList.Select(c => c.RowValue).First();
+            var locList = coordList.Select(c => c.ColValue).ToList();
+            return GetRun(fixedRow, locList, false);
+        }
+
+        public int ScoreMove(List<(Coord coord, Tile tile)> tileList)
+        {
+            // horizontal
+            // score horizonal run
+            //  GetRun(fixedRow, locList, false);
+            // find and score any vertical runs
+              // look at all columns from start to end of row
+                  //  for c col from start to end
+                      // GetRun(c, locList= single entry (fixedRow,c), true)
+            // score
+            // score letter 
+            // adjust letter score
+            // score words (adjusted letter score)
+            // adjust word score
+            // report total
+            // total(wordscore(letter scores)
+
+            return 0;
+        }
+
         public void PlaceTiles(List<(Coord coord, Tile tile)> tileList)
         {
+            MovesMade++;
+
             foreach (var (coord, tile) in tileList)
             {
-                squares[coord.RowValue, coord.ColValue].Tile = new Tile(tile.Letter);
+                var loc = squares[coord.RowValue, coord.ColValue];
+                loc.Tile = new Tile(tile.Letter);
+                loc.MoveOfOccupation = MovesMade;
             };
-
-            MovesMadeCount++;            
         }
 
         public Board NextBoard(List<(Coord coord, Tile tile)> tileList)
         {
             Board board = this.Copy();
 
+            board.MovesMade++;
+
             foreach (var (coord, tile) in tileList)
             {
-                board.squares[coord.RowValue, coord.ColValue].Tile = tile;
+                var loc = board.squares[coord.RowValue, coord.ColValue];
+                loc.Tile = tile;
+                loc.MoveOfOccupation = MovesMade;
             };
-
-            board.MovesMadeCount++;
 
             return board;
         }
 
-
         public (bool valid, List<(Placement errorType, int loc, string letters)> errorList) IsBoardValid()
         {
             if (!IsOccupied(Star))
-               return (false, [(Placement.Star, 0, "STAR not occupied")]);
+            {
+                return (false, new List<(Placement, int, string)> { (Placement.Star, 0, "STAR not occupied") });
+            }
 
             var invalidMessages = new List<(Placement errorType, int location, string letters)>();
 
-            // Check that rows are valid
-
-            for (int row = 0; row < rowCount; row++)
-            {
-                var (valid, invalidWord) = ToValidatedString(GetRowSlice(row));
-
-                if (!valid)
-                {
-                    invalidMessages.Add((Placement.Horizontal, row, invalidWord));
-                }
-            }
-
-            // Check that columns are valid
-
-            for (int col = 0; col < colCount; col++)
-            {
-                var (valid, invalidWord) = ToValidatedString(GetColSlice(col));
-                if (!valid)
-                {
-                    invalidMessages.Add((Placement.Vertical, col, invalidWord));
-                }
-            }
+            ValidateSlices(rowCount, GetRowSlice, Placement.Horizontal, invalidMessages);
+            ValidateSlices(colCount, GetColSlice, Placement.Vertical, invalidMessages);
 
             return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, null);
         }
+
+        private void ValidateSlices(int count, 
+                                    Func<int, List<Square>> getSlice, 
+                                    Placement placement, 
+                                    List<(Placement errorType, int loc, string letters)> invalidMessages)
+        {
+            for (int index = 0; index < count; index++)
+            {
+                var (valid, invalidWord) = IsSliceValid(getSlice(index));
+                if (!valid)
+                {
+                    invalidMessages.Add((placement, index, invalidWord));
+                }
+            }
+        }
+
     }
 }
