@@ -32,17 +32,19 @@ namespace Scrabble.Domain
         public bool AreOccupied(List<Coord> locations) => locations.Select(l => IsOccupied(l)).Any();
 
 
-        static public (int fixedLocation, List<(int, Tile)> tileLocations) ToLocationsTile(List<(Coord coord, Tile tile)> tileList)
+        static public (Placement placement, int fixedLocation, List<(int, Tile)> tileLocations) ToLocationsTile(List<(Coord coord, Tile tile)> tileList)
         {
             if (tileList.Select(c => c.coord.RowValue).Distinct().Count() == 1)
             {
                 var fixedLocation = tileList.Select(c => c.coord.RowValue).First();
                 var tileLocations = tileList.Select(tl =>  (tl.coord.ColValue, tl.tile)).ToList();
-                return (fixedLocation, tileLocations);
+                return (Placement.Horizontal, fixedLocation, tileLocations);
+      
             } else if (tileList.Select(c => c.coord.ColValue).Distinct().Count() == 1) {
                 var fixedLocation = tileList.Select(c => c.coord.ColValue).First();
                 var tileLocations = tileList.Select(tl => (tl.coord.RowValue, tl.tile)).ToList();
-                return (fixedLocation, tileLocations);
+                return (Placement.Vertical, fixedLocation, tileLocations);
+        
             } else
             {
                 throw new Exception("Invalid Move");
@@ -220,39 +222,90 @@ namespace Scrabble.Domain
             return (minOccupied, maxOccupied);
         }
 
-        public (int start, int end) GetVerticalRun(List<Coord> coordList)
+        public int ScoreRun(int loc, int start, int end, bool isVertical)
         {
-            var fixedCol = coordList.Select(c => c.ColValue).First();
-            var locList = coordList.Select(c => c.RowValue).ToList();
-            return GetRun(fixedCol, locList, true);
-        }
+            int score = 0;
+            var wordMultiplier = 1;
 
-        public (int start, int end) GetHorizontalRun(List<Coord> coordList)
-        {
-            var fixedRow = coordList.Select(c => c.RowValue).First();
-            var locList = coordList.Select(c => c.ColValue).ToList();
-            return GetRun(fixedRow, locList, false);
+            for (int pos = start; pos <= end; pos++)
+            {              
+                var location = isVertical ? squares[pos, loc]: squares[loc, pos];
+                var squareType = location.SquareType;
+                var tileValue  = location.Tile.Value;
+
+                switch (squareType)
+                {
+                    case SquareType.start:
+                    case SquareType.reg:
+                        score += tileValue;
+                        break;
+
+                    case SquareType.dl:
+                        score += (tileValue * 2);
+                        break;
+
+                    case SquareType.tl:
+                        score += (tileValue * 3);
+                        break;
+
+                    case SquareType.dw:
+                        score += (tileValue);
+                        wordMultiplier *= 2;
+                        break;
+
+                    case SquareType.tw:
+                        score += (tileValue);
+                        wordMultiplier *= 3;
+                        break;
+
+                    default:
+                        throw new Exception("Unkown SquareType");                       
+                }
+            }
+            return score;
         }
 
         public int ScoreMove(List<(Coord coord, Tile tile)> tileList)
         {
-            // horizontal
-            // score horizonal run
-            //  GetRun(fixedRow, locList, false);
-            // find and score any vertical runs
-              // look at all columns from start to end of row
-                  //  for c col from start to end
-                      // GetRun(c, locList= single entry (fixedRow,c), true)
-            // score
-            // score letter 
-            // adjust letter score
-            // score words (adjusted letter score)
-            // adjust word score
-            // report total
-            // total(wordscore(letter scores)
+            (Placement placement, int fixedLocation, List<(int location, Tile tile)> tileLocations) =
+                ToLocationsTile(tileList);
 
-            return 0;
+            int score = 0;
+
+            switch (placement)
+            {
+                case Placement.Horizontal:
+                    score = CalculateScore(fixedLocation, tileLocations, false);
+                    break;
+
+                case Placement.Vertical:
+                    score = CalculateScore(fixedLocation, tileLocations, true);
+                    break;
+
+                case Placement.Star:
+                default:
+                    throw new Exception("Invalid Placement");
+            }
+
+            return score;
         }
+
+        private int CalculateScore(int fixedLocation, List<(int location, Tile tile)> tileLocations, bool isVertical)
+        {
+            int score = 0;
+
+            var singleRun = GetRun(fixedLocation, tileLocations.Select(tl => tl.location).ToList(), isVertical);
+            score += ScoreRun(fixedLocation, singleRun.start, singleRun.end, isVertical);
+
+            for (int c = singleRun.start; c <= singleRun.end; c++)
+            {
+                var multiRun = GetRun(c, [fixedLocation], !isVertical);
+                score += ScoreRun(fixedLocation, multiRun.start, multiRun.end, !isVertical);
+            }
+
+            return score;
+        }
+
 
         public void PlaceTiles(List<(Coord coord, Tile tile)> tileList)
         {
