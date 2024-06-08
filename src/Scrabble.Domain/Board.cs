@@ -270,27 +270,16 @@ namespace Scrabble.Domain
             (Placement placement, int fixedLocation, List<(int location, Tile tile)> tileLocations) =
                 ToLocationsTile(tileList);
 
-            int score = 0;
-
-            switch (placement)
+            var score = placement switch
             {
-                case Placement.Horizontal:
-                    score = CalculateScore(fixedLocation, tileLocations, false);
-                    break;
-
-                case Placement.Vertical:
-                    score = CalculateScore(fixedLocation, tileLocations, true);
-                    break;
-
-                case Placement.Star:
-                default:
-                    throw new Exception("Invalid Placement");
-            }
-
+                Placement.Horizontal => ScoreMove(fixedLocation, tileLocations, false),
+                Placement.Vertical => ScoreMove(fixedLocation, tileLocations, true),
+                _ => throw new Exception("Invalid Placement"),
+            };
             return score;
         }
 
-        private int CalculateScore(int fixedLocation, List<(int location, Tile tile)> tileLocations, bool isVertical)
+        private int ScoreMove(int fixedLocation, List<(int location, Tile tile)> tileLocations, bool isVertical)
         {
             int score = 0;
 
