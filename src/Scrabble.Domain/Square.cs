@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
 namespace Scrabble.Domain
 {
@@ -10,6 +12,10 @@ namespace Scrabble.Domain
 
     public static class SquareExtensions
     {
+
+        static public List<char>ToCharList(this List<Square> slice ) =>
+            slice.Select(square => square.Tile?.Letter ?? ' ').ToList();
+
         static public int ScoreRun(this List<Square> squares)
         {
             int score = 0;

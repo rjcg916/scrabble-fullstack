@@ -117,8 +117,8 @@ namespace Scrabble.Domain
 
             var invalidMessages = new List<PlacementError>();
 
-            ValidateSlices(rowCount, GetRowSlice, Placement.Horizontal, invalidMessages);
-            ValidateSlices(colCount, GetColSlice, Placement.Vertical, invalidMessages);
+            ValidateBoardSlices(GetRowSlice, Placement.Horizontal, invalidMessages);
+            ValidateBoardSlices(GetColSlice, Placement.Vertical, invalidMessages);
 
             return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, null);
         }
@@ -231,17 +231,23 @@ namespace Scrabble.Domain
 
 
 
-        internal void ValidateSlices(int count,
-                                    Func<int, List<Square>> getSlice,
-                                    Placement placement,
-                                    List<PlacementError> invalidMessages)
+        internal void ValidateBoardSlices(Func<int, List<Square>> getSlice,
+                                     Placement placement,
+                                     List<PlacementError> invalidMessages)
         {
-            for (int index = 0; index < count; index++)
+            int sliceCount = Placement.Horizontal == placement ? Board.colCount : Board.colCount;
+            for (int index = 0; index < sliceCount; index++)
             {
-                var (valid, invalidWord) = IsSliceValid(IsWordValid, getSlice(index));
-                if (!valid)
+                var charList = getSlice(index).ToCharList();
+                
+                if (charList != null)
                 {
-                    invalidMessages.Add(new( placement, index, invalidWord));
+                    var (valid, invalidWord) = charList.IsValidSequence(IsWordValid);
+
+                    if (!valid)
+                    {
+                        invalidMessages.Add(new(placement, index, invalidWord));
+                    }
                 }
             }
         }
@@ -305,9 +311,12 @@ namespace Scrabble.Domain
 
             return (minOccupied, maxOccupied);
         }
-        public static (bool valid, string invalidWord) IsSliceValid(Func<string, bool> IsWordValid, List<Square> slice)
+
+
+
+        public static (bool valid, string invalidWord) IsSliceValid0(Func<string, bool> IsWordValid, List<Square> slice)
         {
-            var charList = slice.Select(square => square.Tile?.Letter ?? ' ').ToList();
+            var charList = slice.ToCharList();
             return charList.IsValidSequence(IsWordValid);
         }
 

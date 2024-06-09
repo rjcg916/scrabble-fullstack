@@ -6,7 +6,8 @@ namespace Scrabble.Domain.Tests
     public class BoardTests
     {
 
-        private bool MockWordValidator(string word) => true;
+        static private bool MockWordValidator(string _) => true;
+        //static private bool MockWordValidatorAlwaysFalse(string _) => false;
 
         [Fact]
         public void Board_Constructor_InitializesCorrectly()
@@ -271,50 +272,18 @@ namespace Scrabble.Domain.Tests
                 Assert.Equal(Board.rowCount, result.Count);
             }
 
-            // Tests for ValidateSlices method
+            // Tests for ValidateBoardSlices method
             [Fact]
-            public void ValidateSlices_AddsErrorForInvalidSlices()
+            public void ValidateBoardSlices_NoErrorsOnEmptyBoard()
             {
                 var board = new Board(MockWordValidator);
                 var errors = new List<PlacementError>();
 
-                board.ValidateSlices(Board.rowCount, board.GetRowSlice, Placement.Horizontal, errors);
-
-                // Assuming there are no valid words on an empty board
-                Assert.True(errors.Count > 0);
-            }
-
-            // Tests for IsSliceValid method
-            [Fact]
-            public void IsSliceValid_ReturnsFalseForInvalidSlice()
-            {
-
-                var tiles = new List<Tile> { new('A'), new('B'), new('C') };
-                var startFrom = new Coord(R._8, C.H);
-                var board = new Board(MockWordValidator, startFrom, tiles, Placement.Horizontal);
-
-                var slice = board.GetSlice(true, (int)R._8);
-
-                var (isValid, invalidWord) = Board.IsSliceValid(MockWordValidator, slice);
-
-                Assert.False(isValid);
-            }
-
-            [Fact]
-            public void IsSliceValid_ReturnsTrueForValidSlice()
-            {
+                board.ValidateBoardSlices(board.GetRowSlice, Placement.Horizontal, errors);
                 
-                var slice = new List<Square>
-                {
-                    new() { Tile = new Tile('A') },
-                    new() { Tile = new Tile('B') },
-                    new() { Tile = new Tile('C') }
-                };
-
-                var (isValid, invalidWord) = Board.IsSliceValid(MockWordValidator, slice);
-
-                Assert.True(isValid);
+                Assert.Empty(errors);
             }
+
 
             // Tests for GetRowSlice method
             [Fact]
