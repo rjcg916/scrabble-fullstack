@@ -23,6 +23,7 @@ namespace Scrabble.Domain
         public static Coord Star => new(R._8, C.H);
         public static int StarRow => Star.RowValue;
         public static int StarCol => Star.ColValue;
+
         // create a new Board
         public Board(Func<string, bool> IsWordValid)
         {
@@ -73,6 +74,7 @@ namespace Scrabble.Domain
             IsWordValid = other.IsWordValid;
         }
         public Board Copy() => new(this);
+
         public static bool DoesMoveTouchStar(List<TilePlacement> tileList) =>
           tileList.Exists(t => (t.Coord.Col == Board.Star.Col) && (t.Coord.Row == Board.Star.Row));
 
