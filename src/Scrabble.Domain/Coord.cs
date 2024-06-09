@@ -2,10 +2,6 @@
 
 namespace Scrabble.Domain
 {
-    public enum Placement
-    {
-        Horizontal, Vertical, Star
-    }
 
     public enum R : int
     {

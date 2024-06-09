@@ -60,9 +60,9 @@ namespace Scrabble.Domain.Tests
         public void Board_DoesMoveTouchStart()
         {
             // Arrange
-            var tiles = new List<(Coord, Tile)>
+            var tiles = new List<TilePlacement>
             {
-                (new Coord(R._8, C.H), new Tile('A'))
+                new(new Coord(R._8, C.H), new Tile('A'))
             };
 
             // Act
@@ -77,11 +77,11 @@ namespace Scrabble.Domain.Tests
         {
             // Arrange
             var board = new Board(MockWordValidator);
-            var tiles = new List<(Coord, Tile)>
+            var tiles = new List<TilePlacement>
             {
-                (new Coord(R._8, C.H), new Tile('A')),
-                (new Coord(R._8, C.I), new Tile('B')),
-                (new Coord(R._8, C.J), new Tile('C'))
+                new (new Coord(R._8, C.H), new Tile('A')),
+                new (new Coord(R._8, C.I), new Tile('B')),
+                new (new Coord(R._8, C.J), new Tile('C'))
             };
 
             // Act
@@ -96,11 +96,11 @@ namespace Scrabble.Domain.Tests
         {
             // Arrange
             var board = new Board(MockWordValidator);
-            var tiles = new List<(Coord, Tile)>
+            var tiles = new List<TilePlacement>
             {
-                (new Coord(R._8, C.H), new Tile('A')),
-                (new Coord(R._8, C.I), new Tile('B')),
-                (new Coord(R._8, C.J), new Tile('C'))
+                new (new Coord(R._8, C.H), new Tile('A')),
+                new (new Coord(R._8, C.I), new Tile('B')),
+                new (new Coord(R._8, C.J), new Tile('C'))
             };
 
             // Act
@@ -120,10 +120,10 @@ namespace Scrabble.Domain.Tests
             var board = new Board(wordValidator);
 
             // Place valid words
-            var tiles = new List<(Coord, Tile)>
+            var tiles = new List<TilePlacement>
             {
-                (new Coord(R._8, C.H), new Tile('A')),
-                (new Coord(R._8, C.I), new Tile('B'))
+                new (new Coord(R._8, C.H), new Tile('A')),
+                new (new Coord(R._8, C.I), new Tile('B'))
             };
             board.PlaceTiles(tiles);
 
@@ -143,10 +143,10 @@ namespace Scrabble.Domain.Tests
             var board = new Board(wordValidator);
 
             // Place an invalid word
-            var tiles = new List<(Coord, Tile)>
+            var tiles = new List<TilePlacement>
             {
-                (new Coord(R._8, C.H), new Tile('A')),
-                (new Coord(R._8, C.I), new Tile('C'))
+                new (new Coord(R._8, C.H), new Tile('A')),
+                new (new Coord(R._8, C.I), new Tile('C'))
             };
             board.PlaceTiles(tiles);
 
@@ -155,7 +155,7 @@ namespace Scrabble.Domain.Tests
 
             // Assert
             Assert.False(isValid);
-            Assert.Equal([(Placement.Horizontal, (int)R._8, "AC")], invalidMessage);
+            Assert.Equal([new PlacementError(Placement.Horizontal, (int)R._8, "AC")], invalidMessage);
         }
     }
 }

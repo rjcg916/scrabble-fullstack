@@ -54,18 +54,18 @@ app.MapPost("/api/Games/{Id}/{playerId}/Board/Tiles", (Guid Id, int playerId, Co
     return Results.Ok();
 });
 
-app.MapGet("/api/Games/{Id}/Board/Squares", (Guid Id, IGameManager GameManager) =>
-{
-    var game = GameManager.GetGame(Id);
-    var board = game.Board;
-    return Results.Ok(board.GetLocationSquares());
-});
+//app.MapGet("/api/Games/{Id}/Board/Squares", (Guid Id, IGameManager GameManager) =>
+//{
+//    var game = GameManager.GetGame(Id);
+//    var board = game.Board;
+//    return Results.Ok(board.GetLocationSquares());
+//});
 
-app.MapGet("/api/Games/{Id}/Board/Tiles", (Guid Id, IGameManager GameManager) =>
-{
-    var game = GameManager.GetGame(Id);
-    var board = game.Board;
-    return Results.Ok(board.GetLocationSquares(filterForOccupied: true));
-});
+//app.MapGet("/api/Games/{Id}/Board/Tiles", (Guid Id, IGameManager GameManager) =>
+//{
+//    var game = GameManager.GetGame(Id);
+//    var board = game.Board;
+//    return Results.Ok(board.GetLocationSquares(filterForOccupied: true));
+//});
 
 app.Run();

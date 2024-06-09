@@ -18,16 +18,16 @@ var boardUI = new BoardUI(moveBoard);
 boardUI.DisplayBoard(false);
 
 // move list
-var moves = new List<List<(Coord, Tile)>>();
+var moves = new List<List<TilePlacement>>();
 
 // make moves
 
 // make first move
-var tiles = new List<(Coord, Tile)>
+var tiles = new List<TilePlacement>
             {
-                (new Coord(R._8, C.G), new Tile('C')),
-                (new Coord(R._8, C.H), new Tile('A')),
-                (new Coord(R._8, C.I), new Tile('R'))
+                new (new Coord(R._8, C.G), new Tile('C')),
+                new (new Coord(R._8, C.H), new Tile('A')),
+                new (new Coord(R._8, C.I), new Tile('R'))
             };
 moveBoard.PlaceTiles(tiles);
 //moveBoard.ScoreMove(tiles); recording move, getting tiles, scoring ???
