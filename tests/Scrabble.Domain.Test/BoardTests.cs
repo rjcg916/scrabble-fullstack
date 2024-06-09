@@ -187,20 +187,26 @@ namespace Scrabble.Domain.Tests
         [Fact]
         public void ScoreMove_ReturnsCorrectScore()
         {
-            var board = new Board(MockWordValidator);
-            var tiles = new List<TilePlacement>
+            //starting board
+
+            var tiles = new List<Tile> { new('B'), new('C'), new('D') };
+            var startFrom = new Coord(R._8, C.H);
+            var board = new Board(MockWordValidator, startFrom, tiles, Placement.Horizontal);
+
+            // make a move
+            var newTiles = new List<TilePlacement>
             {
-                new(new Coord(R._8, C.H), new Tile('A')),
-                new(new Coord(R._8, C.I), new Tile('B')),
-                new(new Coord(R._8, C.J), new Tile('C'))
+                new(new Coord(R._8, C.G), new Tile('A')),
+                new(new Coord(R._8, C.K), new Tile('E'))
             };
+             
+            var boardForScoring = board.Copy();
+            boardForScoring.PlaceTiles(newTiles);
 
-            var result = board.ScoreMove(tiles);
+            // score move
+            var score = boardForScoring.ScoreMove(newTiles);
 
-            // Assuming the score is calculated correctly according to your rules.
-            // Replace `expectedScore` with the actual expected score.
-            int expectedScore = 0; // Calculate based on your scoring rules.
-            Assert.Equal(expectedScore, result);
+            Assert.Equal(9, score);
         }
 
         [Fact]
@@ -307,7 +313,7 @@ namespace Scrabble.Domain.Tests
 
             // Tests for ScoreMove method with fixed location
             [Fact]
-            public void ScoreMove_WithFixedLocationCalculatesCorrectScore()
+            public void ScoreMove_CalculatesCorrectScore()
             {
                 var board = new Board(MockWordValidator);
                 var fixedLocation = (int)R._8;
@@ -317,6 +323,9 @@ namespace Scrabble.Domain.Tests
                 (((int)C.I), new Tile('B')),
                 (((int)C.J), new Tile('C'))
             };
+
+            // TODO Add tiles with gaps to include newly added and existing tiles for scoring
+            // TODO make move or add tiles in score move 
 
                 var score = board.ScoreMove(fixedLocation, tileLocations, false);
 

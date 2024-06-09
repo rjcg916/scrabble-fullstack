@@ -174,13 +174,12 @@ namespace Scrabble.Domain
 
         public int ScoreMove(List<TilePlacement> tileList)
         {
-            (Placement placement, int fixedLocation, List<(int location, Tile tile)> tileLocations) =
-                ToPlacementSpec(tileList);
+            PlacementSpec tileSpecs = ToPlacementSpec(tileList);
 
-            var score = placement switch
+            var score = tileSpecs.Placement switch
             {
-                Placement.Horizontal => ScoreMove(fixedLocation, tileLocations, false),
-                Placement.Vertical => ScoreMove(fixedLocation, tileLocations, true),
+                Placement.Horizontal => ScoreMove(tileSpecs.FixedLocation, tileSpecs.TileLocations, false),
+                Placement.Vertical => ScoreMove(tileSpecs.FixedLocation, tileSpecs.TileLocations, true),
                 _ => throw new Exception("Invalid Placement"),
             };
             return score;
@@ -228,8 +227,6 @@ namespace Scrabble.Domain
 
             return score;
         }
-
-
 
         internal void ValidateBoardSlices(Func<int, List<Square>> getSlice,
                                      Placement placement,
