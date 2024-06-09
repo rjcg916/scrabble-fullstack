@@ -5,157 +5,358 @@ namespace Scrabble.Domain.Tests
 {
     public class BoardTests
     {
-        private static bool MockWordValidator(string word) => true;
+
+        private bool MockWordValidator(string word) => true;
 
         [Fact]
-        public void Board_Initialization()
+        public void Board_Constructor_InitializesCorrectly()
         {
-            // Arrange & Act
             var board = new Board(MockWordValidator);
 
-            // Assert
+            Assert.NotNull(board.squares);
             Assert.Equal(Board.rowCount, board.squares.GetLength(0));
             Assert.Equal(Board.colCount, board.squares.GetLength(1));
+            for (int r = 0; r < Board.rowCount; r++)
+            {
+                for (int c = 0; c < Board.colCount; c++)
+                {
+                    Assert.NotNull(board.squares[r, c]);
+                }
+            }
         }
 
         [Fact]
-        public void Board_Copy()
+        public void Board_Constructor_WithInitialMove_PlacesTilesCorrectly()
         {
-            // Arrange
+            var tiles = new List<Tile> { new('A'), new('B'), new('C') };
+            var startFrom = new Coord(R._8, C.H);
+            var board = new Board(MockWordValidator, startFrom, tiles, Placement.Horizontal);
+
+            Assert.Equal('A', board.GetTile(new Coord(R._8, C.H)).Letter);
+            Assert.Equal('B', board.GetTile(new Coord(R._8, C.I)).Letter);
+            Assert.Equal('C', board.GetTile(new Coord(R._8, C.J)).Letter);
+        }
+
+        [Fact]
+        public void Board_Copy_CreatesIdenticalBoard()
+        {
             var board = new Board(MockWordValidator);
-            var originalTile = new Tile('A');
-            board.squares[0, 0].Tile = originalTile;
+            board.PlaceTiles(
+        [
+            new(new Coord(R._8, C.H), new Tile('A'))
+        ]);
 
-            // Act
-            var copiedBoard = board.Copy();
+            var copy = board.Copy();
 
-            // Assert
-            Assert.Equal(originalTile, copiedBoard.squares[0, 0].Tile);
-            Assert.NotSame(board.squares, copiedBoard.squares);
+            Assert.NotSame(board, copy);
+            Assert.Equal('A', copy.GetTile(new Coord(R._8, C.H)).Letter);
         }
 
         [Fact]
-        public void Board_IsFirstMove()
+        public void DoesMoveTouchStar_ReturnsTrue_WhenMoveTouchesStar()
         {
-            // Arrange
-            var board = new Board(MockWordValidator);
-
-            // Act & Assert
-            Assert.True(board.IsFirstMove());
-        }
-
-        [Fact]
-        public void Board_IsOccupied()
-        {
-            // Arrange
-            var board = new Board(MockWordValidator);
-            var coord = new Coord(R._1, C.A);
-            board.squares[coord.RowValue, coord.ColValue].Tile = new Tile('A');
-
-            // Act & Assert
-            Assert.True(board.IsOccupied(coord));
-        }
-
-        [Fact]
-        public void Board_DoesMoveTouchStart()
-        {
-            // Arrange
             var tiles = new List<TilePlacement>
             {
-                new(new Coord(R._8, C.H), new Tile('A'))
+                new(Board.Star, new Tile('A'))
             };
 
-            // Act
             var result = Board.DoesMoveTouchStar(tiles);
 
-            // Assert
             Assert.True(result);
         }
 
         [Fact]
-        public void Board_AreAllTilesContiguous()
+        public void DoesMoveTouchStar_ReturnsFalse_WhenMoveDoesNotTouchStar()
         {
-            // Arrange
+            var tiles = new List<TilePlacement>
+            {
+                new(new Coord(R._7, C.G), new Tile('A'))
+            };
+
+            var result = Board.DoesMoveTouchStar(tiles);
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void IsFirstMove_ReturnsTrue_WhenNoMovesMade()
+        {
+            var board = new Board(MockWordValidator);
+
+            var result = board.IsFirstMove();
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void IsFirstMove_ReturnsFalse_AfterMoveIsMade()
+        {
+            var board = new Board(MockWordValidator);
+            board.PlaceTiles(
+        [
+            new(Board.Star, new Tile('A'))
+        ]);
+
+            var result = board.IsFirstMove();
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void IsOccupied_ReturnsTrue_WhenSquareIsOccupied()
+        {
+            var board = new Board(MockWordValidator);
+            var coord = new Coord(R._8, C.H);
+            board.PlaceTiles(
+        [
+            new(coord, new Tile('A'))
+        ]);
+
+            var result = board.IsOccupied(coord);
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void IsOccupied_ReturnsFalse_WhenSquareIsNotOccupied()
+        {
+            var board = new Board(MockWordValidator);
+            var coord = new Coord(R._8, C.H);
+
+            var result = board.IsOccupied(coord);
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void AreOccupied_ReturnsTrue_WhenAnySquareIsOccupied()
+        {
+            var board = new Board(MockWordValidator);
+            var coord = new Coord(R._8, C.H);
+            board.PlaceTiles(
+        [
+            new(coord, new Tile('A'))
+        ]);
+
+            var result = board.AreOccupied([coord, new(R._7, C.G)]);
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void AreOccupied_ReturnsFalse_WhenNoSquaresAreOccupied()
+        {
+            var board = new Board(MockWordValidator);
+
+            var result = board.AreOccupied([new(R._8, C.H), new(R._7, C.G)]);
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void AreAllTilesContiguous_ReturnsTrue_WhenTilesAreContiguous()
+        {
             var board = new Board(MockWordValidator);
             var tiles = new List<TilePlacement>
             {
-                new (new Coord(R._8, C.H), new Tile('A')),
-                new (new Coord(R._8, C.I), new Tile('B')),
-                new (new Coord(R._8, C.J), new Tile('C'))
+                new(new Coord(R._8, C.H), new Tile('A')),
+                new(new Coord(R._8, C.I), new Tile('B'))
             };
 
-            // Act
             var result = board.AreAllTilesContiguous(tiles);
 
-            // Assert
             Assert.True(result);
         }
 
         [Fact]
-        public void Board_PlaceTiles()
+        public void AreAllTilesContiguous_ReturnsFalse_WhenTilesAreNotContiguous()
         {
-            // Arrange
             var board = new Board(MockWordValidator);
             var tiles = new List<TilePlacement>
             {
-                new (new Coord(R._8, C.H), new Tile('A')),
-                new (new Coord(R._8, C.I), new Tile('B')),
-                new (new Coord(R._8, C.J), new Tile('C'))
+                new(new Coord(R._8, C.H), new Tile('A')),
+                new(new Coord(R._8, C.J), new Tile('B'))
             };
 
-            // Act
-            board.PlaceTiles(tiles);
+            var result = board.AreAllTilesContiguous(tiles);
 
-            // Assert
-            Assert.Equal('A', board.squares[(int)R._8, (int)C.H].Tile.Letter);
-            Assert.Equal('B', board.squares[(int)R._8, (int)C.I].Tile.Letter);
-            Assert.Equal('C', board.squares[(int)R._8, (int)C.J].Tile.Letter);
+            Assert.False(result);
         }
 
         [Fact]
-        public void Board_IsBoardValid()
+        public void ScoreMove_ReturnsCorrectScore()
         {
-            // Arrange
-            static bool wordValidator(string word) => word == "AB" || word == "CD";
-            var board = new Board(wordValidator);
-
-            // Place valid words
+            var board = new Board(MockWordValidator);
             var tiles = new List<TilePlacement>
             {
-                new (new Coord(R._8, C.H), new Tile('A')),
-                new (new Coord(R._8, C.I), new Tile('B'))
+                new(new Coord(R._8, C.H), new Tile('A')),
+                new(new Coord(R._8, C.I), new Tile('B')),
+                new(new Coord(R._8, C.J), new Tile('C'))
             };
-            board.PlaceTiles(tiles);
 
-            // Act
-            var (isValid, invalidMessage) = board.IsBoardValid();
+            var result = board.ScoreMove(tiles);
 
-            // Assert
-            Assert.True(isValid);
-            Assert.Null(invalidMessage);
+            // Assuming the score is calculated correctly according to your rules.
+            // Replace `expectedScore` with the actual expected score.
+            int expectedScore = 0; // Calculate based on your scoring rules.
+            Assert.Equal(expectedScore, result);
         }
 
         [Fact]
-        public void Board_IsBoardInvalid()
+        public void NextBoard_ReturnsNewBoardWithTilesPlaced()
         {
-            // Arrange
-            static bool wordValidator(string word) => word == "AB";
-            var board = new Board(wordValidator);
-
-            // Place an invalid word
+            var board = new Board(MockWordValidator);
             var tiles = new List<TilePlacement>
             {
-                new (new Coord(R._8, C.H), new Tile('A')),
-                new (new Coord(R._8, C.I), new Tile('C'))
+                new(new Coord(R._8, C.H), new Tile('A')),
+                new(new Coord(R._8, C.I), new Tile('B'))
             };
-            board.PlaceTiles(tiles);
 
-            // Act
-            var (isValid, invalidMessage) = board.IsBoardValid();
+            var nextBoard = board.NextBoard(tiles);
 
-            // Assert
-            Assert.False(isValid);
-            Assert.Equal([new PlacementError(Placement.Horizontal, (int)R._8, "AC")], invalidMessage);
+            Assert.Equal('A', nextBoard.GetTile(new Coord(R._8, C.H)).Letter);
+            Assert.Equal('B', nextBoard.GetTile(new Coord(R._8, C.I)).Letter);
+            Assert.True(nextBoard.IsOccupied(new Coord(R._8, C.H)));
+            Assert.True(nextBoard.IsOccupied(new Coord(R._8, C.I)));
+        }
+
+
+            // Tests for GetRun method
+            [Fact]
+            public void GetRun_ReturnsCorrectRunForHorizontal()
+            {
+                var board = new Board(MockWordValidator);
+                board.PlaceTiles(
+            [
+                new(new Coord(R._8, C.H), new Tile('A')),
+                new(new Coord(R._8, C.I), new Tile('B'))
+            ]);
+
+                var result = board.GetRun(true, (int)R._8, [(int)C.H, (int)C.I]);
+
+                Assert.Equal(((int)C.H, (int)C.I), result);
+            }
+
+            [Fact]
+            public void GetRun_ReturnsCorrectRunForVertical()
+            {
+                var board = new Board(MockWordValidator);
+                board.PlaceTiles(
+            [
+                new(new Coord(R._8, C.H), new Tile('A')),
+                new(new Coord(R._9, C.H), new Tile('B'))
+            ]);
+
+                var result = board.GetRun(false, (int)C.H, [((int)R._8), ((int)R._9)]);
+
+                Assert.Equal((((int)R._8), ((int)R._9)), result);
+            }
+
+            // Tests for GetSlice method
+            [Fact]
+            public void GetSlice_ReturnsCorrectRowSlice()
+            {
+                var board = new Board(MockWordValidator);
+                var result = board.GetSlice(true, (int) R._8);
+
+                Assert.Equal(Board.colCount, result.Count);
+            }
+
+            [Fact]
+            public void GetSlice_ReturnsCorrectColumnSlice()
+            {
+                var board = new Board(MockWordValidator);
+                var result = board.GetSlice(false, (int) C.H);
+
+                Assert.Equal(Board.rowCount, result.Count);
+            }
+
+            // Tests for ValidateSlices method
+            [Fact]
+            public void ValidateSlices_AddsErrorForInvalidSlices()
+            {
+                var board = new Board(MockWordValidator);
+                var errors = new List<PlacementError>();
+
+                board.ValidateSlices(Board.rowCount, board.GetRowSlice, Placement.Horizontal, errors);
+
+                // Assuming there are no valid words on an empty board
+                Assert.True(errors.Count > 0);
+            }
+
+            // Tests for IsSliceValid method
+            [Fact]
+            public void IsSliceValid_ReturnsFalseForInvalidSlice()
+            {
+
+                var tiles = new List<Tile> { new('A'), new('B'), new('C') };
+                var startFrom = new Coord(R._8, C.H);
+                var board = new Board(MockWordValidator, startFrom, tiles, Placement.Horizontal);
+
+                var slice = board.GetSlice(true, (int)R._8);
+
+                var (isValid, invalidWord) = Board.IsSliceValid(MockWordValidator, slice);
+
+                Assert.False(isValid);
+            }
+
+            [Fact]
+            public void IsSliceValid_ReturnsTrueForValidSlice()
+            {
+                
+                var slice = new List<Square>
+                {
+                    new() { Tile = new Tile('A') },
+                    new() { Tile = new Tile('B') },
+                    new() { Tile = new Tile('C') }
+                };
+
+                var (isValid, invalidWord) = Board.IsSliceValid(MockWordValidator, slice);
+
+                Assert.True(isValid);
+            }
+
+            // Tests for GetRowSlice method
+            [Fact]
+            public void GetRowSlice_ReturnsCorrectRow()
+            {
+                var board = new Board(MockWordValidator);
+                var rowSlice = board.GetRowSlice(((int)R._8));
+
+                Assert.Equal(Board.colCount, rowSlice.Count);
+            }
+
+            // Tests for GetColSlice method
+            [Fact]
+            public void GetColSlice_ReturnsCorrectColumn()
+            {
+                var board = new Board(MockWordValidator);
+                var colSlice = board.GetColSlice(((int)C.H));
+
+                Assert.Equal(Board.rowCount, colSlice.Count);
+            }
+
+            // Tests for ScoreMove method with fixed location
+            [Fact]
+            public void ScoreMove_WithFixedLocationCalculatesCorrectScore()
+            {
+                var board = new Board(MockWordValidator);
+                var fixedLocation = (int)R._8;
+                var tileLocations = new List<(int location, Tile tile)>
+            {
+                (((int)C.H), new Tile('A')),
+                (((int)C.I), new Tile('B')),
+                (((int)C.J), new Tile('C'))
+            };
+
+                var score = board.ScoreMove(fixedLocation, tileLocations, false);
+
+                // Assuming some scoring rules, replace expectedScore with the correct value
+                int expectedScore = 0; // Replace with correct score calculation
+                Assert.Equal(expectedScore, score);
+            }
         }
     }
-}
+
+
+

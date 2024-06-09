@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Linq;
 
 namespace Scrabble.Domain
@@ -14,12 +13,12 @@ namespace Scrabble.Domain
 
         public readonly Square[,] squares = new Square[rowCount, colCount];
 
-        private const int LOWER = 0;
+        private const int LOWERBOUND = 0;
         private const int DIMENSION = 15;
 
         private int MovesMade = 0;
 
-        private readonly Func<string, bool> IsWordValid;
+        internal readonly Func<string, bool> IsWordValid;
         public static Coord Star => new(R._8, C.H);
         public static int StarRow => Star.RowValue;
         public static int StarCol => Star.ColValue;
@@ -107,7 +106,6 @@ namespace Scrabble.Domain
                 throw new Exception("Invalid Move");
             }
         }
-
 
 
         public (bool valid, List<PlacementError> errorList) IsBoardValid()
@@ -215,7 +213,7 @@ namespace Scrabble.Domain
 
             return board;
         }
-        private int ScoreMove(int fixedLocation, List<(int location, Tile tile)> tileLocations, bool isHorizontal)
+        internal int ScoreMove(int fixedLocation, List<(int location, Tile tile)> tileLocations, bool isHorizontal)
         {
             int score = 0;
 
@@ -233,14 +231,14 @@ namespace Scrabble.Domain
 
 
 
-        private void ValidateSlices(int count,
+        internal void ValidateSlices(int count,
                                     Func<int, List<Square>> getSlice,
                                     Placement placement,
                                     List<PlacementError> invalidMessages)
         {
             for (int index = 0; index < count; index++)
             {
-                var (valid, invalidWord) = IsSliceValid(getSlice(index));
+                var (valid, invalidWord) = IsSliceValid(IsWordValid, getSlice(index));
                 if (!valid)
                 {
                     invalidMessages.Add(new( placement, index, invalidWord));
@@ -248,17 +246,17 @@ namespace Scrabble.Domain
             }
         }
 
-        private List<Square> GetRowSlice(int row)
+        internal List<Square> GetRowSlice(int row)
         {
             return GetSlice(true, row);
         }
 
-        private List<Square> GetColSlice(int col)
+        internal List<Square> GetColSlice(int col)
         {
             return GetSlice(false, col);
         }
 
-        private List<Square> GetSlice(bool isHorizontal, int index, int start = LOWER, int end = DIMENSION)
+        internal List<Square> GetSlice(bool isHorizontal, int index, int start = LOWERBOUND, int end = DIMENSION)
         {
             List<Square> slice = [];
             if (isHorizontal)
@@ -278,7 +276,7 @@ namespace Scrabble.Domain
             return slice;
         }
 
-        private (int start, int end) GetRun(bool isHorizontal, int fixedLocation, List<int> locationList)
+        internal (int start, int end) GetRun(bool isHorizontal, int fixedLocation, List<int> locationList)
         {
             var minMove = locationList.Min();
             var maxMove = locationList.Max();
@@ -307,7 +305,7 @@ namespace Scrabble.Domain
 
             return (minOccupied, maxOccupied);
         }
-        private (bool valid, string invalidWord) IsSliceValid(List<Square> slice)
+        public static (bool valid, string invalidWord) IsSliceValid(Func<string, bool> IsWordValid, List<Square> slice)
         {
             var charList = slice.Select(square => square.Tile?.Letter ?? ' ').ToList();
             return charList.IsValidSequence(IsWordValid);
