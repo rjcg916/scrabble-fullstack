@@ -8,6 +8,6 @@ namespace Scrabble.Domain
     }
 
     public record PlacementError(Placement Type, int Location, string Letters);
-    public record PlacementSpec(Placement Placement, int FixedLocation, List<(int, Tile)> TileLocations);
+    public record PlacementSpec(Placement Placement, int FixedLocation, List<(int Location, Tile Tile)> TileLocations);
     public record TilePlacement(Coord Coord, Tile Tile);
 }

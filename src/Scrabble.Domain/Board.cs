@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace Scrabble.Domain
 {
-
     public partial class Board
     {
         public static readonly int rowCount = R._15 - R._1 + 1;
@@ -71,7 +70,7 @@ namespace Scrabble.Domain
                 }
             }
             IsWordValid = other.IsWordValid;
-            MovesMade = other.MovesMade;           
+            MovesMade = other.MovesMade;
         }
         public Board Copy() => new(this);
 
@@ -85,24 +84,27 @@ namespace Scrabble.Domain
         public bool IsFirstMove() => MovesMade == 0;
 
         public bool IsOccupied(Coord coord) => squares[coord.RowValue, coord.ColValue].IsOccupied;
-        public bool AreOccupied(List<Coord> locations) => locations.Select(l => IsOccupied(l)).Any();
- 
-        static public PlacementSpec 
+        public bool AreOccupied(List<Coord> locations) => locations.Any(l => IsOccupied(l));
+
+        static public PlacementSpec
             ToPlacementSpec(List<TilePlacement> tileList)
         {
             if (tileList.Select(c => c.Coord.RowValue).Distinct().Count() == 1)
             {
                 var fixedLocation = tileList.Select(c => c.Coord.RowValue).First();
                 var tileLocations = tileList.Select(tl => (tl.Coord.ColValue, tl.Tile)).ToList();
-                return new (Placement.Horizontal, fixedLocation, tileLocations);
+                return new(Placement.Horizontal, fixedLocation, tileLocations);
 
-            } else if (tileList.Select(c => c.Coord.ColValue).Distinct().Count() == 1) {
+            }
+            else if (tileList.Select(c => c.Coord.ColValue).Distinct().Count() == 1)
+            {
 
                 var fixedLocation = tileList.Select(c => c.Coord.ColValue).First();
                 var tileLocations = tileList.Select(tl => (tl.Coord.RowValue, tl.Tile)).ToList();
-                return new (Placement.Vertical, fixedLocation, tileLocations);
+                return new(Placement.Vertical, fixedLocation, tileLocations);
 
-            } else
+            }
+            else
             {
                 throw new Exception("Invalid Move");
             }
@@ -113,7 +115,7 @@ namespace Scrabble.Domain
         {
             if (!IsOccupied(Star))
             {
-                return (false, [ new(Placement.Star, 0, "STAR not occupied")]);
+                return (false, [new(Placement.Star, 0, "STAR not occupied")]);
             }
 
             var invalidMessages = new List<PlacementError>();
@@ -123,8 +125,8 @@ namespace Scrabble.Domain
 
             return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, null);
         }
- 
-       public bool AreAllTilesContiguous(List<TilePlacement> tileList)
+
+        public bool AreAllTilesContiguous(List<TilePlacement> tileList)
         {
             // make a copy of board for testing
 
@@ -172,18 +174,27 @@ namespace Scrabble.Domain
             return true;
         }
 
-        public int ScoreMove(List<TilePlacement> tileList)
+        public int ScoreMove(int fixedLocation, List<int> tileLocations, Placement placement)
         {
-            PlacementSpec tileSpecs = ToPlacementSpec(tileList);
-
-            var score = tileSpecs.Placement switch
+            var score = placement switch
             {
-                Placement.Horizontal => ScoreMove(tileSpecs.FixedLocation, tileSpecs.TileLocations, true),
-                Placement.Vertical => ScoreMove(tileSpecs.FixedLocation, tileSpecs.TileLocations, false),
+                Placement.Horizontal => ScoreMove(fixedLocation, tileLocations, true),
+                Placement.Vertical => ScoreMove(fixedLocation, tileLocations, false),
                 _ => throw new Exception("Invalid Placement"),
             };
             return score;
         }
+
+        public int ScoreMove(List<TilePlacement> tileList)
+        {
+            PlacementSpec tileSpecs = ToPlacementSpec(tileList);
+            var tileLocations = tileSpecs.TileLocations.Select(tl => tl.Location).ToList();
+            var fixedLocation = tileSpecs.FixedLocation;
+            var placement = tileSpecs.Placement;
+
+            return ScoreMove(fixedLocation, tileLocations, placement);
+        }
+
         public void PlaceTiles(List<TilePlacement> tileList)
         {
             MovesMade++;
@@ -193,7 +204,7 @@ namespace Scrabble.Domain
                 var location = squares[coord.RowValue, coord.ColValue];
 
                 location.Tile = new Tile(tile.Letter);
-                location.MoveOfOccupation = MovesMade;            
+                location.MoveOfOccupation = MovesMade;
             };
         }
 
@@ -212,25 +223,25 @@ namespace Scrabble.Domain
 
             return board;
         }
-        internal int ScoreMove(int moveFixed, List<(int location, Tile tile)> tileLocations, bool isHorizontal)
+        internal int ScoreMove(int moveFixed, List<int> tileLocations, bool isHorizontal)
         {
             int score = 0;
 
-            var (singleRunStart, singleRunEnd) = GetRun(isHorizontal, moveFixed, tileLocations.Select(tl => tl.location).ToList());
+            var (singleRunStart, singleRunEnd) = GetRun(isHorizontal, moveFixed, tileLocations);
             var moveSlice = GetSlice(isHorizontal, moveFixed, singleRunStart, singleRunEnd);
             if (moveSlice.Count == 0)
                 throw new Exception("MoveSlice must have one or more tiles");
-          
+
             score += moveSlice.ScoreRun();
 
             for (int perpendicularFixed = singleRunStart; perpendicularFixed <= singleRunEnd; perpendicularFixed++)
             {
                 var (multiRunStart, multiRunEnd) = GetRun(!isHorizontal, perpendicularFixed, [moveFixed]);
                 if (multiRunStart < multiRunEnd)
-                { 
+                {
                     var perpendicularSlice = GetSlice(!isHorizontal, perpendicularFixed, multiRunStart, multiRunEnd);
                     var anyNewTiles = perpendicularSlice.Any(sq => sq.MoveOfOccupation == MovesMade);
-                    if ((perpendicularSlice.Count > 0) && anyNewTiles) 
+                    if ((perpendicularSlice.Count > 0) && anyNewTiles)
                         score += perpendicularSlice.ScoreRun();
                 }
             }
@@ -246,7 +257,7 @@ namespace Scrabble.Domain
             for (int index = 0; index < sliceCount; index++)
             {
                 var charList = getSlice(index).ToCharList();
-                
+
                 if (charList != null)
                 {
                     var (valid, invalidWord) = charList.IsValidSequence(IsWordValid);
@@ -269,12 +280,12 @@ namespace Scrabble.Domain
             return GetSlice(false, col);
         }
 
-        internal List<Square> GetSlice(bool isHorizontal, int index, int start = LOWERBOUND, int end = DIMENSION)
+        internal List<Square> GetSlice(bool isHorizontal, int index, int rangeStart = LOWERBOUND, int rangeEnd = DIMENSION -1)
         {
             List<Square> slice = [];
             if (isHorizontal)
             {
-                for (int col = start; col <= end; col++)
+                for (int col = rangeStart; col <= rangeEnd; col++)
                 {
                     var sq = squares[index, col];
                     if (sq.IsOccupied)
@@ -283,14 +294,14 @@ namespace Scrabble.Domain
             }
             else
             {
-                for (int row = start; row <= end; row++)
+                for (int row = rangeStart; row <= rangeEnd; row++)
                 {
                     var sq = squares[row, index];
                     if (sq.IsOccupied)
                         slice.Add(sq.Copy());
                 }
             }
-            
+
             return slice;
         }
 
