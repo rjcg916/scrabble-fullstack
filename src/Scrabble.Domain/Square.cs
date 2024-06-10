@@ -39,7 +39,9 @@ namespace Scrabble.Domain
             return new Square
             {
                 Tile = this.Tile,
-                SquareType = this.SquareType
+                SquareType = this.SquareType,
+                MoveOfOccupation = this.MoveOfOccupation,
+                IsFinal = this.IsFinal             
             };
         }
         public SquareType SquareType { get; set; } = squareType;
