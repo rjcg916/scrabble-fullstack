@@ -7,8 +7,7 @@ namespace Scrabble.Domain.Tests
     {
 
         static private bool MockWordValidator(string _) => true;
-        //static private bool MockWordValidatorAlwaysFalse(string _) => false;
-
+  
         [Fact]
         public void Board_Constructor_InitializesCorrectly()
         {
@@ -185,28 +184,115 @@ namespace Scrabble.Domain.Tests
         }
 
         [Fact]
-        public void ScoreMove_ReturnsCorrectScore()
+        public void ScoreMove_InitialHorizontal_ReturnsCorrectScore()
         {
             //starting board
 
             var tiles = new List<Tile> { new('B'), new('C'), new('D') };
             var startFrom = new Coord(R._8, C.H);
+
+            var tilesAsPlacement = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.H), new Tile('B')),
+                new(new Coord(R._8, C.I), new Tile('C')),
+                new(new Coord(R._8, C.J), new Tile('D')),
+
+            };
+
             var board = new Board(MockWordValidator, startFrom, tiles, Placement.Horizontal);
+
+            // score initial move
+            var initialScore = board.ScoreMove(tilesAsPlacement);
+            Assert.Equal(8, initialScore);
+
+        }
+        [Fact]
+        public void ScoreMove_InitialHorizontalDoubleLetter_ReturnsCorrectScore()
+        {
+            //starting board
+
+            var tiles = new List<Tile> { new('B'), new('C'), new('D'), new('B'), new('C'), new('D') };
+            var startFrom = new Coord(R._8, C.H);
+
+            var tilesAsPlacement = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.H), new Tile('B')),
+                new(new Coord(R._8, C.I), new Tile('C')),
+                new(new Coord(R._8, C.J), new Tile('D')),
+                new(new Coord(R._8, C.K), new Tile('B')),
+                new(new Coord(R._8, C.L), new Tile('C')),
+                new(new Coord(R._8, C.M), new Tile('D')),
+            };
+
+            var board = new Board(MockWordValidator, startFrom, tiles, Placement.Horizontal);
+
+            // score initial move
+            var initialScore = board.ScoreMove(tilesAsPlacement);
+            Assert.Equal(19, initialScore);
+
+        }
+
+        [Fact]
+        public void ScoreMove_InitialVertical_ReturnsCorrectScore()
+        {
+            //starting board
+
+            var tiles = new List<Tile> { new('B'), new('C'), new('D') };
+            var startFrom = new Coord(R._7, C.H);
+
+            var tilesAsPlacement = new List<TilePlacement>
+            {
+                new(new Coord(R._7, C.H), new Tile('B')),
+                new(new Coord(R._8, C.H), new Tile('C')),
+                new(new Coord(R._9, C.H), new Tile('D')),
+
+            };
+
+            var board = new Board(MockWordValidator, startFrom, tiles, Placement.Vertical);
+
+            // score initial move
+            var initialScore = board.ScoreMove(tilesAsPlacement);
+            Assert.Equal(8, initialScore);
+
+        }
+
+        [Fact]
+        public void ScoreMove_NextHorizontal_ReturnsCorrectScore()
+        {
+            //starting board
+
+            var tiles = new List<Tile> { new('B'), new('C'), new('D') };
+            var startFrom = new Coord(R._8, C.H);
+
+            var tilesAsPlacement = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.H), new Tile('B')),
+                new(new Coord(R._8, C.I), new Tile('C')),
+                new(new Coord(R._8, C.J), new Tile('D')),
+
+            };
+
+            var board = new Board(MockWordValidator, startFrom, tiles, Placement.Horizontal);
+
+            // score move
+            var initialScore = board.ScoreMove(tilesAsPlacement);
+            Assert.Equal(8, initialScore);
+
 
             // make a move
             var newTiles = new List<TilePlacement>
             {
                 new(new Coord(R._8, C.G), new Tile('A')),
-                new(new Coord(R._8, C.K), new Tile('E'))
+                new(new Coord(R._8, C.K), new Tile('J'))
             };
              
             var boardForScoring = board.Copy();
             boardForScoring.PlaceTiles(newTiles);
 
             // score move
-            var score = boardForScoring.ScoreMove(newTiles);
+            var moveScore = boardForScoring.ScoreMove(newTiles);
 
-            Assert.Equal(9, score);
+            Assert.Equal(17, moveScore);
         }
 
         [Fact]

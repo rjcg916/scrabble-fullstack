@@ -122,9 +122,8 @@ namespace Scrabble.Domain
 
             return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, null);
         }
-
  
-        public bool AreAllTilesContiguous(List<TilePlacement> tileList)
+       public bool AreAllTilesContiguous(List<TilePlacement> tileList)
         {
             // make a copy of board for testing
 
@@ -222,7 +221,8 @@ namespace Scrabble.Domain
             for (int c = singleRunStart; c <= singleRunEnd; c++)
             {
                 var (multiRunStart, multiRunEnd) = GetRun(isHorizontal, c, [fixedLocation]);
-                score += GetSlice(isHorizontal,fixedLocation, multiRunStart, multiRunEnd).ScoreRun();
+                if (multiRunStart < multiRunEnd)
+                    score += GetSlice(isHorizontal,fixedLocation, multiRunStart, multiRunEnd).ScoreRun();
             }
 
             return score;
@@ -264,14 +264,14 @@ namespace Scrabble.Domain
             List<Square> slice = [];
             if (isHorizontal)
             {
-                for (int col = start; col < end; col++)
+                for (int col = start; col <= end; col++)
                 {
                     slice.Add(squares[index, col]);
                 }
             }
             else
             {
-                for (int row = start; row < end; row++)
+                for (int row = start; row <= end; row++)
                 {
                     slice.Add(squares[row, index]);
                 }
@@ -307,14 +307,6 @@ namespace Scrabble.Domain
             }
 
             return (minOccupied, maxOccupied);
-        }
-
-
-
-        public static (bool valid, string invalidWord) IsSliceValid0(Func<string, bool> IsWordValid, List<Square> slice)
-        {
-            var charList = slice.ToCharList();
-            return charList.IsValidSequence(IsWordValid);
         }
 
         //public List<EvaluateAt<Square>> GetLocationSquares(bool filterForOccupied = false)
