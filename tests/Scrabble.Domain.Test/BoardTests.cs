@@ -268,7 +268,6 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.H), new Tile('B')),
                 new(new Coord(R._8, C.I), new Tile('C')),
                 new(new Coord(R._8, C.J), new Tile('D')),
-
             };
 
             var board = new Board(MockWordValidator, startFrom, tiles, Placement.Horizontal);
@@ -284,7 +283,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.G), new Tile('A')),
                 new(new Coord(R._8, C.K), new Tile('J'))
             };
-             
+
             var boardForScoring = board.Copy();
             boardForScoring.PlaceTiles(newTiles);
 
@@ -292,6 +291,31 @@ namespace Scrabble.Domain.Tests
             var moveScore = boardForScoring.ScoreMove(newTiles);
 
             Assert.Equal(17, moveScore);
+        }
+
+        [Fact]
+        public void ScoreMove_VerticalNextExtends_ReturnsCorrectScore()
+        {
+            //starting board
+            var board = new Board(MockWordValidator, new Coord(R._8, C.G), [new Tile('J')], Placement.Vertical);
+
+
+            // make a move
+
+            var tileList = new List<TilePlacement>
+            {
+                new(new Coord(R._7, C.G), new Tile('A')),
+                new(new Coord(R._9, C.G), new Tile('Z'))
+            };
+
+            board.PlaceTiles(tileList);
+
+            // score move
+
+            var initialScore = board.ScoreMove(tileList);
+
+            Assert.Equal(30, initialScore);
+
         }
 
         [Fact]

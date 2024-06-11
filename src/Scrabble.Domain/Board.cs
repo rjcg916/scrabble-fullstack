@@ -110,7 +110,6 @@ namespace Scrabble.Domain
             }
         }
 
-
         public (bool valid, List<PlacementError> errorList) IsBoardValid()
         {
             if (!IsOccupied(Star))
@@ -253,7 +252,8 @@ namespace Scrabble.Domain
                                      Placement placement,
                                      List<PlacementError> invalidMessages)
         {
-            int sliceCount = Placement.Horizontal == placement ? Board.colCount : Board.colCount;
+            int sliceCount = Placement.Horizontal == placement ? 
+                                Board.colCount : Board.colCount;
             for (int index = 0; index < sliceCount; index++)
             {
                 var charList = getSlice(index).ToCharList();
@@ -283,6 +283,7 @@ namespace Scrabble.Domain
         internal List<Square> GetSlice(bool isHorizontal, int index, int rangeStart = LOWERBOUND, int rangeEnd = DIMENSION -1)
         {
             List<Square> slice = [];
+
             if (isHorizontal)
             {
                 for (int col = rangeStart; col <= rangeEnd; col++)
