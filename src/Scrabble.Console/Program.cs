@@ -37,17 +37,3 @@ moveBoard.PlaceTiles(tiles);
 moves.Add(tiles);
 
 boardUI.DisplayBoard();
-
-
-// trial moves
-//   initialize trial move list
-// get move
-// if cells occupied
-//  reject move
-// else
-//  add move to move list
-//  display board/status/score
-// while (not done or board invalid) 
-// 
-// add trial move list to game move list
-//

@@ -56,10 +56,10 @@ namespace Scrabble.Domain.Tests
         {
             var tiles = new List<TilePlacement>
             {
-                new(Board.Star, new Tile('A'))
+                new(Board.STAR, new Tile('A'))
             };
 
-            var result = Board.DoesMoveTouchStar(tiles);
+            var result = Board.DoesMoveTouchSTAR(tiles);
 
             Assert.True(result);
         }
@@ -72,7 +72,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._7, C.G), new Tile('A'))
             };
 
-            var result = Board.DoesMoveTouchStar(tiles);
+            var result = Board.DoesMoveTouchSTAR(tiles);
 
             Assert.False(result);
         }
@@ -93,7 +93,7 @@ namespace Scrabble.Domain.Tests
             var board = new Board(MockWordValidator);
             board.PlaceTiles(
         [
-            new(Board.Star, new Tile('A'))
+            new(Board.STAR, new Tile('A'))
         ]);
 
             var result = board.IsFirstMove();
@@ -153,7 +153,7 @@ namespace Scrabble.Domain.Tests
         }
 
         [Fact]
-        public void AreAllTilesContiguous_ReturnsTrue_WhenTilesAreContiguous()
+        public void TilesContiguousOnBoard_ReturnsTrue_WhenTilesAreContiguous()
         {
             var board = new Board(MockWordValidator);
             var tiles = new List<TilePlacement>
@@ -162,13 +162,13 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.I), new Tile('B'))
             };
 
-            var result = board.AreAllTilesContiguous(tiles);
+            var result = board.TilesContiguousOnBoard(tiles);
 
             Assert.True(result);
         }
 
         [Fact]
-        public void AreAllTilesContiguous_ReturnsFalse_WhenTilesAreNotContiguous()
+        public void TilesContiguousOnBoard_ReturnsFalse_WhenTilesAreNotContiguous()
         {
             var board = new Board(MockWordValidator);
             var tiles = new List<TilePlacement>
@@ -177,7 +177,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.J), new Tile('B'))
             };
 
-            var result = board.AreAllTilesContiguous(tiles);
+            var result = board.TilesContiguousOnBoard(tiles);
 
             Assert.False(result);
         }
@@ -457,7 +457,7 @@ namespace Scrabble.Domain.Tests
                     new(new Coord(R._8, C.I), new Tile('B'))
                 ]);
 
-                var result = board.GetSlice(true, (int) R._8);
+                var result = board.GetSquares(true, (int) R._8);
 
                 Assert.Equal(2, result.Count);
             }
@@ -472,7 +472,7 @@ namespace Scrabble.Domain.Tests
                     new(new Coord(R._8, C.H), new Tile('B'))
                 ]);
 
-                var result = board.GetSlice(false, (int)C.H);
+                var result = board.GetSquares(false, (int)C.H);
 
                 Assert.Equal(2, result.Count);
             }
@@ -484,31 +484,12 @@ namespace Scrabble.Domain.Tests
                 var board = new Board(MockWordValidator);
                 var errors = new List<PlacementError>();
 
-                board.ValidateBoardSlices(board.GetRowSlice, Placement.Horizontal, errors);
+                errors = board.ValidateBoardSlices( r => board.GetSquares(true, r), Placement.Horizontal);
                 
                 Assert.Empty(errors);
             }
 
 
-            // Tests for GetRowSlice method
-            [Fact]
-            public void GetRowSlice_WhenEmptyReturnsZero()
-            {
-                var board = new Board(MockWordValidator);
-                var rowSlice = board.GetRowSlice(((int)R._8));
-
-                Assert.Empty(rowSlice);
-            }
-
-            // Tests for GetColSlice method
-            [Fact]
-            public void GetColSlice_WhenEmptyReturnsZero()
-            {
-                var board = new Board(MockWordValidator);
-                var colSlice = board.GetColSlice(((int)C.H));
-
-                Assert.Empty(colSlice);
-            }
 
             // Tests for ScoreMove method with fixed location
             [Fact]

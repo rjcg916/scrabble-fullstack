@@ -11,18 +11,16 @@ namespace Scrabble.Domain
         public static readonly int colCount = C.O - C.A + 1;
 
         public readonly Square[,] squares = new Square[rowCount, colCount];
+        public readonly static Coord STAR = new(R._8, C.H);
 
         private const int LOWERBOUND = 0;
         private const int DIMENSION = 15;
 
-        private int MovesMade = 0;
+        public int MovesMade = 0;
 
         internal readonly Func<string, bool> IsWordValid;
-        public static Coord Star => new(R._8, C.H);
-        public static int StarRow => Star.RowValue;
-        public static int StarCol => Star.ColValue;
 
-        // create a new Board
+
         public Board(Func<string, bool> IsWordValid)
         {
             this.IsWordValid = IsWordValid;
@@ -35,6 +33,15 @@ namespace Scrabble.Domain
         }
 
         // create a new Board with initial move
+        public Board(Func<string, bool> IsWordValid, 
+                     List<TilePlacement> tileList) :
+            this(IsWordValid)
+        {
+            PlaceTiles(tileList);      
+        }
+
+
+        // create a new Board with initial move
         public Board(Func<string, bool> IsWordValid,
                         Coord startFrom,
                         List<Tile> tiles,
@@ -43,6 +50,7 @@ namespace Scrabble.Domain
         {
             switch (placement)
             {
+                case Placement.Star:
                 case Placement.Horizontal:
                     PlaceTiles(tiles.Select((tile, index) =>
                         new TilePlacement(new Coord(startFrom.Row, (C)(startFrom.ColValue + index)), tile)
@@ -54,6 +62,7 @@ namespace Scrabble.Domain
                         new TilePlacement(new Coord((R)(startFrom.RowValue + index), startFrom.Col), tile)
                         ).ToList());
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(placement), placement, null);
             }
@@ -72,73 +81,45 @@ namespace Scrabble.Domain
             IsWordValid = other.IsWordValid;
             MovesMade = other.MovesMade;
         }
+
         public Board Copy() => new(this);
 
-        public static bool DoesMoveTouchStar(List<TilePlacement> tileList) =>
-          tileList.Exists(t => (t.Coord.Col == Board.Star.Col) && (t.Coord.Row == Board.Star.Row));
+        public static bool DoesMoveTouchSTAR(List<TilePlacement> tileList) =>
+          tileList.Exists(t => (t.Coord.Col == Board.STAR.Col) && (t.Coord.Row == Board.STAR.Row));
 
-        public Square GetSquare(Coord loc) => squares[loc.RowValue, loc.ColValue];
-
-        public Tile GetTile(Coord loc) => GetSquare(loc).Tile;
+        public Tile GetTile(Coord loc) => squares[loc.RowValue, loc.ColValue]?.Tile;
 
         public bool IsFirstMove() => MovesMade == 0;
 
         public bool IsOccupied(Coord coord) => squares[coord.RowValue, coord.ColValue].IsOccupied;
         public bool AreOccupied(List<Coord> locations) => locations.Any(l => IsOccupied(l));
 
-        static public PlacementSpec
-            ToPlacementSpec(List<TilePlacement> tileList)
-        {
-            if (tileList.Select(c => c.Coord.RowValue).Distinct().Count() == 1)
-            {
-                var fixedLocation = tileList.Select(c => c.Coord.RowValue).First();
-                var tileLocations = tileList.Select(tl => (tl.Coord.ColValue, tl.Tile)).ToList();
-                return new(Placement.Horizontal, fixedLocation, tileLocations);
-
-            }
-            else if (tileList.Select(c => c.Coord.ColValue).Distinct().Count() == 1)
-            {
-
-                var fixedLocation = tileList.Select(c => c.Coord.ColValue).First();
-                var tileLocations = tileList.Select(tl => (tl.Coord.RowValue, tl.Tile)).ToList();
-                return new(Placement.Vertical, fixedLocation, tileLocations);
-
-            }
-            else
-            {
-                throw new Exception("Invalid Move");
-            }
-        }
-
         public (bool valid, List<PlacementError> errorList) IsBoardValid()
         {
-            if (!IsOccupied(Star))
+            if (!IsOccupied(STAR))
             {
                 return (false, [new(Placement.Star, 0, "STAR not occupied")]);
             }
-
+            
             var invalidMessages = new List<PlacementError>();
 
-            ValidateBoardSlices(GetRowSlice, Placement.Horizontal, invalidMessages);
-            ValidateBoardSlices(GetColSlice, Placement.Vertical, invalidMessages);
-
+            invalidMessages.AddRange(ValidateBoardSlices( r => GetSquares(true, r), Placement.Horizontal));            
+            invalidMessages.AddRange(ValidateBoardSlices( c => GetSquares(false,c), Placement.Vertical));
+            
             return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, null);
         }
 
-        public bool AreAllTilesContiguous(List<TilePlacement> tileList)
+        public bool TilesContiguousOnBoard(List<TilePlacement> tilePlacementList)
         {
-            // make a copy of board for testing
-
-            Board board = this.Copy();
 
             // place the new tiles
-            foreach (var (coord, tile) in tileList)
+            foreach (var (coord, tile) in tilePlacementList)
             {
-                board.squares[coord.RowValue, coord.ColValue].Tile = tile;
+                squares[coord.RowValue, coord.ColValue].Tile = tile;
             }
 
             // make sure each of the new tiles is contiguous with another tile
-            foreach (var (coord, _) in tileList)
+            foreach (var (coord, _) in tilePlacementList)
             {
                 bool isContiguous = false;
 
@@ -156,7 +137,7 @@ namespace Scrabble.Domain
                     if (adjCoord.RowValue >= 0 && adjCoord.RowValue < rowCount &&
                         adjCoord.ColValue >= 0 && adjCoord.ColValue < colCount)
                     {
-                        if (board.squares[adjCoord.RowValue, adjCoord.ColValue].IsOccupied)
+                        if (squares[adjCoord.RowValue, adjCoord.ColValue].IsOccupied)
                         {
                             isContiguous = true;
                             break; // no need to search for another continguous tile
@@ -173,32 +154,31 @@ namespace Scrabble.Domain
             return true;
         }
 
-        public int ScoreMove(int fixedLocation, List<int> tileLocations, Placement placement)
+        public int ScoreMove(int sliceLocation, List<int> tileLocations, Placement placement)
         {
             var score = placement switch
             {
-                Placement.Horizontal => ScoreMove(fixedLocation, tileLocations, true),
-                Placement.Vertical => ScoreMove(fixedLocation, tileLocations, false),
+                Placement.Horizontal => ScoreMoveDirectional(sliceLocation, tileLocations, true),
+                Placement.Vertical => ScoreMoveDirectional(sliceLocation, tileLocations, false),
                 _ => throw new Exception("Invalid Placement"),
             };
             return score;
         }
 
-        public int ScoreMove(List<TilePlacement> tileList)
+        public int ScoreMove(List<TilePlacement> tilePlacementList)
         {
-            PlacementSpec tileSpecs = ToPlacementSpec(tileList);
-            var tileLocations = tileSpecs.TileLocations.Select(tl => tl.Location).ToList();
-            var fixedLocation = tileSpecs.FixedLocation;
-            var placement = tileSpecs.Placement;
+            PlacementSpec tileSpecs = tilePlacementList.ToPlacementSpec();
 
-            return ScoreMove(fixedLocation, tileLocations, placement);
+            return ScoreMove(   tileSpecs.FixedLocation, 
+                                tileSpecs.TileLocations, 
+                                tileSpecs.Placement);
         }
 
-        public void PlaceTiles(List<TilePlacement> tileList)
+        public void PlaceTiles(List<TilePlacement> tilePlacementList)
         {
             MovesMade++;
 
-            foreach (var (coord, tile) in tileList)
+            foreach (var (coord, tile) in tilePlacementList)
             {
                 var location = squares[coord.RowValue, coord.ColValue];
 
@@ -222,12 +202,16 @@ namespace Scrabble.Domain
 
             return board;
         }
-        internal int ScoreMove(int moveFixed, List<int> tileLocations, bool isHorizontal)
+
+        // score by checking for words in slice direction and
+        // words created by slice in perpendicular direction
+        internal int ScoreMoveDirectional(int sliceLocation, List<int> tileLocations, bool isHorizontal)
         {
             int score = 0;
 
-            var (singleRunStart, singleRunEnd) = GetRun(isHorizontal, moveFixed, tileLocations);
-            var moveSlice = GetSlice(isHorizontal, moveFixed, singleRunStart, singleRunEnd);
+            var (singleRunStart, singleRunEnd) = GetRun(isHorizontal, sliceLocation, tileLocations);
+            var moveSlice = GetSquares(isHorizontal, sliceLocation, singleRunStart, singleRunEnd);
+
             if (moveSlice.Count == 0)
                 throw new Exception("MoveSlice must have one or more tiles");
 
@@ -235,10 +219,11 @@ namespace Scrabble.Domain
 
             for (int perpendicularFixed = singleRunStart; perpendicularFixed <= singleRunEnd; perpendicularFixed++)
             {
-                var (multiRunStart, multiRunEnd) = GetRun(!isHorizontal, perpendicularFixed, [moveFixed]);
+                var (multiRunStart, multiRunEnd) = GetRun(!isHorizontal, perpendicularFixed, [sliceLocation]);
+
                 if (multiRunStart < multiRunEnd)
                 {
-                    var perpendicularSlice = GetSlice(!isHorizontal, perpendicularFixed, multiRunStart, multiRunEnd);
+                    var perpendicularSlice = GetSquares(!isHorizontal, perpendicularFixed, multiRunStart, multiRunEnd);
                     var anyNewTiles = perpendicularSlice.Any(sq => sq.MoveOfOccupation == MovesMade);
                     if ((perpendicularSlice.Count > 0) && anyNewTiles)
                         score += perpendicularSlice.ScoreRun();
@@ -248,15 +233,18 @@ namespace Scrabble.Domain
             return score;
         }
 
-        internal void ValidateBoardSlices(Func<int, List<Square>> getSlice,
-                                     Placement placement,
-                                     List<PlacementError> invalidMessages)
+        // apply word validity check across a slice (row or col) of a board
+        internal List<PlacementError> ValidateBoardSlices(Func<int, List<Square>> getSquares,
+                                             Placement placement)
         {
+            List<PlacementError> invalidMessages = [];
+
             int sliceCount = Placement.Horizontal == placement ? 
-                                Board.colCount : Board.colCount;
+                                Board.rowCount : Board.colCount;
+  
             for (int index = 0; index < sliceCount; index++)
             {
-                var charList = getSlice(index).ToCharList();
+                var charList = getSquares(index).ToCharList();
 
                 if (charList != null)
                 {
@@ -268,19 +256,12 @@ namespace Scrabble.Domain
                     }
                 }
             }
+
+            return invalidMessages;
         }
 
-        internal List<Square> GetRowSlice(int row)
-        {
-            return GetSlice(true, row);
-        }
-
-        internal List<Square> GetColSlice(int col)
-        {
-            return GetSlice(false, col);
-        }
-
-        internal List<Square> GetSlice(bool isHorizontal, int index, int rangeStart = LOWERBOUND, int rangeEnd = DIMENSION -1)
+        // retrieve contents of occupied squares from a specified range
+        internal List<Square> GetSquares(bool isHorizontal, int sliceLocation, int rangeStart = LOWERBOUND, int rangeEnd = DIMENSION -1)
         {
             List<Square> slice = [];
 
@@ -288,7 +269,7 @@ namespace Scrabble.Domain
             {
                 for (int col = rangeStart; col <= rangeEnd; col++)
                 {
-                    var sq = squares[index, col];
+                    var sq = squares[sliceLocation, col];
                     if (sq.IsOccupied)
                         slice.Add(sq.Copy());
                 }
@@ -297,7 +278,7 @@ namespace Scrabble.Domain
             {
                 for (int row = rangeStart; row <= rangeEnd; row++)
                 {
-                    var sq = squares[row, index];
+                    var sq = squares[row, sliceLocation];
                     if (sq.IsOccupied)
                         slice.Add(sq.Copy());
                 }
@@ -306,7 +287,8 @@ namespace Scrabble.Domain
             return slice;
         }
 
-        internal (int start, int end) GetRun(bool isHorizontal, int fixedLocation, List<int> locationList)
+        // determine start and end location of occupied squares contiguous with specified squares
+        internal (int start, int end) GetRun(bool isHorizontal, int sliceLocation, List<int> locationList)
         {
             var minMove = locationList.Min();
             var maxMove = locationList.Max();
@@ -315,8 +297,8 @@ namespace Scrabble.Domain
 
             for (int pos = minMove - 1; pos >= 0; pos--)
             {
-                if (!(isHorizontal ? squares[fixedLocation, pos].IsOccupied :
-                                   squares[pos, fixedLocation].IsOccupied))
+                if (!(isHorizontal ? squares[sliceLocation, pos].IsOccupied :
+                                   squares[pos, sliceLocation].IsOccupied))
                 {
                     break;
                 }
@@ -325,8 +307,8 @@ namespace Scrabble.Domain
 
             for (int pos = maxMove + 1; pos < (isHorizontal ? Board.colCount : Board.rowCount); pos++)
             {
-                if (!(isHorizontal ? squares[fixedLocation, pos].IsOccupied :
-                                    squares[pos, fixedLocation].IsOccupied))
+                if (!(isHorizontal ? squares[sliceLocation, pos].IsOccupied :
+                                    squares[pos, sliceLocation].IsOccupied))
                 {
                     break;
                 }
