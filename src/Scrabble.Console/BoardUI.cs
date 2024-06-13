@@ -44,5 +44,12 @@ namespace Scrabble.Console
             Console.WriteLine();
         }
    
+        public void PlaceTile(Player player)
+        {
+            var emptySquares = Board.GetLocationSquares().Select(ls => ls.Coord).ToList();
+
+            var availableLetters = player.Rack.GetTiles().TilesToLetters();
+
+        }
     }
 }
