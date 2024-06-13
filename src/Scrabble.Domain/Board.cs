@@ -20,7 +20,6 @@ namespace Scrabble.Domain
 
         internal readonly Func<string, bool> IsWordValid;
 
-
         public Board(Func<string, bool> IsWordValid)
         {
             this.IsWordValid = IsWordValid;
@@ -93,6 +92,16 @@ namespace Scrabble.Domain
 
         public bool IsOccupied(Coord coord) => squares[coord.RowValue, coord.ColValue].IsOccupied;
         public bool AreOccupied(List<Coord> locations) => locations.Any(l => IsOccupied(l));
+
+
+        public (bool valid, List<PlacementError> errorList) IsMoveValid(List<TilePlacement> move)
+        {
+            Board board = new Board(this);
+
+            board.PlaceTiles(move);
+
+            return board.IsBoardValid();
+        }
 
         public (bool valid, List<PlacementError> errorList) IsBoardValid()
         {
@@ -318,16 +327,16 @@ namespace Scrabble.Domain
             return (minOccupied, maxOccupied);
         }
 
-        //public List<EvaluateAt<Square>> GetLocationSquares(bool filterForOccupied = false)
-        //{
-        //    List<EvaluateAt<Square>> squareList = [];
+        public List<LocationSquare> GetLocationSquares(bool IsOccupied = false)
+        {
+            List<LocationSquare> locationSquareList = [];
 
-        //    foreach (var r in Enumerable.Range(0, rowCount))
-        //        foreach (var c in Enumerable.Range(0, colCount))
-        //            if (squares[r, c].IsOccupied && filterForOccupied || !filterForOccupied)
-        //                squareList.Add(new EvaluateAt<Square>(r, c, squares[r, c]));
+            foreach (var r in Enumerable.Range(0, rowCount))
+                foreach (var c in Enumerable.Range(0, colCount))
+                    if ( IsOccupied ?  squares[r, c].IsOccupied : !squares[r,c].IsOccupied )
+                        locationSquareList.Add(new LocationSquare(new Coord((R)r, (C)c), squares[r, c]));
 
-        //    return squareList;
-        //}
+            return locationSquareList;
+        }
     }
 }

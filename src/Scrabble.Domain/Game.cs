@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Scrabble.Domain
 {
@@ -12,7 +13,6 @@ namespace Scrabble.Domain
         public int NumberOfPlayers => Players.Count;
         public byte TurnOfPlayer { get; set; } = 1;
         public bool GameDone { get; } = false;
-
 
         private Game(Lexicon lexicon, PlayerList players) {
             Lexicon = lexicon;
@@ -29,7 +29,37 @@ namespace Scrabble.Domain
             });
         }
 
-        public TileBag DrawTiles(Player player)
+        public void TakeTurn(Func<List<Tile>, List<Coord>, List<TilePlacement>> GetMove)
+        {
+            var availableSquares = Board.GetLocationSquares().Select(ls => ls.Coord).ToList();
+            var availableTiles = Players[TurnOfPlayer].Rack.GetTiles();
+
+            bool moveValid;
+
+            do
+            {
+                var candidateMove = GetMove(availableTiles, availableSquares);
+                 (moveValid, var errorList) = this.Board.IsMoveValid(candidateMove);
+            } while (!moveValid);
+
+        }
+
+        // generate a random move using all available tiles in vacant spaces
+        List<TilePlacement> GetMoveRandom(List<Tile> availableTiles, List<Coord> availableSpaces)
+        {
+            var tilePlacements = new List<TilePlacement>();
+
+            var coord = 0;            
+            foreach (var tile in availableTiles)
+            {
+                tilePlacements.Add(new TilePlacement(availableSpaces[coord], tile));                    
+                coord++;
+            }
+
+            return tilePlacements;
+        }
+
+        internal TileBag DrawTiles(Player player)
         {
             var tilesAvailable = TileBag.Count;
 
