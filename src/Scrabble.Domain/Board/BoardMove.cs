@@ -17,7 +17,7 @@ namespace Scrabble.Domain
             {
                 var loc = board.squares[coord.RowValue, coord.ColValue];
                 loc.Tile = tile;
-                loc.MoveOfOccupation = MovesMade;
+                loc.MoveOfOccupation = board.MovesMade;
             };
 
             return board;
@@ -54,7 +54,7 @@ namespace Scrabble.Domain
             return board;
         }
         // place tiles on board
-        public void PlaceTiles(List<TilePlacement> tilePlacementList)
+        internal void PlaceTiles(List<TilePlacement> tilePlacementList)
         {
 
             foreach (var (coord, tile) in tilePlacementList)

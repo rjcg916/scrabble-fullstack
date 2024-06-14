@@ -37,6 +37,7 @@ namespace Scrabble.Domain
                      List<TilePlacement> tileList) :
             this(IsWordValid)
         {
+            MovesMade++;
             PlaceTiles(tileList);
         }
 
@@ -48,6 +49,7 @@ namespace Scrabble.Domain
                         Placement placement) :
             this(IsWordValid)
         {
+            MovesMade++;
             switch (placement)
             {
                 case Placement.Star:

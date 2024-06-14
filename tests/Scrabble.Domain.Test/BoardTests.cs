@@ -137,6 +137,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.H), new Tile('A')),
                 new(new Coord(R._8, C.I), new Tile('B'))
             };
+            board.PlaceTiles(tiles);
 
             var result = board.TilesContiguousOnBoard(tiles).valid;
 
@@ -152,6 +153,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.H), new Tile('A')),
                 new(new Coord(R._8, C.J), new Tile('B'))
             };
+            board.PlaceTiles(tiles);
 
             var result = board.TilesContiguousOnBoard(tiles).valid;
 
@@ -346,7 +348,6 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.H), new Tile('B')),
                 new(new Coord(R._8, C.I), new Tile('C')),
                 new(new Coord(R._8, C.J), new Tile('D')),
-
             };
 
             var board = new Board(MockWordValidator, startFrom, tiles, Placement.Horizontal);
@@ -354,7 +355,6 @@ namespace Scrabble.Domain.Tests
             // score move
             var initialScore = board.ScoreMove(tilesAsPlacement);
             Assert.Equal(8, initialScore);
-
 
             // make a move
             var newTiles = new List<TilePlacement>
@@ -364,7 +364,7 @@ namespace Scrabble.Domain.Tests
             };
 
             var boardForScoring = new Board(board); // board.Copy();
-            boardForScoring.PlaceTiles(newTiles);
+            boardForScoring.MakeMove(newTiles);
 
             // score move
             var moveScore = boardForScoring.ScoreMove(newTiles);
