@@ -78,30 +78,6 @@ namespace Scrabble.Domain.Tests
         }
 
         [Fact]
-        public void IsFirstMove_ReturnsTrue_WhenNoMovesMade()
-        {
-            var board = new Board(MockWordValidator);
-
-            var result = board.IsFirstMove();
-
-            Assert.True(result);
-        }
-
-        [Fact]
-        public void IsFirstMove_ReturnsFalse_AfterMoveIsMade()
-        {
-            var board = new Board(MockWordValidator);
-            board.PlaceTiles(
-        [
-            new(Board.STAR, new Tile('A'))
-        ]);
-
-            var result = board.IsFirstMove();
-
-            Assert.False(result);
-        }
-
-        [Fact]
         public void IsOccupied_ReturnsTrue_WhenSquareIsOccupied()
         {
             var board = new Board(MockWordValidator);
@@ -426,7 +402,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.I), new Tile('B'))
             ]);
 
-                var result = board.GetRun(true, (int)R._8, [(int)C.H, (int)C.I]);
+                var result = board.GetEndpoints(true, (int)R._8, [(int)C.H, (int)C.I]);
 
                 Assert.Equal(((int)C.H, (int)C.I), result);
             }
@@ -441,7 +417,7 @@ namespace Scrabble.Domain.Tests
                     new(new Coord(R._9, C.H), new Tile('B'))
                 ]);
 
-                var result = board.GetRun(false, (int)C.H, [((int)R._8), ((int)R._9)]);
+                var result = board.GetEndpoints(false, (int)C.H, [((int)R._8), ((int)R._9)]);
 
                 Assert.Equal((((int)R._8), ((int)R._9)), result);
             }
@@ -484,7 +460,7 @@ namespace Scrabble.Domain.Tests
                 var board = new Board(MockWordValidator);
                 var errors = new List<PlacementError>();
 
-                errors = board.ValidateBoardSlices( r => board.GetSquares(true, r), Placement.Horizontal);
+                errors = board.ValidateWordSlices( r => board.GetSquares(true, r), Placement.Horizontal);
                 
                 Assert.Empty(errors);
             }

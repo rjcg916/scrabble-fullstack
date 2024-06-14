@@ -83,21 +83,46 @@ namespace Scrabble.Domain
 
         public Board Copy() => new(this);
 
+        public Board NextBoard(List<TilePlacement> tileList)
+        {
+            Board board = this.Copy();
+
+         //   board.MovesMade++;
+
+            foreach (var (coord, tile) in tileList)
+            {
+                var loc = board.squares[coord.RowValue, coord.ColValue];
+                loc.Tile = tile;
+                loc.MoveOfOccupation = MovesMade;
+            };
+
+            return board;
+        }
+
+        public void PlaceTiles(List<TilePlacement> tilePlacementList)
+        {
+            MovesMade++;
+
+            foreach (var (coord, tile) in tilePlacementList)
+            {
+                var location = squares[coord.RowValue, coord.ColValue];
+
+                location.Tile = new Tile(tile.Letter);
+                location.MoveOfOccupation = MovesMade;
+            };
+        }
+
         public static bool DoesMoveTouchSTAR(List<TilePlacement> tileList) =>
           tileList.Exists(t => (t.Coord.Col == Board.STAR.Col) && (t.Coord.Row == Board.STAR.Row));
 
         public Tile GetTile(Coord loc) => squares[loc.RowValue, loc.ColValue]?.Tile;
 
-        public bool IsFirstMove() => MovesMade == 0;
-
         public bool IsOccupied(Coord coord) => squares[coord.RowValue, coord.ColValue].IsOccupied;
         public bool AreOccupied(List<Coord> locations) => locations.Any(l => IsOccupied(l));
 
-
         public (bool valid, List<PlacementError> errorList) IsMoveValid(List<TilePlacement> move)
-        {
-           
-            Board board = new Board(this);
+        {    
+            Board board = new(this);
             
             board.PlaceTiles(move);
 
@@ -118,20 +143,17 @@ namespace Scrabble.Domain
 
         public (bool valid, List<PlacementError> errorList) BoardContainsOnlyValidWords()
         {
-
-
             var invalidMessages = new List<PlacementError>();
 
-            invalidMessages.AddRange(ValidateBoardSlices( r => GetSquares(true, r), Placement.Horizontal));            
-            invalidMessages.AddRange(ValidateBoardSlices( c => GetSquares(false,c), Placement.Vertical));
+            invalidMessages.AddRange(ValidateWordSlices( r => GetSquares(true, r), Placement.Horizontal));            
+            invalidMessages.AddRange(ValidateWordSlices( c => GetSquares(false,c), Placement.Vertical));
             
             return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, null);
         }
 
         public (bool valid, PlacementError error) TilesContiguousOnBoard(List<TilePlacement> tilePlacementList)
         {
-
-            // make sure each of the new tiles is contiguous with another tile
+            // make sure each of the tiles in list is contiguous with another tile
             foreach (var (coord, _) in tilePlacementList)
             {
                 bool isContiguous = false;
@@ -167,87 +189,10 @@ namespace Scrabble.Domain
             return (true, new PlacementError(Placement.All, -1 , ""));
         }
 
-        public int ScoreMove(int sliceLocation, List<int> tileLocations, Placement placement)
-        {
-            var score = placement switch
-            {
-                Placement.Horizontal => ScoreMoveDirectional(sliceLocation, tileLocations, true),
-                Placement.Vertical => ScoreMoveDirectional(sliceLocation, tileLocations, false),
-                _ => throw new Exception("Invalid Placement"),
-            };
-            return score;
-        }
 
-        public int ScoreMove(List<TilePlacement> tilePlacementList)
-        {
-            PlacementSpec tileSpecs = tilePlacementList.ToPlacementSpec();
 
-            return ScoreMove(   tileSpecs.FixedLocation, 
-                                tileSpecs.TileLocations, 
-                                tileSpecs.Placement);
-        }
-
-        public void PlaceTiles(List<TilePlacement> tilePlacementList)
-        {
-            MovesMade++;
-
-            foreach (var (coord, tile) in tilePlacementList)
-            {
-                var location = squares[coord.RowValue, coord.ColValue];
-
-                location.Tile = new Tile(tile.Letter);
-                location.MoveOfOccupation = MovesMade;
-            };
-        }
-
-        public Board NextBoard(List<TilePlacement> tileList)
-        {
-            Board board = this.Copy();
-
-            board.MovesMade++;
-
-            foreach (var (coord, tile) in tileList)
-            {
-                var loc = board.squares[coord.RowValue, coord.ColValue];
-                loc.Tile = tile;
-                loc.MoveOfOccupation = MovesMade;
-            };
-
-            return board;
-        }
-
-        // score by checking for words in slice direction and
-        // words created by slice in perpendicular direction
-        internal int ScoreMoveDirectional(int sliceLocation, List<int> tileLocations, bool isHorizontal)
-        {
-            int score = 0;
-
-            var (singleRunStart, singleRunEnd) = GetRun(isHorizontal, sliceLocation, tileLocations);
-            var moveSlice = GetSquares(isHorizontal, sliceLocation, singleRunStart, singleRunEnd);
-
-            if (moveSlice.Count == 0)
-                throw new Exception("MoveSlice must have one or more tiles");
-
-            score += moveSlice.ScoreRun();
-
-            for (int perpendicularFixed = singleRunStart; perpendicularFixed <= singleRunEnd; perpendicularFixed++)
-            {
-                var (multiRunStart, multiRunEnd) = GetRun(!isHorizontal, perpendicularFixed, [sliceLocation]);
-
-                if (multiRunStart < multiRunEnd)
-                {
-                    var perpendicularSlice = GetSquares(!isHorizontal, perpendicularFixed, multiRunStart, multiRunEnd);
-                    var anyNewTiles = perpendicularSlice.Any(sq => sq.MoveOfOccupation == MovesMade);
-                    if ((perpendicularSlice.Count > 0) && anyNewTiles)
-                        score += perpendicularSlice.ScoreRun();
-                }
-            }
-
-            return score;
-        }
-
-        // apply word validity check across a slice (row or col) of a board
-        internal List<PlacementError> ValidateBoardSlices(Func<int, List<Square>> getSquares,
+        // apply word validity check across a slice (row or col) of the board
+        internal List<PlacementError> ValidateWordSlices(Func<int, List<Square>> getSquares,
                                              Placement placement)
         {
             List<PlacementError> invalidMessages = [];
@@ -261,7 +206,7 @@ namespace Scrabble.Domain
 
                 if (charList != null)
                 {
-                    var (valid, invalidWord) = charList.IsValidSequence(IsWordValid);
+                    var (valid, invalidWord) = charList.IsValidWordList(IsWordValid);
 
                     if (!valid)
                     {
@@ -273,7 +218,7 @@ namespace Scrabble.Domain
             return invalidMessages;
         }
 
-        // retrieve contents of occupied squares from a specified range
+        // retrieve contents of squares from a specified range
         internal List<Square> GetSquares(bool isHorizontal, int sliceLocation, int rangeStart = LOWERBOUND, int rangeEnd = DIMENSION -1)
         {
             List<Square> slice = [];
@@ -301,7 +246,7 @@ namespace Scrabble.Domain
         }
 
         // determine start and end location of occupied squares contiguous with specified squares
-        internal (int start, int end) GetRun(bool isHorizontal, int sliceLocation, List<int> locationList)
+        internal (int start, int end) GetEndpoints(bool isHorizontal, int sliceLocation, List<int> locationList)
         {
             var minMove = locationList.Min();
             var maxMove = locationList.Max();
@@ -342,5 +287,6 @@ namespace Scrabble.Domain
 
             return locationSquareList;
         }
+
     }
 }

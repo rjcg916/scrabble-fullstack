@@ -45,19 +45,19 @@ namespace Scrabble.Domain
         }
 
         // generate a random move using all available tiles in vacant spaces
-        List<TilePlacement> GetMoveRandom(List<Tile> availableTiles, List<Coord> availableSpaces)
-        {
-            var tilePlacements = new List<TilePlacement>();
+        //static List<TilePlacement> GetMoveRandom(List<Tile> availableTiles, List<Coord> availableSpaces)
+        //{
+        //    var tilePlacements = new List<TilePlacement>();
 
-            var coord = 0;            
-            foreach (var tile in availableTiles)
-            {
-                tilePlacements.Add(new TilePlacement(availableSpaces[coord], tile));                    
-                coord++;
-            }
+        //    var coord = 0;            
+        //    foreach (var tile in availableTiles)
+        //    {
+        //        tilePlacements.Add(new TilePlacement(availableSpaces[coord], tile));                    
+        //        coord++;
+        //    }
 
-            return tilePlacements;
-        }
+        //    return tilePlacements;
+        //}
 
         internal TileBag DrawTiles(Player player)
         {

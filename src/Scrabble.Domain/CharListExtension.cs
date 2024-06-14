@@ -7,7 +7,7 @@ namespace Scrabble.Domain
     public static class CharListExtension
     {
 
-        public static (bool valid, string invalidWord) IsValidSequence(this List<char> charArray, Func<string, bool> IsWordValid)
+        public static (bool valid, string invalidWord) IsValidWordList(this List<char> charArray, Func<string, bool> IsWordValid)
         {
             char[] separator = [' ', '\t', '\n', '\r'];
 
