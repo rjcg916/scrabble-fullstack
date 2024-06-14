@@ -96,20 +96,30 @@ namespace Scrabble.Domain
 
         public (bool valid, List<PlacementError> errorList) IsMoveValid(List<TilePlacement> move)
         {
+           
             Board board = new Board(this);
-
+            
             board.PlaceTiles(move);
 
-            return board.IsBoardValid();
-        }
-
-        public (bool valid, List<PlacementError> errorList) IsBoardValid()
-        {
             if (!IsOccupied(STAR))
             {
                 return (false, [new(Placement.Star, 0, "STAR not occupied")]);
             }
+
+            var (areTilesContiguous,placementError) = board.TilesContiguousOnBoard(move);
+
+            if (!areTilesContiguous)
+            {
+                return (false, [placementError]);
+            }
             
+            return board.BoardContainsOnlyValidWords();
+        }
+
+        public (bool valid, List<PlacementError> errorList) BoardContainsOnlyValidWords()
+        {
+
+
             var invalidMessages = new List<PlacementError>();
 
             invalidMessages.AddRange(ValidateBoardSlices( r => GetSquares(true, r), Placement.Horizontal));            
@@ -118,14 +128,8 @@ namespace Scrabble.Domain
             return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, null);
         }
 
-        public bool TilesContiguousOnBoard(List<TilePlacement> tilePlacementList)
+        public (bool valid, PlacementError error) TilesContiguousOnBoard(List<TilePlacement> tilePlacementList)
         {
-
-            // place the new tiles
-            foreach (var (coord, tile) in tilePlacementList)
-            {
-                squares[coord.RowValue, coord.ColValue].Tile = tile;
-            }
 
             // make sure each of the new tiles is contiguous with another tile
             foreach (var (coord, _) in tilePlacementList)
@@ -156,11 +160,11 @@ namespace Scrabble.Domain
 
                 if (!isContiguous) // no need to examine other tiles
                 {
-                    return false;
+                    return (false, new PlacementError(Placement.Vertical, coord.ColValue, ""));
                 }
             }
-
-            return true;
+            
+            return (true, new PlacementError(Placement.All, -1 , ""));
         }
 
         public int ScoreMove(int sliceLocation, List<int> tileLocations, Placement placement)

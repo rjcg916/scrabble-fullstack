@@ -6,7 +6,7 @@ namespace Scrabble.Domain
 {
     public enum Placement
     {
-        Horizontal, Vertical, Star
+        Horizontal, Vertical, Star, All
     }
 
     public record PlacementError(Placement Type, int Location, string Letters);

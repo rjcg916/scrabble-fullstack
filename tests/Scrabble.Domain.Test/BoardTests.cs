@@ -162,7 +162,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.I), new Tile('B'))
             };
 
-            var result = board.TilesContiguousOnBoard(tiles);
+            var result = board.TilesContiguousOnBoard(tiles).valid;
 
             Assert.True(result);
         }
@@ -177,7 +177,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.J), new Tile('B'))
             };
 
-            var result = board.TilesContiguousOnBoard(tiles);
+            var result = board.TilesContiguousOnBoard(tiles).valid;
 
             Assert.False(result);
         }
