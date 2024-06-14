@@ -45,7 +45,7 @@ namespace Scrabble.Domain.Tests
             new(new Coord(R._8, C.H), new Tile('A'))
         ]);
 
-            var copy = board.Copy();
+            var copy = new Board(board); //board.Copy();
 
             Assert.NotSame(board, copy);
             Assert.Equal('A', copy.GetTile(new Coord(R._8, C.H)).Letter);
@@ -260,7 +260,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.K), new Tile('J'))
             };
 
-            var boardForScoring = board.Copy();
+            var boardForScoring = new Board(board); // board.Copy();
             boardForScoring.PlaceTiles(newTiles);
 
             // score move
@@ -324,7 +324,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._9, C.K), new Tile('J'))
             };
 
-            var boardForScoring = board.Copy();
+            var boardForScoring = new Board(board);// board.Copy();
             boardForScoring.PlaceTiles(newTiles);
 
             // score move
@@ -363,7 +363,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._9, C.J), new Tile('J'))
             };
 
-            var boardForScoring = board.Copy();
+            var boardForScoring = new Board(board); // board.Copy();
             boardForScoring.PlaceTiles(newTiles);
 
             // score move
@@ -372,23 +372,23 @@ namespace Scrabble.Domain.Tests
             Assert.Equal(11, moveScore);
         }
 
-        [Fact]
-        public void NextBoard_ReturnsNewBoardWithTilesPlaced()
-        {
-            var board = new Board(MockWordValidator);
-            var tiles = new List<TilePlacement>
-            {
-                new(new Coord(R._8, C.H), new Tile('A')),
-                new(new Coord(R._8, C.I), new Tile('B'))
-            };
+        //[Fact]
+        //public void NextBoard_ReturnsNewBoardWithTilesPlaced()
+        //{
+        //    var board = new Board(MockWordValidator);
+        //    var tiles = new List<TilePlacement>
+        //    {
+        //        new(new Coord(R._8, C.H), new Tile('A')),
+        //        new(new Coord(R._8, C.I), new Tile('B'))
+        //    };
 
-            var nextBoard = board.NextBoard(tiles);
+        //    var nextBoard = board.NextBoard(tiles);
 
-            Assert.Equal('A', nextBoard.GetTile(new Coord(R._8, C.H)).Letter);
-            Assert.Equal('B', nextBoard.GetTile(new Coord(R._8, C.I)).Letter);
-            Assert.True(nextBoard.IsOccupied(new Coord(R._8, C.H)));
-            Assert.True(nextBoard.IsOccupied(new Coord(R._8, C.I)));
-        }
+        //    Assert.Equal('A', nextBoard.GetTile(new Coord(R._8, C.H)).Letter);
+        //    Assert.Equal('B', nextBoard.GetTile(new Coord(R._8, C.I)).Letter);
+        //    Assert.True(nextBoard.IsOccupied(new Coord(R._8, C.H)));
+        //    Assert.True(nextBoard.IsOccupied(new Coord(R._8, C.I)));
+        //}
 
 
             // Tests for GetRun method

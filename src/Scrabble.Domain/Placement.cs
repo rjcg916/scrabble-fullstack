@@ -9,8 +9,8 @@ namespace Scrabble.Domain
         Horizontal, Vertical, Star, All
     }
 
-    public record PlacementError(Placement Type, int Location, string Letters);
-    public record PlacementSpec(Placement Placement, int FixedLocation, List<int> TileLocations);
+    public record PlacementError(Placement Type, Coord Location, string Letters);
+    public record PlacementSpec(Placement Placement, int SliceLocation, List<int> TileLocations);
     public record TilePlacement(Coord Coord, Tile Tile);
 
     public static class PlacementSpecExtension
