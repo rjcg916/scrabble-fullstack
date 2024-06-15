@@ -86,6 +86,40 @@ namespace Scrabble.Domain
 
         //public Board Copy() => new(this);
         // retrieve contents of squares from a specified range
+
+        internal List<Square> GetSquaresVertical(int sliceLocation, int rangeStart = LOWERBOUND, int rangeEnd = DIMENSION - 1)
+        {
+            List<Square> slice = [];
+
+
+            for (int row = rangeStart; row <= rangeEnd; row++)
+            {
+                var sq = squares[row, sliceLocation];
+                if (sq.IsOccupied)
+                    slice.Add(sq.Copy());
+            }
+
+
+            return slice;
+        }
+
+
+
+
+        internal List<Square> GetSquaresHorizontal(int sliceLocation, int rangeStart = LOWERBOUND, int rangeEnd = DIMENSION - 1)
+        {
+            List<Square> slice = [];
+
+            for (int col = rangeStart; col <= rangeEnd; col++)
+            {
+                var sq = squares[sliceLocation, col];
+                if (sq.IsOccupied)
+                    slice.Add(sq.Copy());
+            }
+
+            return slice;
+        }
+
         internal List<Square> GetSquares(bool isHorizontal, int sliceLocation, int rangeStart = LOWERBOUND, int rangeEnd = DIMENSION - 1)
         {
             List<Square> slice = [];
@@ -142,6 +176,65 @@ namespace Scrabble.Domain
 
             return (minOccupied, maxOccupied);
         }
+
+        // determine start and end location of occupied squares contiguous with specified squares
+        internal (int start, int end) GetEndpointsHorizontal(int sliceLocation, List<int> locationList)
+        {
+            var minMove = locationList.Min();
+            var maxMove = locationList.Max();
+            var minOccupied = minMove;
+            var maxOccupied = maxMove;
+
+            for (int pos = minMove - 1; pos >= 0; pos--)
+            {
+                if (!(squares[sliceLocation, pos].IsOccupied ))
+                {
+                    break;
+                }
+                minOccupied--;
+            }
+
+            for (int pos = maxMove + 1; pos < (Board.colCount ); pos++)
+            {
+                if (!(squares[sliceLocation, pos].IsOccupied))
+                {
+                    break;
+                }
+                maxOccupied++;
+            }
+
+            return (minOccupied, maxOccupied);
+        }
+
+        // determine start and end location of occupied squares contiguous with specified squares
+        internal (int start, int end) GetEndpointsVertical(int sliceLocation, List<int> locationList)
+        {
+            var minMove = locationList.Min();
+            var maxMove = locationList.Max();
+            var minOccupied = minMove;
+            var maxOccupied = maxMove;
+
+            for (int pos = minMove - 1; pos >= 0; pos--)
+            {
+                if (!(squares[pos, sliceLocation].IsOccupied))
+                {
+                    break;
+                }
+                minOccupied--;
+            }
+
+            for (int pos = maxMove + 1; pos < (Board.rowCount); pos++)
+            {
+                if (!(squares[pos, sliceLocation].IsOccupied))
+                {
+                    break;
+                }
+                maxOccupied++;
+            }
+
+            return (minOccupied, maxOccupied);
+        }
+
 
         public List<LocationSquare> GetLocationSquares(bool IsOccupied = false)
         {

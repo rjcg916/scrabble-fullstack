@@ -433,7 +433,7 @@ namespace Scrabble.Domain.Tests
                     new(new Coord(R._8, C.I), new Tile('B'))
                 ]);
 
-                var result = board.GetSquares(true, (int) R._8);
+                var result = board.GetSquaresHorizontal((int) R._8);
 
                 Assert.Equal(2, result.Count);
             }
@@ -448,7 +448,7 @@ namespace Scrabble.Domain.Tests
                     new(new Coord(R._8, C.H), new Tile('B'))
                 ]);
 
-                var result = board.GetSquares(false, (int)C.H);
+                var result = board.GetSquaresVertical((int)C.H);
 
                 Assert.Equal(2, result.Count);
             }
@@ -460,7 +460,7 @@ namespace Scrabble.Domain.Tests
                 var board = new Board(MockWordValidator);
                 var errors = new List<PlacementError>();
 
-                errors = board.ValidateWordSlices( r => board.GetSquares(true, r), Placement.Horizontal);
+                errors = board.ValidateWordSlices( r => board.GetSquaresHorizontal(r), Placement.Horizontal);
                 
                 Assert.Empty(errors);
             }

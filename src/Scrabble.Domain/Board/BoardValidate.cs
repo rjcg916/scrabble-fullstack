@@ -82,6 +82,57 @@ namespace Scrabble.Domain
         }
 
 
+        // apply word validity check across a slice (row or col) of the board
+        internal List<PlacementError> ValidateHorizontalWordSlices(Func<int, List<Square>> getSquares)
+        {
+            List<PlacementError> invalidMessages = [];
+
+            int sliceCount = Board.rowCount;
+
+            for (int index = 0; index < sliceCount; index++)
+            {
+                var charList = getSquares(index).ToCharList();
+
+                if (charList != null)
+                {
+                    var (valid, invalidWord) = charList.IsValidWordList(IsWordValid);
+
+                    if (!valid)
+                    {
+                        var coord = new Coord((R)index, 0);
+                        invalidMessages.Add(new(Placement.Horizontal, coord, invalidWord));
+                    }
+                }
+            }
+
+            return invalidMessages;
+        }
+
+        // apply word validity check across a slice (row or col) of the board
+        internal List<PlacementError> ValidateVerticalWordSlices(Func<int, List<Square>> getSquares)
+        {
+            List<PlacementError> invalidMessages = [];
+
+            int sliceCount = Board.colCount;
+
+            for (int index = 0; index < sliceCount; index++)
+            {
+                var charList = getSquares(index).ToCharList();
+
+                if (charList != null)
+                {
+                    var (valid, invalidWord) = charList.IsValidWordList(IsWordValid);
+
+                    if (!valid)
+                    {
+                        var coord = new Coord(0, (C)index);
+                        invalidMessages.Add(new(Placement.Vertical, coord, invalidWord));
+                    }
+                }
+            }
+
+            return invalidMessages;
+        }
 
         // apply word validity check across a slice (row or col) of the board
         internal List<PlacementError> ValidateWordSlices(Func<int, List<Square>> getSquares,
