@@ -9,9 +9,10 @@ namespace Scrabble.Console
         Rack Rack { get; set; } = rack;
 
         public void DisplayRack()
-        {          
+        {
+            Console.WriteLine("Tiles"); Console.WriteLine();
             Console.WriteLine(
-                Rack.GetTiles().Select(  t => $"[{t.Letter}]").ToList().ToString()
+             String.Join(", ", Rack.GetTiles().Select(t => $"[{t.Letter}]"))
             );            
         }
     }

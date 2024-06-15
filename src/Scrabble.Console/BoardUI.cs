@@ -9,7 +9,9 @@ namespace Scrabble.Console
         Board Board { get; set; } = board;
 
         public void DisplayBoard(bool DisplayStatus = true)
-        {            
+        {
+            Console.WriteLine("Board"); Console.WriteLine();
+
             for (int r = 0; r < Board.rowCount; r++)
             {
                 for (int c = 0; c < Board.colCount; c++)
