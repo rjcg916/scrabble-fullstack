@@ -10,7 +10,7 @@ namespace Scrabble.Console
         //var x = GetValidLetter(new List<char>() { 'A', 'C' });
         //Console.WriteLine(x);
 
-        public static char GetValidLetter(List<char> currentLetters)
+        public static char GetValidLetter(List<char> validChoices)
         {
             char validLetter;
             bool isLetterValid;
@@ -20,7 +20,7 @@ namespace Scrabble.Console
                 string input = Console.ReadLine().ToUpper();
                 if (char.TryParse(input, out validLetter))
                 {
-                    isLetterValid = currentLetters.Any(l => l.Equals(validLetter));
+                    isLetterValid = validChoices.Any(l => l.Equals(validLetter));
                     if (!isLetterValid)
                     {
                         Console.WriteLine("Invalid letter. Please try again.");
@@ -38,9 +38,9 @@ namespace Scrabble.Console
 
         //var x = GetValidLocation(new List<Coord>() { new Coord(R._1, C.A), new Coord(R._2, C.B) });
         //Console.WriteLine(x);
-        public static Coord GetValidLocation(List<Coord> emptySquares)
+        public static Coord GetValidLocation(List<Coord> validChoices)
         {
-            Coord validLocation = emptySquares.First();
+            Coord validLocation = validChoices.First();
 
             bool isLocationValid = false;
             do
@@ -53,7 +53,7 @@ namespace Scrabble.Console
                 if (int.TryParse(rowStr, out int row) && int.TryParse(colStr, out int col))
                 {
                     validLocation = new Coord((R)row, (C)col);
-                    var es = emptySquares.Select(s => s.ToString());
+                    var es = validChoices.Select(s => s.ToString());
                     isLocationValid = es.Contains(validLocation.ToString());
                     if (!isLocationValid)
                     {
