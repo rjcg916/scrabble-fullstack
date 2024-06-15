@@ -89,8 +89,8 @@ namespace Scrabble.Domain
         {
             return placement switch
             {
-                Placement.Horizontal => ScoreMoveHorizontal(sliceLocation, tileLocations),
-                Placement.Vertical   => ScoreMoveVertical(sliceLocation, tileLocations),
+                Placement.Horizontal => ScoreMoveHorizontal(sliceLocation, tileLocations, MovesMade),
+                Placement.Vertical   => ScoreMoveVertical(sliceLocation, tileLocations, MovesMade),
                 _ => throw new Exception("Invalid Placement"),
             };
         }
@@ -229,7 +229,7 @@ namespace Scrabble.Domain
 
         // score by checking for words:
         // in slice direction and words created in perpendicular direction
-        internal int ScoreMoveHorizontal(int sliceLocation, List<int> tileLocations)
+        internal int ScoreMoveHorizontal0(int sliceLocation, List<int> tileLocations)
         {
             int score = 0;
 
@@ -259,7 +259,7 @@ namespace Scrabble.Domain
 
         // score by checking for words:
         // in slice direction and words created in perpendicular direction
-        internal int ScoreMoveHorizontal1(int sliceLocation, List<int> tileLocations, int MovesMade)
+        internal int ScoreMoveHorizontal(int sliceLocation, List<int> tileLocations, int MovesMade)
         {
 
             var (singleRunStart, singleRunEnd) = GetEndpointsHorizontal(sliceLocation, tileLocations);
@@ -273,7 +273,7 @@ namespace Scrabble.Domain
 
         // score by checking for words:
         // in slice direction and words created in perpendicular direction
-        internal int ScoreMoveVertical(int sliceLocation, List<int> tileLocations)
+        internal int ScoreMoveVertical0(int sliceLocation, List<int> tileLocations)
         {
             int score = 0;
 
@@ -302,7 +302,7 @@ namespace Scrabble.Domain
         }
         // score by checking for words:
         // in slice direction and words created in perpendicular direction
-        internal int ScoreMoveVertical1(int sliceLocation, List<int> tileLocations, int MovesMade)
+        internal int ScoreMoveVertical(int sliceLocation, List<int> tileLocations, int MovesMade)
         {
 
             var (singleRunStart, singleRunEnd) = GetEndpointsVertical(sliceLocation, tileLocations);
