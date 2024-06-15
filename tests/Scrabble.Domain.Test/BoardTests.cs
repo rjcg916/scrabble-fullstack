@@ -364,7 +364,7 @@ namespace Scrabble.Domain.Tests
             };
 
             var boardForScoring = new Board(board); // board.Copy();
-            boardForScoring.MakeMove(newTiles);
+            boardForScoring = boardForScoring.MakeMove(newTiles);
 
             // score move
             var moveScore = boardForScoring.ScoreMove(newTiles);

@@ -5,55 +5,53 @@ var lexicon = new Lexicon();
 
 var gameManager = new GameManager();
 
-// create first game
+//// create first game
 var game = Game.GameFactory.CreateGame(lexicon, 
     new PlayerList( [new("A"), new("B")]));
 gameManager.AddGame(game);
 
-
-// get current board for move
+//// get current board for move
 var moveBoard = new Board(game.Board);
 
-// get rack for current player
+//// get rack for current player
 var currentRack = game.Players[game.TurnOfPlayer].Rack;
 var currentLetters = currentRack.GetTiles().Select( t => t.Letter).ToList();
 var rackUI = new RackUI(currentRack);
 
-// display board
+//// display board
 var boardUI = new BoardUI(moveBoard);
 boardUI.DisplayBoard(false);
 
-// display rack
+//// display rack
 rackUI.DisplayRack();
 
 var emptySquares = game.Board.GetLocationSquares().Select( ls => ls.Coord).ToList();
 
-// place tiles until valid and done
+//// place tiles until valid and done
 
-var makeMove = false;
-bool moveValid = false;
-var theMove = new List<TilePlacement>();
+//var makeMove = false;
+//bool moveValid = false;
+//var theMove = new List<TilePlacement>();
 
-do // get letters/locations until done and resulting move valid
-{
-    char theLetter = GetValidLetter(currentLetters);
-    Coord validCoord = GetValidLocation(emptySquares);
+//do // get letters/locations until done and resulting move valid
+//{
+//    char theLetter = GetValidLetter(currentLetters);
+//    Coord validCoord = GetValidLocation(emptySquares);
 
-    theMove.Add(new TilePlacement(validCoord, new Tile(theLetter)));
+//    theMove.Add(new TilePlacement(validCoord, new Tile(theLetter)));
 
+//    (moveValid, var errorList) = moveBoard.IsMoveValid(theMove);
+//    if (!moveValid)
+//    {
+//        // display error
+//    }
+//    else
+//    {
+//        // determine if done
+//        makeMove = AskToMakeMove();
+//    }
 
-    (moveValid, var errorList) = moveBoard.IsMoveValid(theMove);
-    if (!moveValid)
-    {
-        // display error
-    }
-    else
-    {
-        // determine if done
-        makeMove = AskToMakeMove();
-    }
-
-} while (!makeMove && !moveValid);
+//} while (!makeMove && !moveValid);
 
 
 // make move on original board and score
@@ -78,86 +76,3 @@ do // get letters/locations until done and resulting move valid
 //moves.Add(tiles);
 
 //boardUI.DisplayBoard();
-
-char GetValidLetter(List<char> currentLetters)
-{
-    char validLetter;
-    bool isLetterValid;
-    do
-    {
-        Console.Write("Tile: ");
-        string input = Console.ReadLine();
-        if (char.TryParse(input, out validLetter))
-        {
-            isLetterValid = currentLetters.Any(l => l.Equals(validLetter));
-            if (!isLetterValid)
-            {
-                Console.WriteLine("Invalid letter. Please try again.");
-            }
-        }
-        else
-        {
-            isLetterValid = false;
-            Console.WriteLine("Invalid input. Please enter a single letter.");
-        }
-    } while (!isLetterValid);
-
-    return validLetter;
-}
-
-Coord GetValidLocation(List<Coord> emptySquares)
-{
-    Coord validLocation = emptySquares.First();
-
-    bool isLocationValid = false;
-    do
-    {
-        Console.Write("Row: ");
-        string rowStr = Console.ReadLine();
-        Console.Write("Col: ");
-        string colStr = Console.ReadLine();
-
-        if (int.TryParse(rowStr, out int row) && int.TryParse(colStr, out int col))
-        {
-            validLocation = new Coord((R)row, (C)col);
-            isLocationValid = emptySquares.Contains(validLocation);
-            if (!isLocationValid)
-            {
-                Console.WriteLine("Invalid location. Please try again.");
-            }
-        }
-        else
-        {
-            isLocationValid = false;
-            Console.WriteLine("Invalid input. Please enter numeric values for row and column.");
-        }
-    } while (!isLocationValid);
-
-    return validLocation;
-}
-
-bool AskToMakeMove()
-{
-    bool validInput;
-    do
-    {
-        Console.Write("Make Move (yes/no)? ");
-        string response = Console.ReadLine().Trim().ToLower();
-        if (response == "yes")
-        {
-            return true;
-        }
-        else if (response == "no")
-        {
-            return false;
-        }
-        else
-        {
-            validInput = false;
-            Console.WriteLine("Invalid input. Please enter 'yes' or 'no'.");
-        }
-    } while (!validInput);
-
-    return false;
-}
-
