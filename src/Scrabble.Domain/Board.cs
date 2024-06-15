@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ardalis.GuardClauses;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -48,6 +49,10 @@ namespace Scrabble.Domain
         public Board(Func<string, bool> IsWordValid, Coord startFrom, List<Tile> tiles, Placement placement) :
             this(IsWordValid)
         {
+            Guard.Against.Expression(
+                    p => (p != Placement.Vertical) || (p != Placement.Horizontal), 
+                    placement, 
+                    "Invalid Initial Move Placement");
 
             switch (placement)
             {
@@ -60,8 +65,6 @@ namespace Scrabble.Domain
                     PlaceTiles(tiles.Select((tile, index) =>
                         (new Coord((R)(startFrom.RowValue + index), startFrom.Col), tile)).ToList());
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(placement), placement, null);
             }
         }
 

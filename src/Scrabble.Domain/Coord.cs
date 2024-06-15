@@ -44,8 +44,11 @@ namespace Scrabble.Domain
         public string ColName { get; set; } = ((C)col).ToString()[0..];
     }
 
+  
+
     public static class CoordExtensions
     {
+
         public static Placement GetPlacementType(this List<Tile> tiles, Coord start, Coord end)
         {
             bool horizontal = start.Row == end.Row;
@@ -57,15 +60,13 @@ namespace Scrabble.Domain
 
             if (horizontal && vertical && !oneTile)
                 throw new System.Exception("Unknown Placement Type");
-            else
-            {
-                if (horizontal && horizontalNumberOfTiles == numberOfTiles)
-                    return Placement.Horizontal;
-                else if (vertical && verticalNumberOfTiles == numberOfTiles)
-                    return Placement.Vertical;
-                else 
-                    throw new System.Exception("Unsupported PlacementType");
-            }
+            if (horizontal && horizontalNumberOfTiles == numberOfTiles)
+                return Placement.Horizontal;
+            else if (vertical && verticalNumberOfTiles == numberOfTiles)
+                return Placement.Vertical;
+            else 
+                throw new System.Exception("Unsupported PlacementType");
+            
         }
     }
 }
