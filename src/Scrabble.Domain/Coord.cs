@@ -46,24 +46,24 @@ namespace Scrabble.Domain
     public static class CoordExtensions
     {
 
-        public static Placement GetPlacementType(this List<Tile> tiles, Coord start, Coord end)
-        {
-            bool horizontal = start.Row == end.Row;
-            int horizontalNumberOfTiles = end.Col - start.Col + 1;
-            bool vertical = start.Col == end.Col;
-            int verticalNumberOfTiles = end.Row - start.Row + 1;
-            bool oneTile = horizontal && vertical;
-            int numberOfTiles = tiles.Count;
+        //public static Placement GetPlacementType(this List<Tile> tiles, Coord start, Coord end)
+        //{
+        //    bool horizontal = start.Row == end.Row;
+        //    int horizontalNumberOfTiles = end.Col - start.Col + 1;
+        //    bool vertical = start.Col == end.Col;
+        //    int verticalNumberOfTiles = end.Row - start.Row + 1;
+        //    bool oneTile = horizontal && vertical;
+        //    int numberOfTiles = tiles.Count;
 
-            if (horizontal && vertical && !oneTile)
-                throw new System.Exception("Unknown Placement Type");
-            if (horizontal && horizontalNumberOfTiles == numberOfTiles)
-                return Placement.Horizontal;
-            else if (vertical && verticalNumberOfTiles == numberOfTiles)
-                return Placement.Vertical;
-            else 
-                throw new System.Exception("Unsupported PlacementType");
+        //    if (horizontal && vertical && !oneTile)
+        //        throw new System.Exception("Unknown Placement Type");
+        //    if (horizontal && horizontalNumberOfTiles == numberOfTiles)
+        //        return Placement.Horizontal;
+        //    else if (vertical && verticalNumberOfTiles == numberOfTiles)
+        //        return Placement.Vertical;
+        //    else 
+        //        throw new System.Exception("Unsupported PlacementType");
             
-        }
+        //}
     }
 }
