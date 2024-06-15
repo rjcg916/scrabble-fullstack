@@ -15,11 +15,11 @@ namespace Scrabble.Domain.Tests
             var validSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };
             var invalidSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'X', 'y', 'z' };
 
-            var (valid, blankWord) = validSequence.IsValidSequence(isWordValid);
+            var (valid, blankWord) = validSequence.IsValidWordList(isWordValid);
             Assert.True(valid);
             Assert.Equal("", blankWord);
 
-            var (validFalse, invalidWord) = invalidSequence.IsValidSequence(isWordValid);
+            var (validFalse, invalidWord) = invalidSequence.IsValidWordList(isWordValid);
             Assert.False(validFalse);
             Assert.Equal("Xyz", invalidWord);
         }

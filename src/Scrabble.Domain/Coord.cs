@@ -2,10 +2,6 @@
 
 namespace Scrabble.Domain
 {
-    public enum Placement
-    {
-        Horizontal, Vertical, Star
-    }
 
     public enum R : int
     {
@@ -16,7 +12,6 @@ namespace Scrabble.Domain
     {
         A = 0, B, C, D, E, F, G, H, I, J, K, L, M, N, O
     }
-
 
     public class Coord(R row, C col)
     {
@@ -35,14 +30,16 @@ namespace Scrabble.Domain
         }
     }
 
-    public class EvaluateAt<T>(int row, int col, T evaluator = default)
-    {
-        public T Evaluator { get; set; } = evaluator;
-        public int Row { get; set; } = row;
-        public string RowName { get; set; } = ((R)row).ToString()[1..];
-        public int Col { get; set; } = col;
-        public string ColName { get; set; } = ((C)col).ToString()[0..];
-    }
+    public record LocationSquare (Coord Coord, Square Square);
+
+    //public class EvaluateAt<T>(int row, int col, T evaluator = default)
+    //{
+    //    public T Evaluator { get; set; } = evaluator;
+    //    public int Row { get; set; } = row;
+    //    public string RowName { get; set; } = ((R)row).ToString()[1..];
+    //    public int Col { get; set; } = col;
+    //    public string ColName { get; set; } = ((C)col).ToString()[0..];
+    //}
 
     public static class CoordExtensions
     {
@@ -56,7 +53,7 @@ namespace Scrabble.Domain
             int numberOfTiles = tiles.Count;
 
             if (horizontal && vertical && !oneTile)
-                throw new System.Exception("Unknown Placement Type");
+                throw new System.Exception("Unknown PlacementType");
             else
             {
                 if (horizontal && horizontalNumberOfTiles == numberOfTiles)

@@ -13,8 +13,7 @@ namespace Scrabble.Domain
             if (!IsValid(players)) 
                 throw new ArgumentException($"{players.Count} is not a valid players list size");
 
-            List = players; 
-        
+            List = players;       
         }
 
         private static bool IsValid(List<Player> players) =>
