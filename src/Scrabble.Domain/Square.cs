@@ -1,26 +1,53 @@
-﻿namespace Scrabble.Domain
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Scrabble.Domain
 {
     public enum SquareType
     {
         reg, dl, tl, dw, tw, start
     }
 
-    public class Square(SquareType squareType = SquareType.reg)
+    public static class SquareExtensions
     {
 
+        static public List<char>ToCharList(this List<Square> slice ) =>
+            slice.Select(square => square.Tile?.Letter ?? ' ').ToList();
+
+        static public int ScoreRun(this List<Square> squares)
+        {
+            int score = 0;
+
+            int cumulativeWordMultiplier = 1;
+
+            foreach (var location in squares)
+            {
+                score += (location.Tile.Value * location.LetterMultiplier);
+                cumulativeWordMultiplier *= location.WordMultiplier;                       
+            }
+
+            return score * cumulativeWordMultiplier;
+        }
+    }
+
+    public class Square(SquareType squareType = SquareType.reg)
+    {
         public Square Copy()
         {
             return new Square
             {
-                Tile = this.Tile, 
-                SquareType = this.SquareType
+                Tile = this.Tile,
+                SquareType = this.SquareType,
+                MoveOfOccupation = this.MoveOfOccupation,
+                IsFinal = this.IsFinal             
             };
         }
-
         public SquareType SquareType { get; set; } = squareType;
 
         public bool IsFinal { get; set; } = false;
         public Tile Tile { get; set; }
+
+        public int MoveOfOccupation { get; set; } = 0;
 
         public bool IsOccupied
         {
