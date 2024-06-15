@@ -13,9 +13,9 @@ namespace Scrabble.Domain
         public bool AreOccupied(List<Coord> locations) => locations.Any(l => IsOccupied(l));
 
         public (bool valid, List<PlacementError> errorList) IsMoveValid(List<TilePlacement> move)
-        {    
+        {
             Board board = new(this);
-            
+
             board.PlaceTiles(move);
 
             if (!IsOccupied(STAR))
@@ -23,13 +23,13 @@ namespace Scrabble.Domain
                 return (false, [new(Placement.Star, Board.STAR, "STAR not occupied")]);
             }
 
-            var (areTilesContiguous,placementError) = board.TilesContiguousOnBoard(move);
+            var (areTilesContiguous, placementError) = board.TilesContiguousOnBoard(move);
 
             if (!areTilesContiguous)
             {
                 return (false, [placementError]);
             }
-            
+
             return board.BoardContainsOnlyValidWords();
         }
 
@@ -37,9 +37,9 @@ namespace Scrabble.Domain
         {
             var invalidMessages = new List<PlacementError>();
 
-            invalidMessages.AddRange(ValidateWordSlices( r => GetSquares(true, r), Placement.Horizontal));            
-            invalidMessages.AddRange(ValidateWordSlices( c => GetSquares(false, c), Placement.Vertical));
-            
+            invalidMessages.AddRange(ValidateHorizontalWordSlices(r => GetSquaresHorizontal(r)));
+            invalidMessages.AddRange(ValidateVerticalWordSlices(c => GetSquaresVertical(c)));
+
             return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, null);
         }
 
@@ -50,26 +50,28 @@ namespace Scrabble.Domain
             {
                 bool isContiguous = false;
 
-                // Check the four adjacent squares (up, down, left, right)
-                var adjacentCoords = new List<Coord>
-                    {
-                        new((R)( Math.Max( coord.RowValue - 1, 0)), coord.Col), // Up
-                        new((R)( Math.Min( coord.RowValue + 1, Board.rowCount - 1) ), coord.Col), // Down
-                        new(coord.Row, (C)( Math.Max(coord.ColValue - 1, 0))), // Left
-                        new(coord.Row, (C)( Math.Min(coord.ColValue + 1, Board.colCount - 1)))  // Right
-                    };
+                //// Check the four adjacent squares (up, down, left, right)
+                //var adjacentCoords = new List<Coord>
+                //    {
+                //        new((R)( Math.Max( coord.RowValue - 1, 0)), coord.Col), // Up
+                //        new((R)( Math.Min( coord.RowValue + 1, Board.rowCount - 1) ), coord.Col), // Down
+                //        new(coord.Row, (C)( Math.Max(coord.ColValue - 1, 0))), // Left
+                //        new(coord.Row, (C)( Math.Min(coord.ColValue + 1, Board.colCount - 1)))  // Right
+                //    };
+                var adjacentCoords = coord.GetAdjacent();
 
                 foreach (var adjCoord in adjacentCoords)
                 {
-                    if (adjCoord.RowValue >= 0 && adjCoord.RowValue < rowCount &&
-                        adjCoord.ColValue >= 0 && adjCoord.ColValue < colCount)
+                    //if (adjCoord.RowValue >= 0 && adjCoord.RowValue < rowCount &&
+                    //    adjCoord.ColValue >= 0 && adjCoord.ColValue < colCount)
+                    //{
+                    //     if (adjCoord.IsValidCoord()) {  //not really needed
+                    if (squares[adjCoord.RowValue, adjCoord.ColValue].IsOccupied)
                     {
-                        if (squares[adjCoord.RowValue, adjCoord.ColValue].IsOccupied)
-                        {
-                            isContiguous = true;
-                            break; // no need to search for another continguous tile
-                        }
+                        isContiguous = true;
+                        break; // no need to search for another continguous tile
                     }
+                    //  }
                 }
 
                 if (!isContiguous) // no need to examine other tiles
@@ -77,7 +79,7 @@ namespace Scrabble.Domain
                     return (false, new PlacementError(Placement.Vertical, coord, "Tile Not Contiguous"));
                 }
             }
-            
+
             return (true, new PlacementError(Placement.All, Board.STAR, "No Error"));
         }
 
@@ -135,31 +137,31 @@ namespace Scrabble.Domain
         }
 
         // apply word validity check across a slice (row or col) of the board
-        internal List<PlacementError> ValidateWordSlices(Func<int, List<Square>> getSquares,
-                                             Placement placement)
-        {
-            List<PlacementError> invalidMessages = [];
+        //internal List<PlacementError> ValidateWordSlices(Func<int, List<Square>> getSquares,
+        //                                     Placement placement)
+        //{
+        //    List<PlacementError> invalidMessages = [];
 
-            int sliceCount = Placement.Horizontal == placement ? 
-                                Board.rowCount : Board.colCount;
-  
-            for (int index = 0; index < sliceCount; index++)
-            {
-                var charList = getSquares(index).ToCharList();
+        //    int sliceCount = Placement.Horizontal == placement ? 
+        //                        Board.rowCount : Board.colCount;
 
-                if (charList != null)
-                {
-                    var (valid, invalidWord) = charList.IsValidWordList(IsWordValid);
+        //    for (int index = 0; index < sliceCount; index++)
+        //    {
+        //        var charList = getSquares(index).ToCharList();
 
-                    if (!valid)
-                    {
-                        var coord = placement == Placement.Horizontal ? new Coord((R)index, 0) : new Coord(0, (C)index);
-                        invalidMessages.Add(new(placement, coord, invalidWord));
-                    }
-                }
-            }
+        //        if (charList != null)
+        //        {
+        //            var (valid, invalidWord) = charList.IsValidWordList(IsWordValid);
 
-            return invalidMessages;
-        }
+        //            if (!valid)
+        //            {
+        //                var coord = placement == Placement.Horizontal ? new Coord((R)index, 0) : new Coord(0, (C)index);
+        //                invalidMessages.Add(new(placement, coord, invalidWord));
+        //            }
+        //        }
+        //    }
+
+        //    return invalidMessages;
+        //}
     }
 }

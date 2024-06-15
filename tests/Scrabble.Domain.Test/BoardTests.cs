@@ -402,7 +402,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.I), new Tile('B'))
             ]);
 
-                var result = board.GetEndpoints(true, (int)R._8, [(int)C.H, (int)C.I]);
+                var result = board.GetEndpointsHorizontal((int)R._8, [(int)C.H, (int)C.I]);
 
                 Assert.Equal(((int)C.H, (int)C.I), result);
             }
@@ -417,7 +417,7 @@ namespace Scrabble.Domain.Tests
                     new(new Coord(R._9, C.H), new Tile('B'))
                 ]);
 
-                var result = board.GetEndpoints(false, (int)C.H, [((int)R._8), ((int)R._9)]);
+                var result = board.GetEndpointsVertical((int)C.H, [((int)R._8), ((int)R._9)]);
 
                 Assert.Equal((((int)R._8), ((int)R._9)), result);
             }
@@ -460,11 +460,10 @@ namespace Scrabble.Domain.Tests
                 var board = new Board(MockWordValidator);
                 var errors = new List<PlacementError>();
 
-                errors = board.ValidateWordSlices( r => board.GetSquaresHorizontal(r), Placement.Horizontal);
+                errors = board.ValidateHorizontalWordSlices( r => board.GetSquaresHorizontal(r));
                 
                 Assert.Empty(errors);
             }
-
 
 
             // Tests for ScoreMove method with fixed location

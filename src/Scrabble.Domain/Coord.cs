@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace Scrabble.Domain
 {
@@ -14,6 +16,9 @@ namespace Scrabble.Domain
 
     public class Coord(R row, C col)
     {
+        static private readonly int RowCount = 15;
+        static private readonly int ColCount = 15;
+
         public R Row { get; init; } = row;
         public C Col { get; init; } = col;
     
@@ -27,8 +32,21 @@ namespace Scrabble.Domain
         {
             return $"{Col}{RowValue}";
         }
-    }
 
+        // Check the four adjacent squares (up, down, left, right)
+        public List<Coord> GetAdjacent()
+            =>
+            [
+                new((R)( Math.Max( RowValue - 1, 0)), Col), // Up
+                new((R)( Math.Min( RowValue + 1, RowCount - 1) ), Col), // Down
+                new(Row, (C)( Math.Max(ColValue - 1, 0))), // Left
+                new(Row, (C)( Math.Min(ColValue + 1, ColCount - 1)))  // Right
+            ];
+
+        public bool IsValidCoord() =>
+            RowValue >= 0 && RowValue < RowCount &&
+                        ColValue >= 0 && ColValue < ColCount;
+    }
     public record LocationSquare (Coord Coord, Square Square);
 
 }

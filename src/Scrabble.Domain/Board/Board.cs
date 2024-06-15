@@ -120,62 +120,62 @@ namespace Scrabble.Domain
             return slice;
         }
 
-        internal List<Square> GetSquares(bool isHorizontal, int sliceLocation, int rangeStart = LOWERBOUND, int rangeEnd = DIMENSION - 1)
-        {
-            List<Square> slice = [];
+        //internal List<Square> GetSquares(bool isHorizontal, int sliceLocation, int rangeStart = LOWERBOUND, int rangeEnd = DIMENSION - 1)
+        //{
+        //    List<Square> slice = [];
 
-            if (isHorizontal)
-            {
-                for (int col = rangeStart; col <= rangeEnd; col++)
-                {
-                    var sq = squares[sliceLocation, col];
-                    if (sq.IsOccupied)
-                        slice.Add(sq.Copy());
-                }
-            }
-            else
-            {
-                for (int row = rangeStart; row <= rangeEnd; row++)
-                {
-                    var sq = squares[row, sliceLocation];
-                    if (sq.IsOccupied)
-                        slice.Add(sq.Copy());
-                }
-            }
+        //    if (isHorizontal)
+        //    {
+        //        for (int col = rangeStart; col <= rangeEnd; col++)
+        //        {
+        //            var sq = squares[sliceLocation, col];
+        //            if (sq.IsOccupied)
+        //                slice.Add(sq.Copy());
+        //        }
+        //    }
+        //    else
+        //    {
+        //        for (int row = rangeStart; row <= rangeEnd; row++)
+        //        {
+        //            var sq = squares[row, sliceLocation];
+        //            if (sq.IsOccupied)
+        //                slice.Add(sq.Copy());
+        //        }
+        //    }
 
-            return slice;
-        }
+        //    return slice;
+        //}
 
         // determine start and end location of occupied squares contiguous with specified squares
-        internal (int start, int end) GetEndpoints(bool isHorizontal, int sliceLocation, List<int> locationList)
-        {
-            var minMove = locationList.Min();
-            var maxMove = locationList.Max();
-            var minOccupied = minMove;
-            var maxOccupied = maxMove;
+        //internal (int start, int end) GetEndpoints(bool isHorizontal, int sliceLocation, List<int> locationList)
+        //{
+        //    var minMove = locationList.Min();
+        //    var maxMove = locationList.Max();
+        //    var minOccupied = minMove;
+        //    var maxOccupied = maxMove;
 
-            for (int pos = minMove - 1; pos >= 0; pos--)
-            {
-                if (!(isHorizontal ? squares[sliceLocation, pos].IsOccupied :
-                                   squares[pos, sliceLocation].IsOccupied))
-                {
-                    break;
-                }
-                minOccupied--;
-            }
+        //    for (int pos = minMove - 1; pos >= 0; pos--)
+        //    {
+        //        if (!(isHorizontal ? squares[sliceLocation, pos].IsOccupied :
+        //                           squares[pos, sliceLocation].IsOccupied))
+        //        {
+        //            break;
+        //        }
+        //        minOccupied--;
+        //    }
 
-            for (int pos = maxMove + 1; pos < (isHorizontal ? Board.colCount : Board.rowCount); pos++)
-            {
-                if (!(isHorizontal ? squares[sliceLocation, pos].IsOccupied :
-                                    squares[pos, sliceLocation].IsOccupied))
-                {
-                    break;
-                }
-                maxOccupied++;
-            }
+        //    for (int pos = maxMove + 1; pos < (isHorizontal ? Board.colCount : Board.rowCount); pos++)
+        //    {
+        //        if (!(isHorizontal ? squares[sliceLocation, pos].IsOccupied :
+        //                            squares[pos, sliceLocation].IsOccupied))
+        //        {
+        //            break;
+        //        }
+        //        maxOccupied++;
+        //    }
 
-            return (minOccupied, maxOccupied);
-        }
+        //    return (minOccupied, maxOccupied);
+        //}
 
         // determine start and end location of occupied squares contiguous with specified squares
         internal (int start, int end) GetEndpointsHorizontal(int sliceLocation, List<int> locationList)
