@@ -13,25 +13,25 @@ namespace Scrabble.Console
         public static char GetValidLetter(List<char> validChoices)
         {
             char validLetter;
-            bool isLetterValid;
+            bool isLetteRValid;
             do
             {
                 Console.Write("Letter: ");
                 string input = Console.ReadLine().ToUpper();
                 if (char.TryParse(input, out validLetter))
                 {
-                    isLetterValid = validChoices.Any(l => l.Equals(validLetter));
-                    if (!isLetterValid)
+                    isLetteRValid = validChoices.Any(l => l.Equals(validLetter));
+                    if (!isLetteRValid)
                     {
                         Console.WriteLine("Invalid letter. Please try again.");
                     }
                 }
                 else
                 {
-                    isLetterValid = false;
+                    isLetteRValid = false;
                     Console.WriteLine("Invalid input. Please enter a single letter.");
                 }
-            } while (!isLetterValid);
+            } while (!isLetteRValid);
 
             return validLetter;
         }

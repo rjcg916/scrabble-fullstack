@@ -12,9 +12,9 @@ namespace Scrabble.Console
         {
             Console.WriteLine("Board"); Console.WriteLine();
 
-            for (int r = 0; r < Board.rowCount; r++)
+            for (int r = 0; r < Coord.RowCount; r++)
             {
-                for (int c = 0; c < Board.colCount; c++)
+                for (int c = 0; c < Coord.ColCount; c++)
                 {
                     var square = Board.squares[r, c];               
                     if (square.IsOccupied)

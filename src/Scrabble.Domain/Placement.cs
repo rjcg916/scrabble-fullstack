@@ -17,17 +17,17 @@ namespace Scrabble.Domain
     {
         public static PlacementSpec ToPlacementSpec(this List<TilePlacement> tileList)
         {
-            if (tileList.Select(c => c.Coord.RowValue).Distinct().Count() == 1)
+            if (tileList.Select(c => c.Coord.RVal).Distinct().Count() == 1)
             {
-                var fixedLocation = tileList.Select(c => c.Coord.RowValue).First();
-                var tileLocations = tileList.Select(tl => tl.Coord.ColValue).ToList();
+                var fixedLocation = tileList.Select(c => c.Coord.RVal).First();
+                var tileLocations = tileList.Select(tl => tl.Coord.CVal).ToList();
 
                 return new(Placement.Horizontal, fixedLocation, tileLocations);
             }
-            else if (tileList.Select(c => c.Coord.ColValue).Distinct().Count() == 1)
+            else if (tileList.Select(c => c.Coord.CVal).Distinct().Count() == 1)
             {
-                var fixedLocation = tileList.Select(c => c.Coord.ColValue).First();
-                var tileLocations = tileList.Select(tl => tl.Coord.RowValue).ToList();
+                var fixedLocation = tileList.Select(c => c.Coord.CVal).First();
+                var tileLocations = tileList.Select(tl => tl.Coord.RVal).ToList();
 
                 return new(Placement.Vertical, fixedLocation, tileLocations);
             }

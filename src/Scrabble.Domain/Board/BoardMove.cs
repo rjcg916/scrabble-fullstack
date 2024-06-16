@@ -15,7 +15,7 @@ namespace Scrabble.Domain
 
             foreach (var (coord, tile) in tileList)
             {
-                var loc = board.squares[coord.RowValue, coord.ColValue];
+                var loc = board.squares[coord.RVal, coord.CVal];
                 loc.Tile = tile;
                 loc.MoveOfOccupation = board.MovesMade;
             };
@@ -37,13 +37,13 @@ namespace Scrabble.Domain
                 case Placement.Star:
                 case Placement.Horizontal:
                     board.PlaceTiles(tiles.Select((tile, index) =>
-                        new TilePlacement(new Coord(startFrom.Row, (C)(startFrom.ColValue + index)), tile)
+                        new TilePlacement(new Coord(startFrom.Row, (C)(startFrom.CVal + index)), tile)
                         ).ToList());
                     break;
 
                 case Placement.Vertical:
                     board.PlaceTiles(tiles.Select((tile, index) =>
-                        new TilePlacement(new Coord((R)(startFrom.RowValue + index), startFrom.Col), tile)
+                        new TilePlacement(new Coord((R)(startFrom.RVal + index), startFrom.Col), tile)
                         ).ToList());
                     break;
 
@@ -53,13 +53,13 @@ namespace Scrabble.Domain
 
             return board;
         }
+
         // place tiles on board
         internal void PlaceTiles(List<TilePlacement> tilePlacementList)
         {
-
             foreach (var (coord, tile) in tilePlacementList)
             {
-                var location = squares[coord.RowValue, coord.ColValue];
+                var location = squares[coord.RVal, coord.CVal];
 
                 location.Tile = new Tile(tile.Letter);
                 location.MoveOfOccupation = MovesMade;
@@ -71,10 +71,20 @@ namespace Scrabble.Domain
             PlacementSpec tileSpecs = tilePlacementList.ToPlacementSpec();
 
             return ScoreMove(tileSpecs.SliceLocation,
-                                tileSpecs.TileLocations,
-                                tileSpecs.Placement);
+                             tileSpecs.TileLocations,
+                             tileSpecs.Placement);
         }
-
+        
+        public int ScoreMove(int sliceLocation, List<int> tileLocations, Placement placement)
+        {
+            return placement switch
+            {
+                Placement.Horizontal => ScoreMoveHorizontal(sliceLocation, tileLocations, MovesMade),
+                Placement.Vertical => ScoreMoveVertical(sliceLocation, tileLocations, MovesMade),
+                _ => throw new Exception("Invalid Placement"),
+            };
+        }
+       
         //public int ScoreMove0(int sliceLocation, List<int> tileLocations, Placement placement)
         //{
         //    return placement switch
@@ -84,15 +94,7 @@ namespace Scrabble.Domain
         //        _ => throw new Exception("Invalid Placement"),
         //    };
         //}
-        public int ScoreMove(int sliceLocation, List<int> tileLocations, Placement placement)
-        {
-            return placement switch
-            {
-                Placement.Horizontal => ScoreMoveHorizontal(sliceLocation, tileLocations, MovesMade),
-                Placement.Vertical   => ScoreMoveVertical(sliceLocation, tileLocations, MovesMade),
-                _ => throw new Exception("Invalid Placement"),
-            };
-        }
+
         //public int ScoreMoveHorizontal(int sliceLocation, List<int> tileLocations)
         //{
         //    return ScoreMoveDirectionalHorizontal(sliceLocation, tileLocations);
@@ -191,10 +193,9 @@ namespace Scrabble.Domain
         //    return score;
         //}
 
-
         static internal int ScoreMoveSlice(int location, 
-                                        int singleRunStart, int singleRunEnd,
-                                        Func<int, int, int, List<Square>> GetSquares)
+                                            int singleRunStart, int singleRunEnd,
+                                            Func<int, int, int, List<Square>> GetSquares)
         {  
             var moveSlice = GetSquares(location, singleRunStart, singleRunEnd);
 
@@ -205,8 +206,8 @@ namespace Scrabble.Domain
         }
 
         static internal int ScorePerpendicularSlices(int singleRunStart, int singleRunEnd, int sliceLocation, int MovesMade,
-                                        Func<int, List<int>, (int, int) > GetEndpoints,
-                                        Func<int, int, int, List<Square>> GetSquares)
+                                                    Func<int, List<int>, (int, int) > GetEndpoints,
+                                                    Func<int, int, int, List<Square>> GetSquares)
         {
             int score = 0;
             for (int perpendicularFixed = singleRunStart; perpendicularFixed <= singleRunEnd; perpendicularFixed++)
@@ -224,7 +225,6 @@ namespace Scrabble.Domain
 
             return score;
         }
-
 
         // score by checking for words:
         // in slice direction and words created in perpendicular direction
@@ -260,12 +260,42 @@ namespace Scrabble.Domain
         // in slice direction and words created in perpendicular direction
         internal int ScoreMoveHorizontal(int sliceLocation, List<int> tileLocations, int MovesMade)
         {
+            var (singleRunStart, singleRunEnd) = GetEndpoints(SquareByColumn, sliceLocation, tileLocations);
 
-            var (singleRunStart, singleRunEnd) = GetEndpointsHorizontal(sliceLocation, tileLocations);
+            //   int score = ScoreMoveSlice(sliceLocation, singleRunStart, singleRunEnd, GetSquaresHorizontal);
+            int score = ScoreMoveSlice(sliceLocation, singleRunStart, singleRunEnd, 
+                                        (sl, s, e) => GetSquares(SquareByColumn, sl, s, e));
 
-            int score = Board.ScoreMoveSlice(sliceLocation, singleRunStart, singleRunEnd, GetSquaresHorizontal);
+            score += ScorePerpendicularSlices(singleRunStart, singleRunEnd, 
+                                                sliceLocation, MovesMade,
+                                            /*  GetEndpointsVertical */ 
+                                            (sl, tls) => GetEndpoints(SquareByColumn, sl, tls) ,
+                                                /* GetSquaresVertical */
+                                            (sl, s, e) => GetSquares(SquareByRow, sl, s, e));
+            
+            return score;
+        }
 
-            score += Board.ScorePerpendicularSlices(singleRunStart, singleRunEnd, sliceLocation, MovesMade, GetEndpointsVertical, GetSquaresVertical);
+        // score by checking for words:
+        // in slice direction and words created in perpendicular direction
+        internal int ScoreMoveVertical(int sliceLocation, List<int> tileLocations, int MovesMade)
+        {
+    //        var (singleRunStart, singleRunEnd) = GetEndpointsVertical(sliceLocation, tileLocations);
+              var(singleRunStart, singleRunEnd) = GetEndpoints(SquareByRow, sliceLocation, tileLocations);
+
+            //      int score = ScoreMoveSlice(sliceLocation, singleRunStart, singleRunEnd, GetSquaresVertical);
+            int score = ScoreMoveSlice(sliceLocation, singleRunStart, singleRunEnd, 
+                                        (l, s, e) => GetSquares(SquareByRow, l, s, e));
+
+
+            score += ScorePerpendicularSlices(  singleRunStart, 
+                                                singleRunEnd, 
+                                                sliceLocation, 
+                                                MovesMade,
+                                                /*GetEndpointsHorizontal*/
+                                                (sl, tls) => GetEndpoints(SquareByRow, sl, tls),                
+                                                /*GetSquaresHorizontal*/ 
+                                                (sl, s, e) => GetSquares(SquareByColumn, sl, s, e));
 
             return score;
         }
@@ -299,18 +329,5 @@ namespace Scrabble.Domain
 
         //    return score;
         //}
-        // score by checking for words:
-        // in slice direction and words created in perpendicular direction
-        internal int ScoreMoveVertical(int sliceLocation, List<int> tileLocations, int MovesMade)
-        {
-
-            var (singleRunStart, singleRunEnd) = GetEndpointsVertical(sliceLocation, tileLocations);
-
-            int score = Board.ScoreMoveSlice(sliceLocation, singleRunStart, singleRunEnd, GetSquaresVertical);
-
-            score += Board.ScorePerpendicularSlices(singleRunStart, singleRunEnd, sliceLocation, MovesMade, GetEndpointsHorizontal, GetSquaresHorizontal);
-
-            return score;
-        }
     }
 }

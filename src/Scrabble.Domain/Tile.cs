@@ -7,7 +7,7 @@ namespace Scrabble.Domain
     {
         public char Letter = Char.ToUpper(character);
 
-        private static readonly Dictionary<char, int> LetterValues = new()
+        private static readonly Dictionary<char, int> LetteRValues = new()
         {
             { 'A', 1 }, { 'B', 3 }, { 'C', 3 }, { 'D', 2 }, { 'E', 1 },
             { 'F', 4 }, { 'G', 2 }, { 'H', 4 }, { 'I', 1 }, { 'J', 8 },
@@ -21,7 +21,7 @@ namespace Scrabble.Domain
         {
             get
             {
-                if (LetterValues.TryGetValue(character, out int value))
+                if (LetteRValues.TryGetValue(character, out int value))
                 {
                     return value;
                 }
