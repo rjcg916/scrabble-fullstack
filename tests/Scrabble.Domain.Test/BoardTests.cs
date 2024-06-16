@@ -372,24 +372,6 @@ namespace Scrabble.Domain.Tests
             Assert.Equal(11, moveScore);
         }
 
-        //[Fact]
-        //public void NextBoard_ReturnsNewBoardWithTilesPlaced()
-        //{
-        //    var board = new Board(MockWordValidator);
-        //    var tiles = new List<TilePlacement>
-        //    {
-        //        new(new Coord(R._8, C.H), new Tile('A')),
-        //        new(new Coord(R._8, C.I), new Tile('B'))
-        //    };
-
-        //    var nextBoard = board.NextBoard(tiles);
-
-        //    Assert.Equal('A', nextBoard.GetTile(new Coord(R._8, C.H)).Letter);
-        //    Assert.Equal('B', nextBoard.GetTile(new Coord(R._8, C.I)).Letter);
-        //    Assert.True(nextBoard.IsOccupied(new Coord(R._8, C.H)));
-        //    Assert.True(nextBoard.IsOccupied(new Coord(R._8, C.I)));
-        //}
-
 
             // Tests for GetRun method
             [Fact]
@@ -402,8 +384,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.I), new Tile('B'))
             ]);
 
-            //   var result = board.GetEndpointsHorizontal((int)R._8, [(int)C.H, (int)C.I]);
-                 var result = board.GetEndpoints(board.SquareByColumn,(int)R._8, [(int)C.H, (int)C.I]);
+            var result = Board.GetEndpoints(board.SquareByColumn,(int)R._8, [(int)C.H, (int)C.I]);
 
             Assert.Equal(((int)C.H, (int)C.I), result);
             }
@@ -418,7 +399,7 @@ namespace Scrabble.Domain.Tests
                     new(new Coord(R._9, C.H), new Tile('B'))
                 ]);
 
-                var result = board.GetEndpoints(board.SquareByRow, (int)C.H, [((int)R._8), ((int)R._9)]);
+                var result = Board.GetEndpoints(board.SquareByRow, (int)C.H, [((int)R._8), ((int)R._9)]);
 
                 Assert.Equal((((int)R._8), ((int)R._9)), result);
             }
@@ -434,8 +415,7 @@ namespace Scrabble.Domain.Tests
                     new(new Coord(R._8, C.I), new Tile('B'))
                 ]);
 
-            //                var result = board.GetSquaresHorizontal((int) R._8, 0, Coord.ColCount - 1);
-            var result = board.GetSquares(board.SquareByColumn, (int) R._8, 0, Coord.ColCount - 1);
+            var result = Board.GetSquares(board.SquareByColumn, (int) R._8, (0, Coord.ColCount - 1));
 
             Assert.Equal(2, result.Count);
             }
@@ -450,8 +430,7 @@ namespace Scrabble.Domain.Tests
                     new(new Coord(R._8, C.H), new Tile('B'))
                 ]);
 
-            //var result = board.GetSquaresVertical((int)C.H, 0, Coord.RowCount - 1);
-            var result = board.GetSquares(board.SquareByRow, (int)C.H, 0, Coord.RowCount - 1);
+            var result = Board.GetSquares(board.SquareByRow, (int)C.H, (0, Coord.RowCount - 1));
 
             Assert.Equal(2, result.Count);
             }
@@ -463,8 +442,7 @@ namespace Scrabble.Domain.Tests
                 var board = new Board(MockWordValidator);
                 var errors = new List<PlacementError>();
 
-            //           errors = board.ValidateHorizontalWordSlices( r => board.GetSquaresHorizontal(r, 0, Coord.ColCount - 1));
-            errors = board.ValidateWordSlices( r => board.GetSquares(board.SquareByColumn, r, 0, Coord.ColCount - 1), Coord.RowCount, Placement.Horizontal);
+            errors = board.ValidateWordSlices( r => Board.GetSquares(board.SquareByColumn, r, (0, Coord.ColCount - 1)), Coord.RowCount, Placement.Horizontal);
 
             Assert.Empty(errors);
             }

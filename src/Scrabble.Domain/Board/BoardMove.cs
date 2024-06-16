@@ -9,7 +9,7 @@ namespace Scrabble.Domain
         // create a new board with list of tiles
         public Board MakeMove(List<TilePlacement> tileList)
         {
-            Board board = new(this); // this.Copy();
+            Board board = new(this);
 
             board.MovesMade++;
 
@@ -85,119 +85,46 @@ namespace Scrabble.Domain
             };
         }
        
-        //public int ScoreMove0(int sliceLocation, List<int> tileLocations, Placement placement)
-        //{
-        //    return placement switch
-        //    {
-        //        Placement.Horizontal => ScoreMoveDirectional(sliceLocation, tileLocations, true),
-        //        Placement.Vertical => ScoreMoveDirectional(sliceLocation, tileLocations, false),
-        //        _ => throw new Exception("Invalid Placement"),
-        //    };
-        //}
 
-        //public int ScoreMoveHorizontal(int sliceLocation, List<int> tileLocations)
-        //{
-        //    return ScoreMoveDirectionalHorizontal(sliceLocation, tileLocations);
-        //}
-        //public int ScoreMoveVertical(int sliceLocation, List<int> tileLocations)
-        //{
-        //    return ScoreMoveDirectionalVertical(sliceLocation, tileLocations);
-        //}
 
         // score by checking for words:
         // in slice direction and words created in perpendicular direction
-        //internal int ScoreMoveDirectional(int sliceLocation, List<int> tileLocations, bool isHorizontal)
-        //{
-        //    int score = 0;
+        internal int ScoreMoveHorizontal(int sliceLocation, List<int> tileLocations, int MovesMade)
+        {
+            var (singleRunStart, singleRunEnd) = GetEndpoints(SquareByColumn, sliceLocation, tileLocations);
 
-        //    var (singleRunStart, singleRunEnd) = GetEndpoints(isHorizontal, sliceLocation, tileLocations);
-        //    var moveSlice = GetSquares(isHorizontal, sliceLocation, singleRunStart, singleRunEnd);
+            int score = ScoreMoveSlice(sliceLocation, (singleRunStart, singleRunEnd), 
+                                        (sl, s, e) => GetSquares(SquareByColumn, sl, (s, e)));
 
-        //    if (moveSlice.Count == 0)
-        //        throw new Exception("MoveSlice must have one or more tiles");
-
-        //    score += moveSlice.ScoreRun();
-
-        //    for (int perpendicularFixed = singleRunStart; perpendicularFixed <= singleRunEnd; perpendicularFixed++)
-        //    {
-        //        var (multiRunStart, multiRunEnd) = GetEndpoints(!isHorizontal, perpendicularFixed, [sliceLocation]);
-
-        //        if (multiRunStart < multiRunEnd)
-        //        {
-        //            var perpendicularSlice = GetSquares(!isHorizontal, perpendicularFixed, multiRunStart, multiRunEnd);
-        //            var anyNewTiles = perpendicularSlice.Any(sq => sq.MoveOfOccupation == MovesMade);
-        //            if ((perpendicularSlice.Count > 0) && anyNewTiles)
-        //                score += perpendicularSlice.ScoreRun();
-        //        }
-        //    }
-
-        //    return score;
-        //}
+            score += ScorePerpendicularSlices((singleRunStart, singleRunEnd), 
+                                                sliceLocation, MovesMade,
+                                            (sl, tls) => GetEndpoints(SquareByColumn, sl, tls) ,
+                                            (sl, s, e) => GetSquares(SquareByRow, sl, (s, e)));
+            
+            return score;
+        }
 
         // score by checking for words:
         // in slice direction and words created in perpendicular direction
-        //internal int ScoreMoveDirectionalHorizontal(int sliceLocation, List<int> tileLocations)
-        //{
-        //    int score = 0;
+        internal int ScoreMoveVertical(int sliceLocation, List<int> tileLocations, int MovesMade)
+        {
+            var(singleRunStart, singleRunEnd) = GetEndpoints(SquareByRow, sliceLocation, tileLocations);
 
-        //    var (singleRunStart, singleRunEnd) = GetEndpointsHorizontal(sliceLocation, tileLocations);
-        //    var moveSlice = GetSquaresHorizontal(sliceLocation, singleRunStart, singleRunEnd);
+            int score = ScoreMoveSlice(sliceLocation, (singleRunStart, singleRunEnd), 
+                                        (l, s, e) => GetSquares(SquareByRow, l, (s, e)));
+            score += ScorePerpendicularSlices(  (singleRunStart, singleRunEnd), 
+                                                sliceLocation, 
+                                                MovesMade,
+                                                (sl, tls) => GetEndpoints(SquareByRow, sl, tls),                                                                
+                                                (sl, s, e) => GetSquares(SquareByColumn, sl, (s, e)));
 
-        //    if (moveSlice.Count == 0)
-        //        throw new Exception("MoveSlice must have one or more tiles");
-
-        //    score += moveSlice.ScoreRun();
-
-        //    for (int perpendicularFixed = singleRunStart; perpendicularFixed <= singleRunEnd; perpendicularFixed++)
-        //    {
-        //        var (multiRunStart, multiRunEnd) = GetEndpointsVertical(perpendicularFixed, [sliceLocation]);
-
-        //        if (multiRunStart < multiRunEnd)
-        //        {
-        //            var perpendicularSlice = GetSquaresVertical(perpendicularFixed, multiRunStart, multiRunEnd);
-        //            var anyNewTiles = perpendicularSlice.Any(sq => sq.MoveOfOccupation == MovesMade);
-        //            if ((perpendicularSlice.Count > 0) && anyNewTiles)
-        //                score += perpendicularSlice.ScoreRun();
-        //        }
-        //    }
-
-        //    return score;
-        //}
-        // score by checking for words:
-        // in slice direction and words created in perpendicular direction
-        //internal int ScoreMoveDirectionalVertical(int sliceLocation, List<int> tileLocations)
-        //{
-        //    int score = 0;
-
-        //    var (singleRunStart, singleRunEnd) = GetEndpointsVertical(sliceLocation, tileLocations);
-        //    var moveSlice = GetSquaresVertical(sliceLocation, singleRunStart, singleRunEnd);
-
-        //    if (moveSlice.Count == 0)
-        //        throw new Exception("MoveSlice must have one or more tiles");
-
-        //    score += moveSlice.ScoreRun();
-
-        //    for (int perpendicularFixed = singleRunStart; perpendicularFixed <= singleRunEnd; perpendicularFixed++)
-        //    {
-        //        var (multiRunStart, multiRunEnd) = GetEndpointsHorizontal(perpendicularFixed, [sliceLocation]);
-
-        //        if (multiRunStart < multiRunEnd)
-        //        {
-        //            var perpendicularSlice = GetSquaresHorizontal(perpendicularFixed, multiRunStart, multiRunEnd);
-        //            var anyNewTiles = perpendicularSlice.Any(sq => sq.MoveOfOccupation == MovesMade);
-        //            if ((perpendicularSlice.Count > 0) && anyNewTiles)
-        //                score += perpendicularSlice.ScoreRun();
-        //        }
-        //    }
-
-        //    return score;
-        //}
-
-        static internal int ScoreMoveSlice(int location, 
-                                            int singleRunStart, int singleRunEnd,
-                                            Func<int, int, int, List<Square>> GetSquares)
-        {  
-            var moveSlice = GetSquares(location, singleRunStart, singleRunEnd);
+            return score;
+        }
+        static internal int ScoreMoveSlice(int location,
+                                    (int start, int end) singleRun,
+                                    Func<int, int, int, List<Square>> GetSquares)
+        {
+            var moveSlice = GetSquares(location, singleRun.start, singleRun.end);
 
             if (moveSlice.Count == 0)
                 throw new Exception("MoveSlice must have one or more tiles");
@@ -205,12 +132,12 @@ namespace Scrabble.Domain
             return moveSlice.ScoreRun();
         }
 
-        static internal int ScorePerpendicularSlices(int singleRunStart, int singleRunEnd, int sliceLocation, int MovesMade,
-                                                    Func<int, List<int>, (int, int) > GetEndpoints,
+        static internal int ScorePerpendicularSlices((int start, int end) singleRun, int sliceLocation, int MovesMade,
+                                                    Func<int, List<int>, (int, int)> GetEndpoints,
                                                     Func<int, int, int, List<Square>> GetSquares)
         {
             int score = 0;
-            for (int perpendicularFixed = singleRunStart; perpendicularFixed <= singleRunEnd; perpendicularFixed++)
+            for (int perpendicularFixed = singleRun.start; perpendicularFixed <= singleRun.end; perpendicularFixed++)
             {
                 var (multiRunStart, multiRunEnd) = GetEndpoints(perpendicularFixed, [sliceLocation]);
 
@@ -226,108 +153,5 @@ namespace Scrabble.Domain
             return score;
         }
 
-        // score by checking for words:
-        // in slice direction and words created in perpendicular direction
-        //internal int ScoreMoveHorizontal0(int sliceLocation, List<int> tileLocations)
-        //{
-        //    int score = 0;
-
-        //    var (singleRunStart, singleRunEnd) = GetEndpointsHorizontal(sliceLocation, tileLocations);
-        //    var moveSlice = GetSquaresHorizontal(sliceLocation, singleRunStart, singleRunEnd);
-
-        //    if (moveSlice.Count == 0)
-        //        throw new Exception("MoveSlice must have one or more tiles");
-
-        //    score += moveSlice.ScoreRun();
-
-        //    for (int perpendicularFixed = singleRunStart; perpendicularFixed <= singleRunEnd; perpendicularFixed++)
-        //    {
-        //        var (multiRunStart, multiRunEnd) = GetEndpointsVertical(perpendicularFixed, [sliceLocation]);
-
-        //        if (multiRunStart < multiRunEnd)
-        //        {
-        //            var perpendicularSlice = GetSquaresVertical(perpendicularFixed, multiRunStart, multiRunEnd);
-        //            var anyNewTiles = perpendicularSlice.Any(sq => sq.MoveOfOccupation == MovesMade);
-        //            if ((perpendicularSlice.Count > 0) && anyNewTiles)
-        //                score += perpendicularSlice.ScoreRun();
-        //        }
-        //    }
-
-        //    return score;
-        //}
-
-        // score by checking for words:
-        // in slice direction and words created in perpendicular direction
-        internal int ScoreMoveHorizontal(int sliceLocation, List<int> tileLocations, int MovesMade)
-        {
-            var (singleRunStart, singleRunEnd) = GetEndpoints(SquareByColumn, sliceLocation, tileLocations);
-
-            //   int score = ScoreMoveSlice(sliceLocation, singleRunStart, singleRunEnd, GetSquaresHorizontal);
-            int score = ScoreMoveSlice(sliceLocation, singleRunStart, singleRunEnd, 
-                                        (sl, s, e) => GetSquares(SquareByColumn, sl, s, e));
-
-            score += ScorePerpendicularSlices(singleRunStart, singleRunEnd, 
-                                                sliceLocation, MovesMade,
-                                            /*  GetEndpointsVertical */ 
-                                            (sl, tls) => GetEndpoints(SquareByColumn, sl, tls) ,
-                                                /* GetSquaresVertical */
-                                            (sl, s, e) => GetSquares(SquareByRow, sl, s, e));
-            
-            return score;
-        }
-
-        // score by checking for words:
-        // in slice direction and words created in perpendicular direction
-        internal int ScoreMoveVertical(int sliceLocation, List<int> tileLocations, int MovesMade)
-        {
-    //        var (singleRunStart, singleRunEnd) = GetEndpointsVertical(sliceLocation, tileLocations);
-              var(singleRunStart, singleRunEnd) = GetEndpoints(SquareByRow, sliceLocation, tileLocations);
-
-            //      int score = ScoreMoveSlice(sliceLocation, singleRunStart, singleRunEnd, GetSquaresVertical);
-            int score = ScoreMoveSlice(sliceLocation, singleRunStart, singleRunEnd, 
-                                        (l, s, e) => GetSquares(SquareByRow, l, s, e));
-
-
-            score += ScorePerpendicularSlices(  singleRunStart, 
-                                                singleRunEnd, 
-                                                sliceLocation, 
-                                                MovesMade,
-                                                /*GetEndpointsHorizontal*/
-                                                (sl, tls) => GetEndpoints(SquareByRow, sl, tls),                
-                                                /*GetSquaresHorizontal*/ 
-                                                (sl, s, e) => GetSquares(SquareByColumn, sl, s, e));
-
-            return score;
-        }
-
-        // score by checking for words:
-        // in slice direction and words created in perpendicular direction
-        //internal int ScoreMoveVertical0(int sliceLocation, List<int> tileLocations)
-        //{
-        //    int score = 0;
-
-        //    var (singleRunStart, singleRunEnd) = GetEndpointsVertical(sliceLocation, tileLocations);
-        //    var moveSlice = GetSquaresVertical(sliceLocation, singleRunStart, singleRunEnd);
-
-        //    if (moveSlice.Count == 0)
-        //        throw new Exception("MoveSlice must have one or more tiles");
-
-        //    score += moveSlice.ScoreRun();
-
-        //    for (int perpendicularFixed = singleRunStart; perpendicularFixed <= singleRunEnd; perpendicularFixed++)
-        //    {
-        //        var (multiRunStart, multiRunEnd) = GetEndpointsHorizontal(perpendicularFixed, [sliceLocation]);
-
-        //        if (multiRunStart < multiRunEnd)
-        //        {
-        //            var perpendicularSlice = GetSquaresHorizontal(perpendicularFixed, multiRunStart, multiRunEnd);
-        //            var anyNewTiles = perpendicularSlice.Any(sq => sq.MoveOfOccupation == MovesMade);
-        //            if ((perpendicularSlice.Count > 0) && anyNewTiles)
-        //                score += perpendicularSlice.ScoreRun();
-        //        }
-        //    }
-
-        //    return score;
-        //}
     }
 }

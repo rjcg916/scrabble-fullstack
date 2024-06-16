@@ -37,10 +37,8 @@ namespace Scrabble.Domain
         {
             var invalidMessages = new List<PlacementError>();
 
-            //invalidMessages.AddRange(ValidateHorizontalWordSlices(r => GetSquaresHorizontal(r, 0, Coord.ColCount -1 )));
-            //invalidMessages.AddRange(ValidateVerticalWordSlices(c => GetSquaresVertical(c, 0, Coord.RowCount - 1)));
-            invalidMessages.AddRange(ValidateWordSlices(r => GetSquares(SquareByColumn, r, 0, Coord.ColCount - 1 ), Coord.ColCount, Placement.Horizontal));
-            invalidMessages.AddRange(ValidateWordSlices(c => GetSquares(SquareByRow, c, 0, Coord.RowCount - 1), Coord.RowCount, Placement.Vertical));
+            invalidMessages.AddRange(ValidateWordSlices(r => GetSquares(SquareByColumn, r, (0, Coord.ColCount - 1) ), Coord.ColCount, Placement.Horizontal));
+            invalidMessages.AddRange(ValidateWordSlices(c => GetSquares(SquareByRow, c, (0, Coord.RowCount - 1)), Coord.RowCount, Placement.Vertical));
 
             return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, null);
         }
@@ -52,28 +50,16 @@ namespace Scrabble.Domain
             {
                 bool isContiguous = false;
 
-                //// Check the four adjacent squares (up, down, left, right)
-                //var adjacentCoords = new List<Coord>
-                //    {
-                //        new((R)( Math.Max( coord.RowValue - 1, 0)), coord.Col), // Up
-                //        new((R)( Math.Min( coord.RowValue + 1, Board.rowCount - 1) ), coord.Col), // Down
-                //        new(coord.Row, (C)( Math.Max(coord.ColValue - 1, 0))), // Left
-                //        new(coord.Row, (C)( Math.Min(coord.ColValue + 1, Board.colCount - 1)))  // Right
-                //    };
                 var adjacentCoords = coord.GetAdjacent();
 
                 foreach (var adjCoord in adjacentCoords)
                 {
-                    //if (adjCoord.RowValue >= 0 && adjCoord.RowValue < rowCount &&
-                    //    adjCoord.ColValue >= 0 && adjCoord.ColValue < colCount)
-                    //{
-                    //     if (adjCoord.IsValidCoord()) {  //not really needed
+
                     if (squares[adjCoord.RVal, adjCoord.CVal].IsOccupied)
                     {
                         isContiguous = true;
                         break; // no need to search for another continguous tile
                     }
-                    //  }
                 }
 
                 if (!isContiguous) // no need to examine other tiles
@@ -85,68 +71,13 @@ namespace Scrabble.Domain
             return (true, new PlacementError(Placement.All, Board.STAR, "No Error"));
         }
 
-
-        //// apply word validity check across a slice (row or col) of the board
-        //internal List<PlacementError> ValidateHorizontalWordSlicesX(Func<int, List<Square>> getSquares)
-        //{
-        //    List<PlacementError> invalidMessages = [];
-
-        //    int sliceCount = Coord.RowCount;
-
-        //    for (int index = 0; index < sliceCount; index++)
-        //    {
-        //        var charList = getSquares(index).ToCharList();
-
-        //        if (charList != null)
-        //        {
-        //            var (valid, invalidWord) = charList.IsValidWordList(IsWordValid);
-
-        //            if (!valid)
-        //            {
-        //                var coord = new Coord((R)index, 0);
-        //                invalidMessages.Add(new(Placement.Horizontal, coord, invalidWord));
-        //            }
-        //        }
-        //    }
-
-        //    return invalidMessages;
-        //}
-
-        //// apply word validity check across a slice (row or col) of the board
-        //internal List<PlacementError> ValidateVerticalWordSlicesX(Func<int, List<Square>> getSquares)
-        //{
-        //    List<PlacementError> invalidMessages = [];
-
-        //    int sliceCount = Coord.ColCount;
-
-        //    for (int index = 0; index < sliceCount; index++)
-        //    {
-        //        var charList = getSquares(index).ToCharList();
-
-        //        if (charList != null)
-        //        {
-        //            var (valid, invalidWord) = charList.IsValidWordList(IsWordValid);
-
-        //            if (!valid)
-        //            {
-        //                var coord = new Coord(0, (C)index);
-        //                invalidMessages.Add(new(Placement.Vertical, coord, invalidWord));
-        //            }
-        //        }
-        //    }
-
-        //    return invalidMessages;
-        //}
-
         // apply word validity check across a slice (row or col) of the board
-        internal List<PlacementError> ValidateWordSlices(Func<int, List<Square>> getSquares,
-                                             int sliceCount,
-                                             Placement placement)
+        internal List<PlacementError> ValidateWordSlices(
+                                            Func<int, List<Square>> getSquares,
+                                            int sliceCount,
+                                            Placement placement)
         {
             List<PlacementError> invalidMessages = [];
-
-     //       int sliceCount = Placement.Horizontal == placement ?
-     //                           Board.rowCount : Board.colCount;
 
             for (int index = 0; index < sliceCount; index++)
             {
