@@ -95,7 +95,7 @@ namespace Scrabble.Domain.Tests
             // Assert
             Assert.Equal(1, rackAfterRemoval.TileCount);
             var aTile = rackAfterRemoval.GetTiles().FirstOrDefault(t => t == new Tile('C'));
-            Assert.Null(aTile);
+            Assert.Equal(new Tile('C'), aTile);
 
         }
 

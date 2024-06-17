@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Scrabble.Domain
 {
-    public class Tile(char character)
+    public record Tile(char Letter)
     {
-        public char Letter = Char.ToUpper(character);
+        public char Letter { get; } = Char.ToUpper(Letter);
 
-        private static readonly Dictionary<char, int> LetteRValues = new()
+        private static readonly Dictionary<char, int> LetterValues = new()
         {
             { 'A', 1 }, { 'B', 3 }, { 'C', 3 }, { 'D', 2 }, { 'E', 1 },
             { 'F', 4 }, { 'G', 2 }, { 'H', 4 }, { 'I', 1 }, { 'J', 8 },
@@ -21,32 +21,12 @@ namespace Scrabble.Domain
         {
             get
             {
-                if (LetteRValues.TryGetValue(character, out int value))
+                if (LetterValues.TryGetValue(Letter, out int value))
                 {
                     return value;
                 }
                 throw new ArgumentException("Invalid character");
             }
-        }
-
-        // Override Equals method
-        public override bool Equals(object obj)
-        {
-            if (obj == null || GetType() != obj.GetType())
-            {
-                return false;
-            }
-
-            var other = (Tile)obj;
-
-            // Compare Letter and Value properties
-            return Letter == other.Letter && Value == other.Value;
-        }
-
-        // Override GetHashCode method
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Letter, Value);
         }
     }
 }
