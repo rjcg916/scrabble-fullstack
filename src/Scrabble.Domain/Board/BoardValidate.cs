@@ -37,7 +37,7 @@ namespace Scrabble.Domain
         {
             var invalidMessages = new List<PlacementError>();
 
-            invalidMessages.AddRange(ValidateWordSlices(r => GetSquares(SquareByColumn, r, (0, Coord.ColCount - 1) ), Coord.ColCount, Placement.Horizontal));
+            invalidMessages.AddRange(ValidateWordSlices(r => GetSquares(SquareByColumn, r, (0, Coord.ColCount - 1)), Coord.ColCount, Placement.Horizontal));
             invalidMessages.AddRange(ValidateWordSlices(c => GetSquares(SquareByRow, c, (0, Coord.RowCount - 1)), Coord.RowCount, Placement.Vertical));
 
             return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, null);

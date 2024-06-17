@@ -309,7 +309,6 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.H), new Tile('B')),
                 new(new Coord(R._8, C.I), new Tile('C')),
                 new(new Coord(R._8, C.J), new Tile('D')),
-
             };
 
             var board = new Board(MockWordValidator, startFrom, tiles, Placement.Horizontal);
@@ -326,7 +325,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._9, C.K), new Tile('J'))
             };
 
-            var boardForScoring = new Board(board);// board.Copy();
+            var boardForScoring = new Board(board);
             boardForScoring.PlaceTiles(newTiles);
 
             // score move

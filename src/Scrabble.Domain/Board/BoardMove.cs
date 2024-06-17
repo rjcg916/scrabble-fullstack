@@ -97,10 +97,11 @@ namespace Scrabble.Domain
                                         (sl, s, e) => GetSquares(SquareByColumn, sl, (s, e)));
 
             score += ScorePerpendicularSlices((singleRunStart, singleRunEnd), 
-                                                sliceLocation, MovesMade,
-                                            (sl, tls) => GetEndpoints(SquareByColumn, sl, tls) ,
-                                            (sl, s, e) => GetSquares(SquareByRow, sl, (s, e)));
-            
+                                                sliceLocation, 
+                                                MovesMade,
+                                                (sl, tls) => GetSquares(SquareByRow, sl, tls));
+
+
             return score;
         }
 
@@ -112,11 +113,11 @@ namespace Scrabble.Domain
 
             int score = ScoreMoveSlice(sliceLocation, (singleRunStart, singleRunEnd), 
                                         (l, s, e) => GetSquares(SquareByRow, l, (s, e)));
+
             score += ScorePerpendicularSlices(  (singleRunStart, singleRunEnd), 
                                                 sliceLocation, 
                                                 MovesMade,
-                                                (sl, tls) => GetEndpoints(SquareByRow, sl, tls),                                                                
-                                                (sl, s, e) => GetSquares(SquareByColumn, sl, (s, e)));
+                                                (sl, tls) => GetSquares(SquareByColumn, sl, tls));
 
             return score;
         }
@@ -133,21 +134,16 @@ namespace Scrabble.Domain
         }
 
         static internal int ScorePerpendicularSlices((int start, int end) singleRun, int sliceLocation, int MovesMade,
-                                                    Func<int, List<int>, (int, int)> GetEndpoints,
-                                                    Func<int, int, int, List<Square>> GetSquares)
+                                                    Func<int, List<int>, List<Square>> GetSquares)
         {
             int score = 0;
+
             for (int perpendicularFixed = singleRun.start; perpendicularFixed <= singleRun.end; perpendicularFixed++)
             {
-                var (multiRunStart, multiRunEnd) = GetEndpoints(perpendicularFixed, [sliceLocation]);
-
-                if (multiRunStart < multiRunEnd)
-                {
-                    var perpendicularSlice = GetSquares(perpendicularFixed, multiRunStart, multiRunEnd);
-                    var anyNewTiles = perpendicularSlice.Any(sq => sq.MoveOfOccupation == MovesMade);
-                    if ((perpendicularSlice.Count > 0) && anyNewTiles)
-                        score += perpendicularSlice.ScoreRun();
-                }
+                var perpendicularSlice = GetSquares(perpendicularFixed, [sliceLocation]);
+                var anyNewTiles = perpendicularSlice.Any(sq => sq.MoveOfOccupation == MovesMade);
+                if ((perpendicularSlice.Count > 1) && anyNewTiles)
+                    score += perpendicularSlice.ScoreRun();
             }
 
             return score;

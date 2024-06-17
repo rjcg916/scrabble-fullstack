@@ -20,8 +20,8 @@ namespace Scrabble.Domain
         {
             this.IsWordValid = IsWordValid;
 
-            foreach (var r in Coord.Rows) //Enumerable.Range(0, Coord.RowCount))
-                foreach (var c in Coord.Cols) // Enumerable.Range(0, Coord.ColCount))
+            foreach (var r in Coord.Rows) 
+                foreach (var c in Coord.Cols) 
                     squares[(int)r, (int)c] = new Square();
 
             Initialize();
@@ -81,6 +81,12 @@ namespace Scrabble.Domain
         public Square SquareByColumn(int col, int row) =>
             squares[row, col];
 
+        internal static List<Square> GetSquares(Func<int, int, Square> GetSquare, int sliceLocation, List<int> locationList, int maxIndex = Coord.RowCount - 1)
+        {
+            var (start, end) = GetEndpoints(GetSquare, sliceLocation, locationList, maxIndex);
+            return GetSquares(GetSquare, sliceLocation, (start, end));
+        }
+
         internal static List<Square> GetSquares(Func<int, int, Square> GetSquare, int sliceLocation, (int Start, int End) range )
         {
             List<Square> slice = [];
@@ -91,18 +97,17 @@ namespace Scrabble.Domain
                 if (sq.IsOccupied)
                     slice.Add(sq.Copy());
             }
+
             return slice;
         }
 
         // determine start and end location of occupied squares contiguous with specified squares
-        internal static (int start, int end) GetEndpoints(Func<int, int, Square> GetSquare, int sliceLocation, List<int> locationList, int maxCount = Coord.RowCount)
+        internal static (int start, int end) GetEndpoints(Func<int, int, Square> GetSquare, int sliceLocation, List<int> locationList, int maxIndex = Coord.RowCount - 1)
         {
    
             var minMove = locationList.Min();
-            var maxMove = locationList.Max();
             var minOccupied = minMove;
-            var maxOccupied = maxMove;
-
+ 
             for (int pos = minMove - 1; pos >= 0; pos--)
             {
                 if (!( GetSquare(pos, sliceLocation).IsOccupied )) 
@@ -112,7 +117,10 @@ namespace Scrabble.Domain
                 minOccupied--;
             }
 
-            for (int pos = maxMove + 1; pos < maxCount; pos++) 
+            var maxMove = locationList.Max();
+            var maxOccupied = maxMove;
+
+            for (int pos = maxMove + 1; pos <= maxIndex; pos++) 
             {
                 if (!(GetSquare(pos, sliceLocation).IsOccupied))
                 {
@@ -124,6 +132,7 @@ namespace Scrabble.Domain
             return (minOccupied, maxOccupied);
         }
 
+        
         public List<LocationSquare> GetLocationSquares(bool IsOccupied = false)
         {
             List<LocationSquare> locationSquareList = [];
