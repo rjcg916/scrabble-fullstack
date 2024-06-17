@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Scrabble.Domain
@@ -71,5 +72,47 @@ namespace Scrabble.Domain
             _ => 1
         };
 
+        // Override Equals method
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            var other = (Square)obj;
+
+            // Compare Tile
+            if (Tile != null && other.Tile != null)
+            {
+                if (!Tile.Equals(other.Tile))
+                {
+                    return false;
+                }
+            }
+            else if (Tile != other.Tile) // One is null and the other is not
+            {
+                return false;
+            }
+
+            // Compare SquareType, MoveOfOccupation, and IsFinal
+            return SquareType == other.SquareType &&
+                   MoveOfOccupation == other.MoveOfOccupation &&
+                   IsFinal == other.IsFinal;
+        }
+
+        // Override GetHashCode method
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(SquareType);
+            hashCode.Add(MoveOfOccupation);
+            hashCode.Add(IsFinal);
+            if (Tile != null)
+            {
+                hashCode.Add(Tile);
+            }
+            return hashCode.ToHashCode();
+        }
     }
 }

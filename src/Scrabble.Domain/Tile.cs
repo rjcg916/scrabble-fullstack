@@ -28,5 +28,25 @@ namespace Scrabble.Domain
                 throw new ArgumentException("Invalid character");
             }
         }
+
+        // Override Equals method
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            var other = (Tile)obj;
+
+            // Compare Letter and Value properties
+            return Letter == other.Letter && Value == other.Value;
+        }
+
+        // Override GetHashCode method
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Letter, Value);
+        }
     }
 }

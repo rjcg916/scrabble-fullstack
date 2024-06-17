@@ -141,8 +141,8 @@ namespace Scrabble.Domain
             for (int perpendicularFixed = singleRun.start; perpendicularFixed <= singleRun.end; perpendicularFixed++)
             {
                 var perpendicularSlice = GetSquares(perpendicularFixed, [sliceLocation]);
-                var anyNewTiles = perpendicularSlice.Any(sq => sq.MoveOfOccupation == MovesMade);
-                if ((perpendicularSlice.Count > 1) && anyNewTiles)
+                var hasNewTiles = perpendicularSlice.Any(sq => sq.MoveOfOccupation == MovesMade);
+                if ((perpendicularSlice.Count > 1) && hasNewTiles)
                     score += perpendicularSlice.ScoreRun();
             }
 
