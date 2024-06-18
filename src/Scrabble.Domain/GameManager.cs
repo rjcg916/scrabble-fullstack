@@ -8,7 +8,6 @@ namespace Scrabble.Domain
       
         private readonly Dictionary<Guid, Game> _games = [];
 
-    
         public Guid AddGame(Game game)
         {
             var gameId = Guid.NewGuid();

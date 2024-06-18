@@ -6,8 +6,8 @@ namespace Scrabble.Domain
 {
     public class Rack
     {
-        public readonly static int Capacity = 7;
-        List<Tile> Tiles { get; init; }
+        public static readonly int Capacity = 7;
+        public IReadOnlyList<Tile> Tiles { get; init; }
 
         public int TileCount => Tiles.Count;
 
@@ -15,54 +15,50 @@ namespace Scrabble.Domain
 
         public Rack()
         {
-            Tiles = [];
+            Tiles = Array.Empty<Tile>();
         }
 
-        public Rack(List<Tile> newTiles)
+        public Rack(IEnumerable<Tile> newTiles)
         {
-            this.AddTiles(newTiles);
+            Tiles = new List<Tile>(newTiles).AsReadOnly();
         }
 
         public List<Tile> GetTiles() => new(Tiles);
 
         public bool InRack(char letter) => Tiles.Any(t => t.Letter == letter);
 
-        public Rack AddTiles(List<Tile> newTiles)
+        public Rack AddTiles(IEnumerable<Tile> newTiles)
         {
-            var _ = new TileDrawCount(newTiles.Count);
+            if (TileCount + newTiles.Count() > Capacity)
+                throw new InvalidOperationException("Exceeding rack capacity");
 
-            var updatedTiles = new List<Tile>(Tiles);
-            updatedTiles.AddRange(newTiles);
-
-            return new Rack { Tiles = updatedTiles };
+            var updatedTiles = Tiles.Concat(newTiles).ToList();
+            return new Rack(updatedTiles);
         }
 
         public Rack RemoveTiles(int count)
         {
             if (count > TileCount)
-                throw new Exception("Attempt to remove more tiles than existing in rack.");
+                throw new InvalidOperationException("Attempt to remove more tiles than existing in rack.");
 
-            var updatedTiles = new List<Tile>(Tiles);
-            updatedTiles.RemoveRange(0, count);
-
-            return new Rack { Tiles = updatedTiles };
+            var updatedTiles = Tiles.Take(TileCount - count).ToList();
+            return new Rack(updatedTiles);
         }
 
-        public Rack RemoveTiles(List<Tile> tilesToRemove)
+        public Rack RemoveTiles(IEnumerable<Tile> tilesToRemove)
         {
-            var updatedTiles = new List<Tile>(Tiles);
+            var updatedTiles = Tiles.ToList();
 
-           
-            tilesToRemove.ForEach(tileToRemove =>
+            foreach (var tileToRemove in tilesToRemove)
             {
                 var index = updatedTiles.FindIndex(t => t.Letter == tileToRemove.Letter);
                 if (index > -1)
                     updatedTiles.RemoveAt(index);
-                //else
-                //    throw new InvalidOperationException("Attempt to remove tile not in rack.");
-            });
+                else
+                    throw new InvalidOperationException("Attempt to remove tile not in rack.");
+            }
 
-            return new Rack { Tiles = updatedTiles };
+            return new Rack(updatedTiles);
         }
     }
 }

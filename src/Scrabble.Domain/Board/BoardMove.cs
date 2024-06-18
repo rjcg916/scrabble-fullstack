@@ -6,7 +6,8 @@ namespace Scrabble.Domain
 {
     public partial class Board
     {
-        // create a new board with list of tiles
+
+        // return a new board with tiles placed in the move
         public Board MakeMove(List<TilePlacement> tileList)
         {
             Board board = new(this);
@@ -23,7 +24,7 @@ namespace Scrabble.Domain
             return board;
         }
 
-        // create a new board with list of tiles
+        // return a new board with tiles placed in the move
         public Board MakeMove(Coord startFrom,
                                 List<Tile> tiles,
                                 Placement placement)
@@ -84,16 +85,17 @@ namespace Scrabble.Domain
                 _ => throw new Exception("Invalid Placement"),
             };
         }
-       
 
 
+        // Horizontal Move -
         // score by checking for words:
-        // in slice direction and words created in perpendicular direction
+        // in slice direction + for words created in perpendicular direction
         internal int ScoreMoveHorizontal(int sliceLocation, List<int> tileLocations, int MovesMade)
         {
             var (singleRunStart, singleRunEnd) = GetEndpoints(SquareByColumn, sliceLocation, tileLocations);
 
-            int score = ScoreMoveSlice(sliceLocation, (singleRunStart, singleRunEnd), 
+            int score = ScoreMoveSlice(sliceLocation, 
+                                        (singleRunStart, singleRunEnd), 
                                         (sl, s, e) => GetSquares(SquareByColumn, sl, (s, e)));
 
             score += ScorePerpendicularSlices((singleRunStart, singleRunEnd), 
@@ -101,27 +103,29 @@ namespace Scrabble.Domain
                                                 MovesMade,
                                                 (sl, tls) => GetSquares(SquareByRow, sl, tls));
 
-
             return score;
         }
 
+        // Vertical Move -
         // score by checking for words:
-        // in slice direction and words created in perpendicular direction
+        // in slice direction + words created in perpendicular direction
         internal int ScoreMoveVertical(int sliceLocation, List<int> tileLocations, int MovesMade)
         {
             var(singleRunStart, singleRunEnd) = GetEndpoints(SquareByRow, sliceLocation, tileLocations);
 
-            int score = ScoreMoveSlice(sliceLocation, (singleRunStart, singleRunEnd), 
+            int score = ScoreMoveSlice(sliceLocation, 
+                                        (singleRunStart, singleRunEnd), 
                                         (l, s, e) => GetSquares(SquareByRow, l, (s, e)));
 
             score += ScorePerpendicularSlices(  (singleRunStart, singleRunEnd), 
                                                 sliceLocation, 
                                                 MovesMade,
                                                 (sl, tls) => GetSquares(SquareByColumn, sl, tls));
-
             return score;
         }
-        static internal int ScoreMoveSlice(int location,
+
+        static internal int ScoreMoveSlice(
+                                    int location,
                                     (int start, int end) singleRun,
                                     Func<int, int, int, List<Square>> GetSquares)
         {

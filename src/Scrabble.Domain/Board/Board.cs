@@ -8,6 +8,16 @@ namespace Scrabble.Domain
     {
 
         public readonly Square[,] squares = new Square[Coord.RowCount, Coord.ColCount];
+
+        // "SquareBy" functions used as parameters to Higher Order Functions
+        //  to allow them to operater in either Horizontal or Vertical direction
+
+        public Square SquareByRow(int row, int col) =>
+            squares[row, col];
+
+        public Square SquareByColumn(int col, int row) =>
+            squares[row, col];
+
         public static readonly Coord STAR = new(R._8, C.H);
 
         public int MovesMade = 0;
@@ -15,6 +25,7 @@ namespace Scrabble.Domain
         internal readonly Func<string, bool> IsWordValid;
 
         public Tile GetTile(Coord loc) => squares[loc.RVal, loc.CVal]?.Tile;
+
 
         public Board(Func<string, bool> IsWordValid)
         {
@@ -64,7 +75,6 @@ namespace Scrabble.Domain
             }
         }
 
- 
         public Board(Board other)
         {
             foreach (var r in Coord.Rows)
@@ -75,19 +85,23 @@ namespace Scrabble.Domain
             MovesMade = other.MovesMade;
         }
 
-        public Square SquareByRow(int row, int col) =>
-            squares[row, col];
 
-        public Square SquareByColumn(int col, int row) =>
-            squares[row, col];
-
-        internal static List<Square> GetSquares(Func<int, int, Square> GetSquare, int sliceLocation, List<int> locationList, int maxIndex = Coord.RowCount - 1)
+        // fetch all specified squares in a slice (horizontal or vertical)
+        internal static List<Square> GetSquares(
+                                            Func<int, int, Square> GetSquare, 
+                                            int sliceLocation, 
+                                            List<int> locationList, 
+                                            int maxIndex = Coord.RowCount - 1)
         {
             var (start, end) = GetEndpoints(GetSquare, sliceLocation, locationList, maxIndex);
             return GetSquares(GetSquare, sliceLocation, (start, end));
         }
 
-        internal static List<Square> GetSquares(Func<int, int, Square> GetSquare, int sliceLocation, (int Start, int End) range )
+        // fetch all squares in a range of a slice
+        internal static List<Square> GetSquares(
+                                        Func<int, int, Square> GetSquare, 
+                                        int sliceLocation, 
+                                        (int Start, int End) range )
         {
             List<Square> slice = [];
 
@@ -102,7 +116,11 @@ namespace Scrabble.Domain
         }
 
         // determine start and end location of occupied squares contiguous with specified squares
-        internal static (int start, int end) GetEndpoints(Func<int, int, Square> GetSquare, int sliceLocation, List<int> locationList, int maxIndex = Coord.RowCount - 1)
+        internal static (int start, int end) GetEndpoints(
+                                        Func<int, int, Square> GetSquare, 
+                                        int sliceLocation, 
+                                        List<int> locationList, 
+                                        int maxIndex = Coord.RowCount - 1)
         {
    
             var minMove = locationList.Min();
@@ -131,8 +149,9 @@ namespace Scrabble.Domain
 
             return (minOccupied, maxOccupied);
         }
+       
 
-        
+        // get list of coord and squares (by default, empty squares)
         public List<LocationSquare> GetLocationSquares(bool IsOccupied = false)
         {
             List<LocationSquare> locationSquareList = [];
@@ -145,6 +164,61 @@ namespace Scrabble.Domain
             return locationSquareList;
         }
 
+        // override equality operator for board comparison
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            var other = (Board)obj;
+
+            // Compare IsWordValid
+            if (!IsWordValid.Method.Equals(other.IsWordValid.Method))
+            {
+                return false;
+            }
+
+            // Compare MovesMade
+            if (MovesMade != other.MovesMade)
+            {
+                return false;
+            }
+
+            // Compare squares
+            for (int r = 0; r < Coord.RowCount; r++)
+            {
+                for (int c = 0; c < Coord.ColCount; c++)
+                {
+                    if (!squares[r, c].Equals(other.squares[r, c]))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+
+            // Combine hash codes of relevant properties
+            hashCode.Add(IsWordValid.Method);
+            hashCode.Add(MovesMade);
+
+            for (int r = 0; r < Coord.RowCount; r++)
+            {
+                for (int c = 0; c < Coord.ColCount; c++)
+                {
+                    hashCode.Add(squares[r, c]);
+                }
+            }
+
+            return hashCode.ToHashCode();
+        }
         private void Initialize()
         {
             // start
@@ -232,63 +306,5 @@ namespace Scrabble.Domain
                 };
             }
         }
-
-        // Override Equals method
-        public override bool Equals(object obj)
-        {
-            if (obj == null || GetType() != obj.GetType())
-            {
-                return false;
-            }
-
-            var other = (Board)obj;
-
-            // Compare IsWordValid
-            if (!IsWordValid.Method.Equals(other.IsWordValid.Method))
-            {
-                return false;
-            }
-
-            // Compare MovesMade
-            if (MovesMade != other.MovesMade)
-            {
-                return false;
-            }
-
-            // Compare squares
-            for (int r = 0; r < Coord.RowCount; r++)
-            {
-                for (int c = 0; c < Coord.ColCount; c++)
-                {
-                    if (!squares[r, c].Equals(other.squares[r, c]))
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        // Override GetHashCode method
-        public override int GetHashCode()
-        {
-            var hashCode = new HashCode();
-
-            // Combine hash codes of relevant properties
-            hashCode.Add(IsWordValid.Method);
-            hashCode.Add(MovesMade);
-
-            for (int r = 0; r < Coord.RowCount; r++)
-            {
-                for (int c = 0; c < Coord.ColCount; c++)
-                {
-                    hashCode.Add(squares[r, c]);
-                }
-            }
-
-            return hashCode.ToHashCode();
-        }
-
     }
 }

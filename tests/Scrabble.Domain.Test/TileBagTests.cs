@@ -83,11 +83,10 @@ namespace Scrabble.Domain.Tests
         {
             // Arrange
             var originalTileBag = TileBag.TileBagFactory.Create();
-            var shuffledTileBag = TileBag.TileBagFactory.Copy(originalTileBag);
 
             // Act
-            shuffledTileBag.Shuffle();
-            
+            var shuffledTileBag  = originalTileBag.Shuffle();
+
             // Assert
             Assert.NotEqual(originalTileBag, shuffledTileBag); // Not guaranteed to be different but highly likely
         }
@@ -99,7 +98,7 @@ namespace Scrabble.Domain.Tests
             var tileBag = TileBag.TileBagFactory.Create();
 
             // Act
-            var vowels = tileBag.FindAll(tile => "AEIOU".Contains(tile.Letter));
+            var vowels = tileBag.Peek().FindAll(tile => "AEIOU".Contains(tile.Letter));
 
             // Assert
             Assert.True(vowels.All(tile => "AEIOU".Contains(tile.Letter)));

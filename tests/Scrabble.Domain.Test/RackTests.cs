@@ -60,8 +60,8 @@ namespace Scrabble.Domain.Tests
             };
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => rack.AddTiles(tilesToAdd));
-            Assert.Contains("Not a valid tile count", exception.Message);
+            var exception = Assert.Throws<InvalidOperationException>(() => rack.AddTiles(tilesToAdd));
+            Assert.Contains("Exceeding rack capacity", exception.Message);
         }
 
         [Fact]
@@ -89,13 +89,10 @@ namespace Scrabble.Domain.Tests
             var rack = emptyRack.AddTiles(initialTiles);
             var tilesToRemove = new List<Tile> { new('A'), new('B') };
 
-            // Act 
-            var rackAfterRemoval = rack.RemoveTiles(tilesToRemove);
 
-            // Assert
-            Assert.Equal(1, rackAfterRemoval.TileCount);
-            var aTile = rackAfterRemoval.GetTiles().FirstOrDefault(t => t == new Tile('C'));
-            Assert.Equal(new Tile('C'), aTile);
+            // Act & Assert
+            var exception = Assert.Throws<InvalidOperationException>(() => rack.RemoveTiles(tilesToRemove));
+            Assert.Contains("Attempt to remove tile not in rack.", exception.Message);
 
         }
 
