@@ -176,14 +176,91 @@ namespace Scrabble.Domain.Tests
             Assert.False(board.TilesContiguousOnBoard(tiles).valid);
         }
 
+        [Fact]
+        public void WordOnBoardValid_RealValidator_ReturnValid()
+        {
+            var lex = new Lexicon(["ball", "bat"]);
 
+            var board = new Board(lex.IsWordValid);
+            var tiles = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.H), new Tile('B')),
+                new(new Coord(R._8, C.I), new Tile('A')),
+                new(new Coord(R._8, C.J), new Tile('L')),
+                new(new Coord(R._8, C.K), new Tile('L'))
+            };
+            board.PlaceTiles(tiles);
+
+            Assert.True(board.BoardContainsOnlyValidWords().valid);
+        }
+        [Fact]
+        public void WordOnBoardInValid_RealValidator_ReturnInvalid()
+        {
+            var lex = new Lexicon(["mitt", "base"]);
+
+            var board = new Board(lex.IsWordValid);
+            var tiles = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.H), new Tile('B')),
+                new(new Coord(R._8, C.I), new Tile('A')),
+                new(new Coord(R._8, C.J), new Tile('L')),
+                new(new Coord(R._8, C.K), new Tile('L'))
+            };
+            board.PlaceTiles(tiles);
+
+            var(valid, errorList) = board.BoardContainsOnlyValidWords();
+            Assert.False(valid);
+            Assert.Equal("Horizontal", errorList[0].Type.ToString());
+            Assert.Equal("BALL", errorList[0].Letters);
+            Assert.Equal<Coord>(new Coord(R._8, C.A), errorList[0].Location);
+        }
+
+        [Fact]
+        public void ScoreMove_AllBlanks_ReturnsCorrectScore()
+        {
+            //starting board
+
+            var startFrom = new Coord(R._8, C.H);
+            var tiles = new List<Tile> { new(' '), new(' '), new(' ') };
+
+            var board = new Board(MockWordValidator, startFrom, tiles, Placement.Horizontal);
+
+            // score initial move
+            var tilesAsPlacement = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.H), new Tile(' ')),
+                new(new Coord(R._8, C.I), new Tile(' ')),
+                new(new Coord(R._8, C.J), new Tile(' ')),
+            };
+
+            Assert.Equal(0, board.ScoreMove(tilesAsPlacement));
+        }
+
+        [Fact]
+        public void ScoreMove_SomeBlanks_ReturnsCorrectScore()
+        {
+            //starting board
+
+            var startFrom = new Coord(R._8, C.H);
+            var tiles = new List<Tile> { new('A'), new(' '), new('Z') };
+
+            var board = new Board(MockWordValidator, startFrom, tiles, Placement.Horizontal);
+
+            // score initial move
+            var tilesAsPlacement = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.H), new Tile('A')),
+                new(new Coord(R._8, C.I), new Tile(' ')),
+                new(new Coord(R._8, C.J), new Tile('Z')),
+            };
+
+            Assert.Equal(11, board.ScoreMove(tilesAsPlacement));
+        }
 
         [Fact]
         public void ScoreMove_InitialHorizontal_ReturnsCorrectScore()
         {
             //starting board
-
-
             var startFrom = new Coord(R._8, C.H);
             var tiles = new List<Tile> { new('B'), new('Z'), new('D') };
 
@@ -453,7 +530,7 @@ namespace Scrabble.Domain.Tests
             Assert.Equal((((int)R._8), ((int)R._9)), result);
         }
 
-        // Tests for GetSlice method
+
         [Fact]
         public void GetSlice_ReturnsCorrectRowSlice()
         {
@@ -484,7 +561,7 @@ namespace Scrabble.Domain.Tests
             Assert.Equal(2, result.Count);
         }
 
-        // Tests for ValidateBoardSlices method
+
         [Fact]
         public void ValidateBoardSlices_NoErrorsOnEmptyBoard()
         {
@@ -497,7 +574,6 @@ namespace Scrabble.Domain.Tests
         }
 
 
-        // Tests for ScoreMove method with fixed location
         [Fact]
         public void ScoreMove_CalculatesCorrectScore()
         {

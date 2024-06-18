@@ -81,7 +81,8 @@ namespace Scrabble.Domain
 
             for (int index = 0; index < sliceCount; index++)
             {
-                var charList = getSquares(index).ToCharList();
+                var sqList = getSquares(index);
+                var charList = sqList.ToCharList();
 
                 if (charList != null)
                 {
@@ -89,7 +90,10 @@ namespace Scrabble.Domain
 
                     if (!valid)
                     {
-                        var coord = placement == Placement.Horizontal ? new Coord((R)index, 0) : new Coord(0, (C)index);
+                     
+                        var coord = placement == Placement.Horizontal 
+                                ? new Coord((R)index, 0) : new Coord(0, (C)index);
+
                         invalidMessages.Add(new(placement, coord, invalidWord));
                     }
                 }
@@ -97,5 +101,6 @@ namespace Scrabble.Domain
 
             return invalidMessages;
         }
+
     }
 }

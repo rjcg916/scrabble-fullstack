@@ -101,7 +101,7 @@ namespace Scrabble.Domain
         internal static List<Square> GetSquares(
                                         Func<int, int, Square> GetSquare, 
                                         int sliceLocation, 
-                                        (int Start, int End) range )
+                                        (int Start, int End) range)
         {
             List<Square> slice = [];
 
@@ -114,6 +114,7 @@ namespace Scrabble.Domain
 
             return slice;
         }
+        
 
         // determine start and end location of occupied squares contiguous with specified squares
         internal static (int start, int end) GetEndpoints(
@@ -162,6 +163,24 @@ namespace Scrabble.Domain
                         locationSquareList.Add(new LocationSquare(new Coord(r, c), squares[(int)r, (int)c]));
 
             return locationSquareList;
+        }
+
+        // fetch all squares in a range of a slice
+        internal static List<(int, Square)> GetLocationSquares(
+                                        Func<int, int, Square> GetSquare,
+                                        int sliceLocation,
+                                        (int Start, int End) range)
+        {
+            List<(int, Square)> slice = [];
+
+            for (int location = range.Start; location <= range.End; location++)
+            {
+                var sq = GetSquare(location, sliceLocation);
+                if (sq.IsOccupied)
+                    slice.Add( (location, sq.Copy())); 
+            }
+
+            return slice;
         }
 
         // override equality operator for board comparison

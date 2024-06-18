@@ -30,7 +30,7 @@ namespace Scrabble.Domain
 
         public override string ToString()
         {
-            return $"{Col}{RVal}";            
+            return $"{RVal}{Col}";            
         }
 
         public List<Coord> GetAdjacent()
@@ -44,7 +44,40 @@ namespace Scrabble.Domain
 
         public bool IsValidCoord() =>
             RVal >= 0 && RVal < RowCount &&
-            CVal >= 0 && CVal < ColCount;
+            CVal >= 0 && CVal < ColCount; 
+        
+        
+        // Override Equals
+        public override bool Equals(object obj)
+        {
+            if (obj is Coord other)
+            {
+                return Row.Equals(other.Row) && Col.Equals(other.Col);
+            }
+            return false;
+        }
+
+        // Override GetHashCode
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Row, Col);
+        }
+
+        // Implement equality operators
+        public static bool operator ==(Coord left, Coord right)
+        {
+            if (ReferenceEquals(left, null))
+            {
+                return ReferenceEquals(right, null);
+            }
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Coord left, Coord right)
+        {
+            return !(left == right);
+        }
+
     }
     public record LocationSquare (Coord Coord, Square Square);
 
