@@ -6,7 +6,6 @@ namespace Scrabble.Domain
 {
     public partial class Board
     {
-
         // return a new board with tiles placed in the move
         public Board MakeMove(List<TilePlacement> tileList)
         {
@@ -80,15 +79,15 @@ namespace Scrabble.Domain
         {
             return placement switch
             {
-               Placement.Horizontal => ScoreMove(SquareByColumn, SquareByRow, sliceLocation, tileLocations, MovesMade),
-               Placement.Vertical => ScoreMove(SquareByRow, SquareByColumn, sliceLocation, tileLocations, MovesMade),
+               Placement.Horizontal => ScoreMove(SquareByColumn, SquareByRow, sliceLocation, tileLocations),
+               Placement.Vertical => ScoreMove(SquareByRow, SquareByColumn, sliceLocation, tileLocations),
                 _ => throw new Exception("Invalid Placement")
             };
         }
 
         internal int ScoreMove(Func<int, int, Square> primaryDirection, 
                                Func<int, int, Square> secondaryDirection, 
-                               int sliceLocation, List<int> tileLocations, int MovesMade)
+                               int sliceLocation, List<int> tileLocations)
         {
             var (singleRunStart, singleRunEnd) = GetEndpoints(primaryDirection, sliceLocation, tileLocations);
 
@@ -132,6 +131,5 @@ namespace Scrabble.Domain
 
             return score;
         }
-
     }
 }
