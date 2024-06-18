@@ -183,21 +183,21 @@ namespace Scrabble.Domain.Tests
         {
             //starting board
 
-            var tiles = new List<Tile> { new('B'), new('C'), new('D') };
+
             var startFrom = new Coord(R._8, C.H);
-
-            var tilesAsPlacement = new List<TilePlacement>
-            {
-                new(new Coord(R._8, C.H), new Tile('B')),
-                new(new Coord(R._8, C.I), new Tile('C')),
-                new(new Coord(R._8, C.J), new Tile('D')),
-
-            };
+            var tiles = new List<Tile> { new('B'), new('Z'), new('D') };
 
             var board = new Board(MockWordValidator, startFrom, tiles, Placement.Horizontal);
 
             // score initial move
-            Assert.Equal(8, board.ScoreMove(tilesAsPlacement));
+            var tilesAsPlacement = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.H), new Tile('B')),
+                new(new Coord(R._8, C.I), new Tile('Z')),
+                new(new Coord(R._8, C.J), new Tile('D')),
+            };
+            
+            Assert.Equal(15, board.ScoreMove(tilesAsPlacement));
 
         }
 
