@@ -28,7 +28,7 @@ namespace Scrabble.Domain
                                 List<Tile> tiles,
                                 Placement placement)
         {
-            Board board = new(this); // this.Copy();
+            Board board = new(this); 
 
             board.MovesMade++;
 
@@ -91,22 +91,21 @@ namespace Scrabble.Domain
         {
             var (singleRunStart, singleRunEnd) = GetEndpoints(primaryDirection, sliceLocation, tileLocations);
 
-            int score = ScoreMoveSlice(sliceLocation,
-                                        (singleRunStart, singleRunEnd),
-                                        (sl, s, e) => GetSquares(primaryDirection, sl, (s, e)));
+            int score = ScoreMoveSlice((sl, s, e) => GetSquares(primaryDirection, sl, (s, e)), sliceLocation,
+                                        (singleRunStart, singleRunEnd)
+                                       );
 
-            score += ScorePerpendicularSlices((singleRunStart, singleRunEnd),
+            score += ScorePerpendicularSlices((sl, tls) => GetSquares(secondaryDirection, sl, tls), (singleRunStart, singleRunEnd),
                                                 sliceLocation,
-                                                MovesMade,
-                                                (sl, tls) => GetSquares(secondaryDirection, sl, tls));
+                                                MovesMade
+                                                );
 
             return score;
         }
 
-        static internal int ScoreMoveSlice(
+        static internal int ScoreMoveSlice(Func<int, int, int, List<Square>> GetSquares,
                                     int location,
-                                    (int start, int end) singleRun,
-                                    Func<int, int, int, List<Square>> GetSquares)
+                                    (int start, int end) singleRun)
         {
             var moveSlice = GetSquares(location, singleRun.start, singleRun.end);
 
@@ -116,8 +115,9 @@ namespace Scrabble.Domain
             return moveSlice.ScoreRun();
         }
 
-        static internal int ScorePerpendicularSlices((int start, int end) singleRun, int sliceLocation, int MovesMade,
-                                                    Func<int, List<int>, List<Square>> GetSquares)
+        static internal int ScorePerpendicularSlices(Func<int, List<int>, List<Square>> GetSquares,
+                                                    (int start, int end) singleRun, int sliceLocation, int MovesMade
+                                                    )
         {
             int score = 0;
 

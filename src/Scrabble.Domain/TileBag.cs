@@ -22,8 +22,8 @@ namespace Scrabble.Domain
 
     public class TileBag : ITileBag
     {
-        private static readonly List<(Tile tile, ushort freq)> tiles = new()
-        {
+        private static readonly List<(Tile tile, ushort freq)> tiles =
+        [
             new(new Tile('A'), 9),
             new(new Tile('B'), 2),
             new(new Tile('C'), 2),
@@ -51,7 +51,7 @@ namespace Scrabble.Domain
             new(new Tile('Y'), 2),
             new(new Tile('Z'), 1),
             new(new Tile(' '), 2)
-        };
+        ];
 
         public IReadOnlyList<Tile> Tiles { get; }
 
@@ -62,8 +62,8 @@ namespace Scrabble.Domain
             Tiles = tiles;
         }
   
-        public List<Tile> Peek() => 
-            Tiles.ToList();
+        public List<Tile> Peek() =>
+            [.. Tiles];
 
         public  TileBag Shuffle() =>
             Shuffle([.. this.Tiles]);

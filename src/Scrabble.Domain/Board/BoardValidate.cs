@@ -54,7 +54,6 @@ namespace Scrabble.Domain
 
                 foreach (var adjCoord in adjacentCoords)
                 {
-
                     if (squares[adjCoord.RVal, adjCoord.CVal].IsOccupied)
                     {
                         isContiguous = true;
@@ -89,8 +88,7 @@ namespace Scrabble.Domain
                     var (valid, invalidWord) = charList.IsValidWordList(IsWordValid);
 
                     if (!valid)
-                    {
-                     
+                    {                     
                         var coord = placement == Placement.Horizontal 
                                 ? new Coord((R)index, 0) : new Coord(0, (C)index);
 

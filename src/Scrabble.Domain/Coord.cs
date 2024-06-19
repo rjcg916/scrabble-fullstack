@@ -19,10 +19,10 @@ namespace Scrabble.Domain
         public const int ColCount = 15;
 
         public R Row { get; init; } = row;
-        public static R[] Rows = (R[])Enum.GetValues(typeof(R));
-        
         public C Col { get; init; } = col;
-        public static C[] Cols = (C[])Enum.GetValues(typeof(C));
+
+        public static  R[] Rows => (R[])Enum.GetValues(typeof(R));
+        public static  C[] Cols => (C[])Enum.GetValues(typeof(C));
 
         public int RVal => (int) Row;
 
@@ -66,9 +66,9 @@ namespace Scrabble.Domain
         // Implement equality operators
         public static bool operator ==(Coord left, Coord right)
         {
-            if (ReferenceEquals(left, null))
+            if (left is null)
             {
-                return ReferenceEquals(right, null);
+                return right is null;
             }
             return left.Equals(right);
         }
@@ -77,8 +77,5 @@ namespace Scrabble.Domain
         {
             return !(left == right);
         }
-
     }
-    public record LocationSquare (Coord Coord, Square Square);
-
 }

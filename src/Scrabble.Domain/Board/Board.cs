@@ -4,13 +4,15 @@ using System;
 
 namespace Scrabble.Domain
 {
+    public record LocationSquare(Coord Coord, Square Square);
+
     public partial class Board
     {
 
         public readonly Square[,] squares = new Square[Coord.RowCount, Coord.ColCount];
 
-        // "SquareBy" functions used as parameters to Higher Order Functions
-        //  to allow them to operater in either Horizontal or Vertical direction
+        // "SquareBy" functions are used as parameters and allow Higher Order Functions
+        // to operater in either Horizontal or Vertical direction
 
         public Square SquareByRow(int row, int col) =>
             squares[row, col];
@@ -26,7 +28,7 @@ namespace Scrabble.Domain
 
         public Tile GetTile(Coord loc) => squares[loc.RVal, loc.CVal]?.Tile;
 
-
+ 
         public Board(Func<string, bool> IsWordValid)
         {
             this.IsWordValid = IsWordValid;
@@ -183,7 +185,6 @@ namespace Scrabble.Domain
             return slice;
         }
 
-        // override equality operator for board comparison
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType())
@@ -193,19 +194,17 @@ namespace Scrabble.Domain
 
             var other = (Board)obj;
 
-            // Compare IsWordValid
+
             if (!IsWordValid.Method.Equals(other.IsWordValid.Method))
             {
                 return false;
             }
 
-            // Compare MovesMade
             if (MovesMade != other.MovesMade)
             {
                 return false;
             }
 
-            // Compare squares
             for (int r = 0; r < Coord.RowCount; r++)
             {
                 for (int c = 0; c < Coord.ColCount; c++)
