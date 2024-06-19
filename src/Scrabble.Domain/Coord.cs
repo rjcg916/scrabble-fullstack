@@ -30,7 +30,7 @@ namespace Scrabble.Domain
 
         public override string ToString()
         {
-            return $"{RVal}{Col}";            
+            return $"{RVal+1}{Col}";            
         }
 
         public List<Coord> GetAdjacent()
