@@ -8,15 +8,12 @@ namespace Scrabble.Domain
 
     public partial class Board
     {
+        public  Square[,] squares = new Square[Coord.RowCount, Coord.ColCount];
 
-        public readonly Square[,] squares = new Square[Coord.RowCount, Coord.ColCount];
-
-        // "SquareBy" functions are used as parameters and allow Higher Order Functions
+        // "SquareBy" functions allow Higher Order Functions
         // to operater in either Horizontal or Vertical direction
-
         public Square SquareByRow(int row, int col) =>
             squares[row, col];
-
         public Square SquareByColumn(int col, int row) =>
             squares[row, col];
 
@@ -28,7 +25,6 @@ namespace Scrabble.Domain
 
         public Tile GetTile(Coord loc) => squares[loc.RVal, loc.CVal]?.Tile;
 
-
         public Board(Func<string, bool> IsWordValid)
         {
             this.IsWordValid = IsWordValid;
@@ -38,6 +34,17 @@ namespace Scrabble.Domain
                     squares[(int)r, (int)c] = new Square();
 
             Initialize();
+        }
+
+        public Board(Board other)
+        {            
+            IsWordValid = other.IsWordValid;
+         
+            MoveNumber = other.MoveNumber;
+
+            foreach (var r in Coord.Rows)
+                foreach (var c in Coord.Cols)
+                    squares[(int)r, (int)c] = new Square(other.squares[(int)r, (int)c]);          
         }
 
         // create a new Board with initial move
@@ -58,16 +65,45 @@ namespace Scrabble.Domain
             MakeMove(startFrom, tiles, placement);
         }
 
-        public Board(Board other)
+        // return a new board with tiles placed in the move
+        public void MakeMove(List<TilePlacement> tileList)
         {
-            foreach (var r in Coord.Rows)
-                foreach (var c in Coord.Cols)
-                    squares[(int)r, (int)c] = other.squares[(int)r, (int)c].Copy();
-
-            IsWordValid = other.IsWordValid;
-            MoveNumber = other.MoveNumber;
+            var move = new Move(tileList);
+            move.Apply(this);
+           // return this;
         }
 
+        // return a new board with tiles placed in the move
+        public void MakeMove(Coord startFrom, List<Tile> tiles, Placement placement)
+        {
+            var tilePlacements = GetTilePlacements(startFrom, tiles, placement);
+            var move = new Move(tilePlacements);
+            move.Apply(this);
+           // return this;
+        }
+
+        public int ScoreMove(List<TilePlacement> tilePlacementList)
+        {
+            return new Score(this, tilePlacementList).Calculate();
+        }
+
+        // fetch all squares in a range of a slice
+        internal static List<Square> GetSquares(
+                                        Func<int, int, Square> GetSquare,
+                                        int sliceLocation,
+                                        (int Start, int End) range)
+        {
+            List<Square> slice = [];
+
+            for (int location = range.Start; location <= range.End; location++)
+            {
+                var sq = GetSquare(location, sliceLocation);
+                if (sq.IsOccupied)
+                    slice.Add(new(sq));
+            }
+
+            return slice;
+        }
 
         // get list of coord and squares (by default, empty squares)
         public List<LocationSquare> GetLocationSquares(bool IsOccupied = false)
@@ -94,29 +130,14 @@ namespace Scrabble.Domain
             {
                 var sq = GetSquare(location, sliceLocation);
                 if (sq.IsOccupied)
-                    slice.Add((location, sq.Copy()));
+                    slice.Add((location, new(sq)));
             }
 
             return slice;
         }
 
-        // return a new board with tiles placed in the move
-        public Board MakeMove(List<TilePlacement> tileList)
-        {
-            var move = new Move(MoveNumber + 1, tileList);
-            return move.Apply(this);
-        }
-
-        // return a new board with tiles placed in the move
-        public Board MakeMove(Coord startFrom, List<Tile> tiles, Placement placement)
-        {
-            var tilePlacements = CreateTilePlacements(startFrom, tiles, placement);
-            var move = new Move(MoveNumber + 1, tilePlacements);
-            return move.Apply(this);
-        }
-
         // place tiles on board
-        private static List<TilePlacement> CreateTilePlacements(Coord startFrom, List<Tile> tiles, Placement placement)
+        private static List<TilePlacement> GetTilePlacements(Coord startFrom, List<Tile> tiles, Placement placement)
         {
             return placement switch
             {
@@ -125,12 +146,6 @@ namespace Scrabble.Domain
                 _ => throw new ArgumentOutOfRangeException(nameof(placement), placement, null)
             };
         }
-
-        public int ScoreMove(List<TilePlacement> tilePlacementList)
-        {
-            return new Score(this, tilePlacementList).Calculate();
-        }
-
 
         public static bool DoesMoveTouchSTAR(List<TilePlacement> tileList) =>
              tileList.Exists(t => (t.Coord.Col == Board.STAR.Col) && (t.Coord.Row == Board.STAR.Row));
@@ -149,7 +164,7 @@ namespace Scrabble.Domain
                 return (false, [new(Placement.Star, Board.STAR, "STAR not occupied")]);
             }
 
-            var (areTilesContiguous, placementError) = board.TilesContiguousOnBoard(move);
+            var (areTilesContiguous, placementError) = board.TilesContiguousOnBoard(moveToTest);
 
             if (!areTilesContiguous)
             {
@@ -159,24 +174,6 @@ namespace Scrabble.Domain
             return board.BoardContainsOnlyValidWords();
         }
 
-
-        // fetch all squares in a range of a slice
-        internal static List<Square> GetSquares(
-                                        Func<int, int, Square> GetSquare,
-                                        int sliceLocation,
-                                        (int Start, int End) range)
-        {
-            List<Square> slice = [];
-
-            for (int location = range.Start; location <= range.End; location++)
-            {
-                var sq = GetSquare(location, sliceLocation);
-                if (sq.IsOccupied)
-                    slice.Add(sq.Copy());
-            }
-
-            return slice;
-        }
         public (bool valid, List<PlacementError> errorList) BoardContainsOnlyValidWords()
         {
             var invalidMessages = new List<PlacementError>();
@@ -186,6 +183,7 @@ namespace Scrabble.Domain
 
             return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, null);
         }
+
 
         public (bool valid, PlacementError error) TilesContiguousOnBoard(List<TilePlacement> tilePlacementList)
         {

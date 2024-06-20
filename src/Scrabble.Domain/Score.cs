@@ -71,15 +71,14 @@ namespace Scrabble.Domain
 
             for (int perpendicularFixed = singleRun.start; perpendicularFixed <= singleRun.end; perpendicularFixed++)
             {
-                var perpendicularSlice = getSquares(perpendicularFixed, new List<int> { sliceLocation });
-                var hasNewTiles = perpendicularSlice.Any(sq => sq.MoveOfOccupation == movesMade);
+                var perpendicularSlice = getSquares(perpendicularFixed, [sliceLocation]);
+                var hasNewTiles = perpendicularSlice.Any(sq => sq.MoveNumber == movesMade);
                 if ((perpendicularSlice.Count > 1) && hasNewTiles)
                     score += perpendicularSlice.ScoreRun();
             }
 
             return score;
         }
-
 
         // fetch all specified squares in a slice (horizontal or vertical)
         internal static List<Square> GetSquares(
@@ -91,7 +90,6 @@ namespace Scrabble.Domain
             var (start, end) = GetEndpoints(GetSquare, sliceLocation, locationList, maxIndex);
             return Board.GetSquares(GetSquare, sliceLocation, (start, end));
         }
-
 
         // determine start and end location of occupied squares contiguous with specified squares
         internal static (int start, int end) GetEndpoints(

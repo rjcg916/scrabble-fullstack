@@ -15,7 +15,9 @@ namespace Scrabble.Domain
 
         public Rack()
         {
+#pragma warning disable IDE0301 // Simplify collection initialization
             Tiles = Array.Empty<Tile>();
+#pragma warning restore IDE0301 // Simplify collection initialization
         }
 
         public Rack(IEnumerable<Tile> newTiles)

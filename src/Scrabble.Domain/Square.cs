@@ -11,7 +11,6 @@ namespace Scrabble.Domain
 
     public static class SquareExtensions
     {
-
         static public List<char>ToCharList(this List<Square> slice ) =>
             slice.Select(square => square.Tile?.Letter ?? ' ').ToList();
 
@@ -33,23 +32,19 @@ namespace Scrabble.Domain
 
     public class Square(SquareType squareType = SquareType.reg)
     {
-        public Square Copy()
-        {
-            return new Square
-            {
-                Tile = this.Tile,
-                SquareType = this.SquareType,
-                MoveOfOccupation = this.MoveOfOccupation,
-                IsFinal = this.IsFinal             
-            };
-        }
         public SquareType SquareType { get; set; } = squareType;
-
         public bool IsFinal { get; set; } = false;
         public Tile Tile { get; set; }
+        public int MoveNumber { get; set; } = 0;
 
-        public int MoveOfOccupation { get; set; } = 0;
-
+        public Square(Square other) : 
+            this(other.SquareType)
+        {
+            Tile = other.Tile != null ? new Tile(other.Tile.Letter) : null;
+            MoveNumber = other.MoveNumber;
+            IsFinal = other.IsFinal;
+        }
+        
         public bool IsOccupied
         {
             get
@@ -95,9 +90,9 @@ namespace Scrabble.Domain
                 return false;
             }
 
-            // Compare SquareType, MoveOfOccupation, and IsFinal
+            // Compare SquareType, MoveNumber, and IsFinal
             return SquareType == other.SquareType &&
-                   MoveOfOccupation == other.MoveOfOccupation &&
+                   MoveNumber == other.MoveNumber &&
                    IsFinal == other.IsFinal;
         }
 
@@ -106,7 +101,7 @@ namespace Scrabble.Domain
         {
             var hashCode = new HashCode();
             hashCode.Add(SquareType);
-            hashCode.Add(MoveOfOccupation);
+            hashCode.Add(MoveNumber);
             hashCode.Add(IsFinal);
             if (Tile != null)
             {
