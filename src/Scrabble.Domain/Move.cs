@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.WebSockets;
 
 namespace Scrabble.Domain
 {
@@ -13,23 +12,18 @@ namespace Scrabble.Domain
             TilePlacements = tilePlacements;
         }
 
-        public Move(Coord startFrom, List<Tile> tiles, Placement placement)
-        {
-            TilePlacements = placement switch
-            {
-                Placement.Vertical  => tiles.Select((tile, index) =>
-                                        new TilePlacement(new Coord((R)(startFrom.RVal + index), startFrom.Col), tile)
-                                        ).ToList(),
-                _                   => tiles.Select((tile, index) =>
-                                        new TilePlacement(new Coord(startFrom.Row, (C)(startFrom.CVal + index)), tile)
-                                        ).ToList(),
-            };
-        }
+        public Move(Coord startFrom, List<Tile> tiles, bool isHorizontal) =>
+            TilePlacements = isHorizontal ? 
+                tiles.Select((tile, index) =>
+                    new TilePlacement(new Coord((R)(startFrom.RVal + index), startFrom.Col), tile))
+                          .ToList() :
+                tiles.Select((tile, index) =>
+                    new TilePlacement(new Coord(startFrom.Row, (C)(startFrom.CVal + index)), tile))
+                         .ToList();        
 
         // place tiles on board
-        public void Apply(Board board)
+        public Board Apply(Board board)
         {
-          //  var newBoard = new Board(board);
             board.MoveNumber++;
     
             foreach (var placement in TilePlacements)
@@ -40,7 +34,7 @@ namespace Scrabble.Domain
                 board.squares[row,col].MoveNumber = board.MoveNumber;
             }
 
-           // return board;
+            return board;
         }
     }
 }

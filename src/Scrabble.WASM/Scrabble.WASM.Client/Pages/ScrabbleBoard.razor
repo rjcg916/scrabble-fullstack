@@ -24,7 +24,7 @@
     private static Lexicon lexicon = new Lexicon();    
     private Board board = new Board(lexicon.IsWordValid, new Coord(R._8, C.G),
                             "cAr".LettersToTiles(),
-                            Placement.Horizontal);
+                            isHorizontal:true);
 
     static string GetTileClass(SquareType st) => st switch
     {

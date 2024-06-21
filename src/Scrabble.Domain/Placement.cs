@@ -4,32 +4,32 @@ using System.Linq;
 
 namespace Scrabble.Domain
 {
-    public enum Placement
-    {
-        Horizontal, Vertical, Star, All
-    }
-
-    public record PlacementError(Placement Type, Coord Location, string Letters);
-    public record PlacementSpec(Placement Placement, int SliceLocation, List<int> TileLocations);
+    public record PlacementError(Coord Location, string Letters);
+    public record PlacementSpec(bool IsHorizontal, int SliceLocation, List<int> TileLocations);
     public record TilePlacement(Coord Coord, Tile Tile);
 
     public static class PlacementSpecExtension
     {
+        public static bool IsHorizontal(this List<TilePlacement> tileList) =>
+            tileList.Select(c => c.Coord.RVal).Distinct().Count() == 1;
+        public static bool IsVertical(this List<TilePlacement> tileList) =>
+            tileList.Select(c => c.Coord.CVal).Distinct().Count() == 1;
+
         public static PlacementSpec ToPlacementSpec(this List<TilePlacement> tileList)
         {
-            if (tileList.Select(c => c.Coord.RVal).Distinct().Count() == 1)
+            if (tileList.IsHorizontal())
             {
                 var fixedLocation = tileList.Select(c => c.Coord.RVal).First();
                 var tileLocations = tileList.Select(tl => tl.Coord.CVal).ToList();
 
-                return new(Placement.Horizontal, fixedLocation, tileLocations);
+                return new(IsHorizontal:true, fixedLocation, tileLocations);
             }
-            else if (tileList.Select(c => c.Coord.CVal).Distinct().Count() == 1)
+            else if (tileList.IsVertical())
             {
                 var fixedLocation = tileList.Select(c => c.Coord.CVal).First();
                 var tileLocations = tileList.Select(tl => tl.Coord.RVal).ToList();
 
-                return new(Placement.Vertical, fixedLocation, tileLocations);
+                return new(IsHorizontal:false, fixedLocation, tileLocations);
             }
             else
             {
