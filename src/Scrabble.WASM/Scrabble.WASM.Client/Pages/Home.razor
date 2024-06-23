@@ -1,7 +1,41 @@
-﻿@page "/"
+﻿@using Scrabble.WASM.Client.Components
+@using Scrabble.WASM.Client.Models
+@using Scrabble.Domain
 
-<PageTitle>Home</PageTitle>
+@page "/"
+
+<PageTitle></PageTitle>
 
 <h1>Hello, world!</h1>
 
-Welcome to your new app.
+<ScrabbleBoard board="currentBoard" 
+    OnSquareClickedCallback ="HandleSquareClicked"/>
+
+<ScrabbleMove OnMoveSubmitted="HandleMoveSubmitted" />
+
+@code {
+    private static Lexicon lexicon = new Lexicon();
+
+    public required Board currentBoard;
+
+    protected override void OnInitialized()
+    {
+        currentBoard = new Board(lexicon.IsWordValid);
+    }
+
+    private void HandleMoveSubmitted(ScrabbleMoveModel move)
+    {
+        var startFrom = new Coord((R)move.StartRow, (C)move.StartColumn);
+        var tiles = move.Letters.Select(letter => new Tile(letter)).ToList();
+        var nextBoard = currentBoard.MakeMove(startFrom, tiles, move.IsHorizontal);
+        currentBoard = nextBoard;
+        StateHasChanged();
+    }
+
+    private void HandleSquareClicked(Coord coord)
+    {
+        // Handle the square click event here
+        Console.WriteLine($"Square at Row: {coord.RVal} Col:{coord.CVal} clicked.");
+    }
+
+}

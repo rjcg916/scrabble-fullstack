@@ -1,0 +1,42 @@
+﻿@using Scrabble.WASM.Client.Models
+
+<div>
+    <label>Starting Row: </label>
+    <input type="number" @bind="StartRow" min="0" max="14" />
+</div>
+<div>
+    <label>Starting Column: </label>
+    <input type="number" @bind="StartColumn" min="0" max="14" />
+</div>
+<div>
+    <label>Letters: </label>
+    <input type="text" @bind="Letters" />
+</div>
+<div>
+    <label>Is Horizontal: </label>
+    <input type="checkbox" @bind="IsHorizontal" />
+</div>
+<button @onclick="SubmitMove">Submit Move</button>
+
+@code {
+    [Parameter]
+    public EventCallback<ScrabbleMoveModel> OnMoveSubmitted { get; set; }
+
+    public int StartRow { get; set; }
+    public int StartColumn { get; set; }
+    public string Letters { get; set; }
+    public bool IsHorizontal { get; set; }
+
+    private void SubmitMove()
+    {
+        var move = new ScrabbleMoveModel
+            {
+                StartRow = StartRow,
+                StartColumn = StartColumn,
+                Letters = Letters,
+                IsHorizontal = IsHorizontal
+            };
+
+        OnMoveSubmitted.InvokeAsync(move);
+    }
+}

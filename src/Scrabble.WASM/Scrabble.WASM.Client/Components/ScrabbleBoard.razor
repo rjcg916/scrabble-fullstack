@@ -1,0 +1,57 @@
+﻿@using Scrabble.Domain
+
+<table class="scrabble-board">
+    @for (int row = 0; row <= ((int)R._15); row++)
+    {
+        <tr>
+            @for (int col = 0; col <= (int)C.O; col++)
+            {
+                var square = board?.squares?[row, col];
+                var IsOccupied = square?.IsOccupied ?? false;
+                var currentRow = row;
+                var currentCol = col;
+                @if (IsOccupied)
+                {
+                    <td class="@GetTileClass(square?.SquareType ?? SquareType.reg)">
+                       @( square?.Tile.Letter.ToString())
+                    </td>
+                } else
+                {
+                    <td class="@GetTileClass(square?.SquareType ?? SquareType.reg)"
+                        @onclick="@(() => OnSquareClicked(currentRow, currentCol))">
+                        @(".")
+                    </td>
+                }
+        }
+        </tr>
+    }
+</table>
+
+
+@code {
+
+    [Parameter]
+    public required Board board { get; set; }
+
+    [Parameter]
+    public EventCallback<Coord> OnSquareClickedCallback { get; set; }
+
+
+    private void OnSquareClicked(int row, int col)
+    {
+        var coord = new Coord((R)row, (C)col);
+        OnSquareClickedCallback.InvokeAsync(coord);
+    }
+
+
+    static string GetTileClass(SquareType st) => st switch
+    {
+        SquareType.dl => "tile double-letter",
+        SquareType.dw => "tile double-word",
+        SquareType.tl => "tile triple-letter",
+        SquareType.tw => "tile triple-word",
+        SquareType.start => "tile start",
+        _ => "tile"
+    };
+
+}

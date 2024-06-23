@@ -283,6 +283,7 @@ namespace Scrabble.Domain.Tests
             // score initial move
             var expectedScore = 19;
             Assert.Equal(expectedScore, board.ScoreMove(tilesAsPlacement));
+           // Assert.Equal(expectedScore, board.ScoreMove(new Move(startFrom, tiles, isHorizontal: true));
         }
 
         [Fact]
