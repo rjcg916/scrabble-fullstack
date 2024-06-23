@@ -11,7 +11,6 @@ namespace Scrabble.Domain
         {
             TilePlacements = tilePlacements;
         }
-
         public Move(Coord startFrom, List<Tile> tiles, bool isHorizontal) =>
             TilePlacements = isHorizontal ? 
                 tiles.Select((tile, index) =>
@@ -21,20 +20,9 @@ namespace Scrabble.Domain
                     new TilePlacement(new Coord(startFrom.Row, (C)(startFrom.CVal + index)), tile))
                          .ToList();        
 
-        // place tiles on board
-        public Board Apply(Board board)
+        public List<TilePlacement> GetTilePlacements()
         {
-            board.MoveNumber++;
-    
-            foreach (var placement in TilePlacements)
-            {
-                int row = placement.Coord.RVal;
-                int col = placement.Coord.CVal;
-                board.squares[row,col].Tile = new Tile( placement.Tile.Letter);
-                board.squares[row,col].MoveNumber = board.MoveNumber;
-            }
-
-            return board;
+            return TilePlacements;
         }
     }
 }

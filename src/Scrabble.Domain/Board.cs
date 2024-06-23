@@ -71,21 +71,27 @@ namespace Scrabble.Domain
         }
 
         // return a new board with tiles placed in the move
+        public Board MakeMove(Move move) =>
+            MakeMove(move.TilePlacements);
+
+        public Board MakeMove(Coord startFrom, List<Tile> tiles, bool isHorizontal) =>
+            MakeMove(GetTilePlacements(startFrom, tiles, isHorizontal));
+        
         public Board MakeMove(List<TilePlacement> tileList)
         {
-            var move = new Move(tileList);
-            move.Apply(this);
+            this.MoveNumber++;
+
+            foreach (var placement in tileList)
+            {
+                int row = placement.Coord.RVal;
+                int col = placement.Coord.CVal;
+                squares[row, col].Tile = new Tile(placement.Tile.Letter);
+                squares[row, col].MoveNumber = MoveNumber;
+            }
             return this;
         }
 
-        // return a new board with tiles placed in the move
-        public Board MakeMove(Coord startFrom, List<Tile> tiles, bool isHorizontal)
-        {
-            var tilePlacements = GetTilePlacements(startFrom, tiles, isHorizontal);
-            var move = new Move(tilePlacements);
-            move.Apply(this);
-            return this;
-        }
+
 
         public int ScoreMove(List<TilePlacement> tilePlacementList)
         {
@@ -194,7 +200,6 @@ namespace Scrabble.Domain
 
             return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, null);
         }
-
 
         public (bool valid, PlacementError error) TilesContiguousOnBoard(List<TilePlacement> tilePlacementList)
         {
