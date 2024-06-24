@@ -8,8 +8,11 @@ namespace Scrabble.Domain
     public record PlacementSpec(bool IsHorizontal, int SliceLocation, List<int> TileLocations);
     public record TilePlacement(Coord Coord, Tile Tile);
 
-    public static class PlacementSpecExtension
+    public static class PlacementExtension
     {
+        public static Move ToMove(this List<TilePlacement> placements) =>
+            new(placements);
+                
         public static bool IsHorizontal(this List<TilePlacement> tileList) =>
             tileList.Select(c => c.Coord.RVal).Distinct().Count() == 1;
         public static bool IsVertical(this List<TilePlacement> tileList) =>
@@ -17,24 +20,17 @@ namespace Scrabble.Domain
 
         public static PlacementSpec ToPlacementSpec(this List<TilePlacement> tileList)
         {
-            if (tileList.IsHorizontal())
-            {
-                var fixedLocation = tileList.Select(c => c.Coord.RVal).First();
-                var tileLocations = tileList.Select(tl => tl.Coord.CVal).ToList();
-
-                return new(IsHorizontal:true, fixedLocation, tileLocations);
-            }
-            else if (tileList.IsVertical())
-            {
-                var fixedLocation = tileList.Select(c => c.Coord.CVal).First();
-                var tileLocations = tileList.Select(tl => tl.Coord.RVal).ToList();
-
-                return new(IsHorizontal:false, fixedLocation, tileLocations);
-            }
-            else
-            {
+            var isHorizontal = IsHorizontal(tileList);
+            var isVertical   = IsVertical(tileList);
+            
+            if (!isHorizontal && !isVertical) 
                 throw new Exception("Invalid Move");
-            }
+
+            var fixedLocation = tileList.Select(c => isHorizontal ? c.Coord.RVal : c.Coord.CVal).First();
+            var tileLocations = tileList.Select( c => isHorizontal ? c.Coord.CVal : c.Coord.RVal).ToList();
+            
+            return new(isHorizontal, SliceLocation:fixedLocation, TileLocations: tileLocations);
+
         }
     }  
 }

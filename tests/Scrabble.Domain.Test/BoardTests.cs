@@ -48,34 +48,13 @@ namespace Scrabble.Domain.Tests
             [
                 new(new Coord(R._8, C.H), new Tile('A'))
             ];
-            board.MakeMove(tiles);
+            board.MakeMove(new Move(tiles));
 
             var copy = new Board(board);
 
             Assert.NotSame(board, copy);
             Assert.Equal('A', copy.GetTile(new Coord(R._8, C.H)).Letter);
             Assert.Equal(board.MoveNumber, copy.MoveNumber);
-        }
-
-        [Fact]
-        public void BoardConstructor_AlternateConstructors_CreatesSameBoard()
-        {
-            //starting board
-
-            var tiles = new List<Tile> { new('B'), new('C'), new('D') };
-            var startFrom = new Coord(R._7, C.H);
- 
-            var tilesAsPlacement = new List<TilePlacement>
-            {
-                new(new Coord(R._7, C.H), new Tile('B')),
-                new(new Coord(R._8, C.H), new Tile('C')),
-                new(new Coord(R._9, C.H), new Tile('D'))
-            };
-
-            var board = new Board(MockWordValidator, startFrom, tiles, isHorizontal: false);
-            var boardAlt = new Board(MockWordValidator, tilesAsPlacement);
-            
-            Assert.Equal(board, boardAlt);
         }
 
         [Fact]
@@ -112,7 +91,7 @@ namespace Scrabble.Domain.Tests
             [
                 new(coord, new Tile('A'))
             ];
-            board.MakeMove(tiles);
+            board.MakeMove(new Move(tiles));
 
             Assert.True(board.IsOccupied(coord));
         }
@@ -138,7 +117,7 @@ namespace Scrabble.Domain.Tests
             [
                 new(coord, new Tile('A'))
             ];
-            board.MakeMove(tiles);
+            board.MakeMove(new Move(tiles));
 
             Assert.True(board.AreOccupied([coord, new(R._7, C.G)]));
         }
@@ -161,7 +140,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.H), new Tile('A')),
                 new(new Coord(R._8, C.I), new Tile('B'))
             };
-            board.MakeMove(tiles);
+            board.MakeMove(new Move(tiles));
 
             Assert.True(board.TilesContiguousOnBoard(tiles).valid);
         }
@@ -175,7 +154,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.H), new Tile('A')),
                 new(new Coord(R._8, C.J), new Tile('B'))
             };
-            board.MakeMove(tiles);
+            board.MakeMove(new Move(tiles));
 
             Assert.False(board.TilesContiguousOnBoard(tiles).valid);
         }
@@ -193,7 +172,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.J), new Tile('L')),
                 new(new Coord(R._8, C.K), new Tile('L'))
             };
-            board.MakeMove(tiles);
+            board.MakeMove(new Move(tiles));
 
             Assert.True(board.BoardContainsOnlyValidWords().valid);
         }
@@ -210,7 +189,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.J), new Tile('L')),
                 new(new Coord(R._8, C.K), new Tile('L'))
             };
-            board.MakeMove(tiles);
+            board.MakeMove(new Move(tiles));
 
             var(valid, errorList) = board.BoardContainsOnlyValidWords();
             Assert.False(valid);
@@ -230,7 +209,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.H), new Tile('A')),
                 new(new Coord(R._8, C.I), new Tile('B'))
             ];
-            board.MakeMove(tiles);
+            board.MakeMove(new Move(tiles));
 
             var result = Board.GetSquares(board.SquareByColumn, (int)R._8, (0, Coord.ColCount - 1));
 
@@ -247,7 +226,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.H), new Tile('B'))
             ];
 
-            board.MakeMove(tiles);
+            board.MakeMove(new Move(tiles));
 
             var result = Board.GetSquares(board.SquareByRow, (int)C.H, (0, Coord.RowCount - 1));
 

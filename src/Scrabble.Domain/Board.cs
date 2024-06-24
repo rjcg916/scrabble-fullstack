@@ -52,11 +52,12 @@ namespace Scrabble.Domain
         /// create a new Board with initial move
         /// </summary>>
         public Board(Func<string, bool> IsWordValid,
-                     List<TilePlacement> tileList) :
+                     Move move) :
             this(IsWordValid)
         {
-            MakeMove(tileList);
+            MakeMove(move);
         }
+
 
         /// <summary>
         /// create a new Board with initial move
@@ -67,21 +68,22 @@ namespace Scrabble.Domain
                         bool isHorizontal) :
             this(IsWordValid)
         {
-            MakeMove(startFrom, tiles, isHorizontal);
+            this.MakeMove(new Move(startFrom, tiles, isHorizontal));
         }
 
         // return a new board with tiles placed in the move
-        public Board MakeMove(Move move) =>
-            MakeMove(move.TilePlacements);
+       // public Board MakeMove(Move move) =>
+       //     MakeMove(move.TilePlacements);
 
-        public Board MakeMove(Coord startFrom, List<Tile> tiles, bool isHorizontal) =>
-            MakeMove(GetTilePlacements(startFrom, tiles, isHorizontal));
+      //  public Board MakeMove(Coord startFrom, List<Tile> tiles, bool isHorizontal) =>
+      //      MakeMove(GetTilePlacements(startFrom, tiles, isHorizontal));
         
-        public Board MakeMove(List<TilePlacement> tileList)
+
+        public Board MakeMove(Move move)
         {
             this.MoveNumber++;
 
-            foreach (var placement in tileList)
+            foreach (var placement in move.GetTilePlacements())
             {
                 int row = placement.Coord.RVal;
                 int col = placement.Coord.CVal;
@@ -89,13 +91,6 @@ namespace Scrabble.Domain
                 squares[row, col].MoveNumber = MoveNumber;
             }
             return this;
-        }
-
-
-
-        public int ScoreMove(List<TilePlacement> tilePlacementList)
-        {
-            return new Score(this, tilePlacementList).Calculate();
         }
 
         public int ScoreMove(Move move)
@@ -159,10 +154,10 @@ namespace Scrabble.Domain
         /// <summary>
         /// place tiles on board
         /// </summary>
-        private static List<TilePlacement> GetTilePlacements(Coord startFrom, List<Tile> tiles, bool isHorizontal) =>
-                isHorizontal ? 
-                 tiles.Select((tile, index) => new TilePlacement(new Coord(startFrom.Row, (C)(startFrom.CVal + index)), tile)).ToList()
-               : tiles.Select((tile, index) => new TilePlacement(new Coord((R)(startFrom.RVal + index), startFrom.Col), tile)).ToList();
+        //private static List<TilePlacement> GetTilePlacements(Coord startFrom, List<Tile> tiles, bool isHorizontal) =>
+        //        isHorizontal ? 
+        //         tiles.Select((tile, index) => new TilePlacement(new Coord(startFrom.Row, (C)(startFrom.CVal + index)), tile)).ToList()
+        //       : tiles.Select((tile, index) => new TilePlacement(new Coord((R)(startFrom.RVal + index), startFrom.Col), tile)).ToList();
             
         public static bool DoesMoveTouchSTAR(List<TilePlacement> tileList) =>
              tileList.Exists(t => (t.Coord.Col == Board.STAR.Col) && (t.Coord.Row == Board.STAR.Row));
@@ -174,7 +169,7 @@ namespace Scrabble.Domain
         {
             Board board = new(this);
 
-            board.MakeMove(moveToTest);
+            board.MakeMove(new Move(moveToTest));
 
             if (!IsOccupied(STAR))
             {

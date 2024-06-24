@@ -6,15 +6,13 @@
 
 <PageTitle></PageTitle>
 
-<h1>Hello, world!</h1>
 
 <div>
     <label>Valid State? </label>
     <span>@(IsBoardValid ? "Yes" : "No")</span>
 </div>
 
-<ScrabbleBoard board="currentBoard" 
-    OnSquareClickedCallback ="HandleSquareClicked"/>
+<ScrabbleBoard board="currentBoard" OnSquareClickedCallback ="HandleSquareClicked"/>
 
 <ScrabbleMove OnMoveSubmitted="HandleMoveSubmitted" />
 

@@ -21,23 +21,6 @@ namespace Scrabble.Domain
             SliceLocation = tileSpecs.SliceLocation;
         }
 
-        public Score(Board board, List<TilePlacement> tilePlacements)
-        {
-            Board = board;
-            var tileSpecs = tilePlacements.ToPlacementSpec();
-            IsHorizontal = tileSpecs.IsHorizontal;
-            TileLocations = tileSpecs.TileLocations;    
-            SliceLocation = tileSpecs.SliceLocation;
-        }
-
-        public Score(Board board, int sliceLocation, List<int> tileLocations, bool isHorizontal)
-        {
-            Board = board;
-            IsHorizontal = isHorizontal;
-            TileLocations = tileLocations;
-            SliceLocation = sliceLocation;
-        }
-
         public int Calculate() =>
                     IsHorizontal ? 
                         Calculate(Board, Board.SquareByColumn, Board.SquareByRow, SliceLocation, TileLocations):

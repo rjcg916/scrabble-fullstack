@@ -29,13 +29,7 @@
 
     private void SubmitMove()
     {
-        var move = new ScrabbleMoveModel
-            {
-                StartRow = StartRow,
-                StartColumn = StartColumn,
-                Letters = Letters,
-                IsHorizontal = IsHorizontal
-            };
+        var move = new ScrabbleMoveModel(StartRow, StartColumn, Letters, IsHorizontal);
 
         OnMoveSubmitted.InvokeAsync(move);
     }
