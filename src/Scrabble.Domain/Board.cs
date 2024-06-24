@@ -71,14 +71,6 @@ namespace Scrabble.Domain
             this.MakeMove(MoveFactory.CreateMove(startFrom, tiles, isHorizontal));
         }
 
-        // return a new board with tiles placed in the move
-       // public Board MakeMove(Move move) =>
-       //     MakeMove(move.TilePlacements);
-
-      //  public Board MakeMove(Coord startFrom, List<Tile> tiles, bool isHorizontal) =>
-      //      MakeMove(GetTilePlacements(startFrom, tiles, isHorizontal));
-        
-
         public Board MakeMove(Move move)
         {
             this.MoveNumber++;
@@ -151,14 +143,6 @@ namespace Scrabble.Domain
             return slice;
         }
 
-        /// <summary>
-        /// place tiles on board
-        /// </summary>
-        //private static List<TilePlacement> GetTilePlacements(Coord startFrom, List<Tile> tiles, bool isHorizontal) =>
-        //        isHorizontal ? 
-        //         tiles.Select((tile, index) => new TilePlacement(new Coord(startFrom.Row, (C)(startFrom.CVal + index)), tile)).ToList()
-        //       : tiles.Select((tile, index) => new TilePlacement(new Coord((R)(startFrom.RVal + index), startFrom.Col), tile)).ToList();
-            
         public static bool DoesMoveTouchSTAR(List<TilePlacement> tileList) =>
              tileList.Exists(t => (t.Coord.Col == Board.STAR.Col) && (t.Coord.Row == Board.STAR.Row));
 
@@ -176,17 +160,17 @@ namespace Scrabble.Domain
                 return (false, [new(Board.STAR, "STAR not occupied")]);
             }
 
-            var (areTilesContiguous, placementError) = board.TilesContiguousOnBoard(moveToTest);
+            var (areTilesContiguous, placementError) = board.TilesContiguous(moveToTest);
 
             if (!areTilesContiguous)
             {
                 return (false, [placementError]);
             }
 
-            return board.BoardContainsOnlyValidWords();
+            return board.OnlyValidWords();
         }
 
-        public (bool valid, List<PlacementError> errorList) BoardContainsOnlyValidWords()
+        public (bool valid, List<PlacementError> errorList) OnlyValidWords()
         {
             var invalidMessages = new List<PlacementError>();
 
@@ -196,7 +180,7 @@ namespace Scrabble.Domain
             return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, null);
         }
 
-        public (bool valid, PlacementError error) TilesContiguousOnBoard(List<TilePlacement> tilePlacementList)
+        public (bool valid, PlacementError error) TilesContiguous(List<TilePlacement> tilePlacementList)
         {
             // make sure each of the tiles in list is contiguous with another tile
             foreach (var (coord, _) in tilePlacementList)

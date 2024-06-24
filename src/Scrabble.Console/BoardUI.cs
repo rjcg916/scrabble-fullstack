@@ -39,7 +39,7 @@ namespace Scrabble.Console
    
         public void DisplayBoardStatus()
         {
-            (bool IsBoardValid, List<PlacementError> InvalidMessage) = Board.BoardContainsOnlyValidWords();
+            (bool IsBoardValid, List<PlacementError> InvalidMessage) = Board.OnlyValidWords();
 
             Console.WriteLine(
                $"Is Board Valid? {IsBoardValid}\n{(IsBoardValid ? string.Empty : InvalidMessage.ToString())}");

@@ -142,7 +142,7 @@ namespace Scrabble.Domain.Tests
             };
             board.MakeMove(MoveFactory.CreateMove(tiles));
 
-            Assert.True(board.TilesContiguousOnBoard(tiles).valid);
+            Assert.True(board.TilesContiguous(tiles).valid);
         }
 
         [Fact]
@@ -156,7 +156,7 @@ namespace Scrabble.Domain.Tests
             };
             board.MakeMove(MoveFactory.CreateMove(tiles));
 
-            Assert.False(board.TilesContiguousOnBoard(tiles).valid);
+            Assert.False(board.TilesContiguous(tiles).valid);
         }
 
         [Fact]
@@ -174,7 +174,7 @@ namespace Scrabble.Domain.Tests
             };
             board.MakeMove(MoveFactory.CreateMove(tiles));
 
-            Assert.True(board.BoardContainsOnlyValidWords().valid);
+            Assert.True(board.OnlyValidWords().valid);
         }
         [Fact]
         public void WordOnBoardInValid_RealValidator_ReturnInvalid()
@@ -191,7 +191,7 @@ namespace Scrabble.Domain.Tests
             };
             board.MakeMove(MoveFactory.CreateMove(tiles));
 
-            var(valid, errorList) = board.BoardContainsOnlyValidWords();
+            var(valid, errorList) = board.OnlyValidWords();
             Assert.False(valid);
             Assert.Equal("BALL", errorList[0].Letters);
             Assert.Equal<Coord>(new Coord(R._8, C.A), errorList[0].Location);
