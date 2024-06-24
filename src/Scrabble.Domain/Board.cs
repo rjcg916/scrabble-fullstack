@@ -68,7 +68,7 @@ namespace Scrabble.Domain
                         bool isHorizontal) :
             this(IsWordValid)
         {
-            this.MakeMove(new Move(startFrom, tiles, isHorizontal));
+            this.MakeMove(MoveFactory.CreateMove(startFrom, tiles, isHorizontal));
         }
 
         // return a new board with tiles placed in the move
@@ -83,7 +83,7 @@ namespace Scrabble.Domain
         {
             this.MoveNumber++;
 
-            foreach (var placement in move.GetTilePlacements())
+            foreach (var placement in move.TilePlacements)
             {
                 int row = placement.Coord.RVal;
                 int col = placement.Coord.CVal;
@@ -169,7 +169,7 @@ namespace Scrabble.Domain
         {
             Board board = new(this);
 
-            board.MakeMove(new Move(moveToTest));
+            board.MakeMove(MoveFactory.CreateMove(moveToTest));
 
             if (!IsOccupied(STAR))
             {

@@ -34,7 +34,7 @@
     {
         var startFrom = new Coord((R)move.StartRow, (C)move.StartColumn);
         var tiles = move.Letters.Select(letter => new Tile(letter)).ToList();
-        currentMove = new Move(startFrom, tiles, move.IsHorizontal);
+        currentMove = MoveFactory.CreateMove(startFrom, tiles, move.IsHorizontal);
 
         //IsBoardValid = currentBoard.IsMoveValid()
 

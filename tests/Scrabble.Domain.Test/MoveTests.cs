@@ -73,7 +73,7 @@ namespace Scrabble.Domain.Tests
 
             var startFrom = new Coord(R._1, C.J);
 
-            var (valid, msg) = Move.IsValidCoordTileList(startFrom, tiles, true);
+            var (valid, msg) = MoveHorizontal.IsValidCoordTileList(startFrom, tiles);
 
             Assert.False(valid);
             Assert.Equal("Move off of board (Right)", msg);
@@ -95,7 +95,7 @@ namespace Scrabble.Domain.Tests
 
             var startFrom = new Coord(R._10, C.A);
 
-            var (valid, msg) = Move.IsValidCoordTileList(startFrom, tiles, false);
+            var (valid, msg) = MoveVertical.IsValidCoordTileList(startFrom, tiles);
 
             Assert.False(valid);
             Assert.Equal("Move off of board (Bottom)", msg);
@@ -110,7 +110,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._1, C.B), new Tile('B'))
             };
 
-            var move = new Move(tiles);
+            var move = MoveFactory.CreateMove(tiles);
 
             Assert.NotNull(move.TilePlacements);
             Assert.Equal(2, move.TilePlacements.Count);
@@ -125,7 +125,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._2, C.B), new Tile('B'))
             };
 
-            var exception = Assert.Throws<Exception>(() => new Move(tiles));
+            var exception = Assert.Throws<Exception>(() => MoveFactory.CreateMove(tiles));
 
             Assert.Equal("Move is in both horizontal and vertical direction", exception.Message);
         }
@@ -141,7 +141,7 @@ namespace Scrabble.Domain.Tests
 
             var startFrom = new Coord(R._1, C.A);
 
-            var move = new Move(startFrom, tiles, true);
+            var move = MoveFactory.CreateMove(startFrom, tiles, true);
 
             Assert.NotNull(move.TilePlacements);
             Assert.Equal(2, move.TilePlacements.Count);
@@ -158,7 +158,7 @@ namespace Scrabble.Domain.Tests
 
             var startFrom = new Coord(R._15, C.O);
 
-            var exception = Assert.Throws<Exception>(() => new Move(startFrom, tiles, true));
+            var exception = Assert.Throws<Exception>(() => MoveFactory.CreateMove(startFrom, tiles, true));
 
             Assert.Equal("Move off of board (Right)", exception.Message);
         }

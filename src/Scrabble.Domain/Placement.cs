@@ -11,7 +11,7 @@ namespace Scrabble.Domain
     public static class PlacementExtension
     {
         public static Move ToMove(this List<TilePlacement> placements) =>
-            new(placements);
+            MoveFactory.CreateMove(placements);
                 
         public static bool IsHorizontal(this List<TilePlacement> tileList) =>
             tileList.Select(c => c.Coord.RVal).Distinct().Count() == 1;
