@@ -4,13 +4,17 @@
 
 @page "/"
 
-<PageTitle></PageTitle>
-
-
 <div>
     <label>Valid State? </label>
     <span>@(IsBoardValid ? "Yes" : "No")</span>
 </div>
+<div>
+    <label>Player</label>
+    <span>@(currentPlayer == 0 ? "One" : "Two")</span>
+</div>
+
+<button @onclick="StartGame">Start New Game</button>
+<button @onclick="SwitchPlayer">Switch Player View</button>
 
 <ScrabbleBoard board="currentBoard" OnSquareClickedCallback ="HandleSquareClicked"/>
 
@@ -24,6 +28,8 @@
     public required Board currentBoard;
 
     private Move? currentMove;
+
+    private int currentPlayer = 0;
 
     private bool IsBoardValid = true;
 
@@ -50,6 +56,15 @@
     {
         // Handle the square click event here
         Console.WriteLine($"Square at Row: {coord.RVal} Col:{coord.CVal} clicked.");
+    }
+
+    private void StartGame()
+    {
+        Console.WriteLine("Start Game");
+    }
+    private void SwitchPlayer()
+    {
+        if (currentBoard == 0) currentBoard = 1 else currentBoard = 0;
     }
 
 }

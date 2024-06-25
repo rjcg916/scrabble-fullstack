@@ -8,6 +8,14 @@
     <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;RZ10012</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;RZ10012</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Components\BoardTileRack.razor.css" />
   </ItemGroup>

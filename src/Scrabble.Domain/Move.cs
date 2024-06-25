@@ -46,6 +46,31 @@ namespace Scrabble.Domain
 
         public static bool IsVertical(List<TilePlacement> tileList) =>
             tileList.Select(c => c.Coord.CVal).Distinct().Count() == 1;
+        public static class MoveFactory
+        {
+            public static Move CreateMove(List<TilePlacement> tilePlacements)
+            {
+                if (Move.UniDirectionalMove(tilePlacements))
+                {
+                    if (Move.IsHorizontal(tilePlacements))
+                        return new MoveHorizontal(tilePlacements);
+                    else
+                        return new MoveVertical(tilePlacements);
+                }
+                else
+                {
+                    throw new Exception("Move is in both horizontal and vertical direction");
+                }
+            }
+
+            public static Move CreateMove(Coord startFrom, List<Tile> tiles, bool isHorizontal)
+            {
+                if (isHorizontal)
+                    return new MoveHorizontal(startFrom, tiles);
+                else
+                    return new MoveVertical(startFrom, tiles);
+            }
+        }
     }
 
     public class MoveHorizontal : Move
@@ -131,29 +156,4 @@ namespace Scrabble.Domain
         }
     }
 
-    public static class MoveFactory
-    {
-        public static Move CreateMove(List<TilePlacement> tilePlacements)
-        {
-            if (Move.UniDirectionalMove(tilePlacements))
-            {
-                if (Move.IsHorizontal(tilePlacements))
-                    return new MoveHorizontal(tilePlacements);
-                else
-                    return new MoveVertical(tilePlacements);
-            }
-            else
-            {
-                throw new Exception("Move is in both horizontal and vertical direction");
-            }
-        }
-
-        public static Move CreateMove(Coord startFrom, List<Tile> tiles, bool isHorizontal)
-        {
-            if (isHorizontal)
-                return new MoveHorizontal(startFrom, tiles);
-            else
-                return new MoveVertical(startFrom, tiles);
-        }
-    }
 }
