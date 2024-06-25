@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Scrabble.Domain
 {
-    public class Move
+    public abstract class Move
     {
         protected static readonly int MAX_TILES_IN_MOVE = Rack.Capacity;
 
@@ -18,7 +18,6 @@ namespace Scrabble.Domain
 
             TilePlacements = tilePlacements;
         }
-
 
         public static (bool valid, string msg) IsValidTilePlacement(List<TilePlacement> tilePlacements)
         {
@@ -64,7 +63,6 @@ namespace Scrabble.Domain
                 throw new Exception(msg);
         }
 
-
         public static (bool valid, string msg) IsValidCoordTileList(Coord startFrom, List<Tile> tiles)
         {
             var count = tiles.Count;
@@ -80,7 +78,7 @@ namespace Scrabble.Domain
 
         public override (bool valid, string msg) IsValid(List<TilePlacement> tilePlacements)
         {
-            // Additional validation for horizontal moves
+
             if (!IsHorizontal(tilePlacements))
                 return (false, "Move is not horizontal");
 
@@ -91,7 +89,6 @@ namespace Scrabble.Domain
             return (true, "Valid Move");
         }
     }
-
     public class MoveVertical : Move
     {
         internal MoveVertical(List<TilePlacement> tilePlacements) : base(tilePlacements)

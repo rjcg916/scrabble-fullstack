@@ -13,13 +13,13 @@
                 @if (IsOccupied)
                 {
                     <td class="@GetTileClass(square?.SquareType ?? SquareType.reg)">
-                       @( square?.Tile.Letter.ToString())
+                        <span>@(square?.Tile.Letter.ToString())</span>
                     </td>
                 } else
                 {
                     <td class="@GetTileClass(square?.SquareType ?? SquareType.reg)"
                         @onclick="@(() => OnSquareClicked(currentRow, currentCol))">
-                        @(".")
+                        <span>.</span>
                     </td>
                 }
         }
@@ -27,23 +27,19 @@
     }
 </table>
 
-
 @code {
 
     [Parameter]
     public required Board board { get; set; }
 
-
     [Parameter]
     public EventCallback<Coord> OnSquareClickedCallback { get; set; }
-
 
     private void OnSquareClicked(int row, int col)
     {
         var coord = new Coord((R)row, (C)col);
         OnSquareClickedCallback.InvokeAsync(coord);
     }
-
 
     static string GetTileClass(SquareType st) => st switch
     {
@@ -54,5 +50,4 @@
         SquareType.start => "tile start",
         _ => "tile"
     };
-
 }

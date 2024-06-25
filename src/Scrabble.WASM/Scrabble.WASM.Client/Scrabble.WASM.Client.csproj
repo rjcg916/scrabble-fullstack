@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -9,7 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Pages\ScrabbleMove.razor" />
+    <None Remove="Components\BoardTileRack.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Components\BoardTileRack.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,18 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Scrabble.Domain\Scrabble.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Pages\ScrabbleMove.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Pages\ScrabbleMove.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Components\ScrabbleMove.razor" />
   </ItemGroup>
 
 </Project>
