@@ -1,6 +1,7 @@
 ﻿@using Scrabble.Domain
 
-<table class="scrabble-board">
+<MudContainer Fixed="true">
+<MudSimpleTable class="scrabble-board">
     @for (int row = 0; row <= ((int)R._15); row++)
     {
         <tr>
@@ -25,7 +26,8 @@
         }
         </tr>
     }
-</table>
+</MudSimpleTable>
+</MudContainer>
 
 @code {
 

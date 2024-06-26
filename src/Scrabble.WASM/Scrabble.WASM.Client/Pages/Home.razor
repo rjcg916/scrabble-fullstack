@@ -1,8 +1,7 @@
-﻿@using Scrabble.WASM.Client.Components
-@using Scrabble.WASM.Client.Models
-@using Scrabble.Domain
+﻿@page "/"
+@rendermode InteractiveWebAssembly
 
-@page "/"
+<PageTitle>Scrabble</PageTitle>
 
 <div>
     <label>Valid State? </label>
@@ -15,6 +14,7 @@
 
 <button @onclick="StartGame">Start New Game</button>
 <button @onclick="SwitchPlayer">Switch Player View</button>
+
 
 <ScrabbleBoard board="currentBoard" OnSquareClickedCallback ="HandleSquareClicked"/>
 
@@ -64,7 +64,7 @@
     }
     private void SwitchPlayer()
     {
-        if (currentBoard == 0) currentBoard = 1 else currentBoard = 0;
+        //if (currentBoard == 0) currentBoard = 1 else currentBoard = 0;
     }
 
 }
