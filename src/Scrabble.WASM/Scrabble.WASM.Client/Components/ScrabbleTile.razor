@@ -1,0 +1,14 @@
+﻿@using MudBlazor
+
+<MudCard Class="scrabble-tile" @attributes="AdditionalAttributes">
+    <MudCardContent>
+        <div class="tile-letter">@Letter</div>
+        <div class="tile-score">@Score</div>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter] public string Letter { get; set; }
+    [Parameter] public int Score { get; set; }
+    [Parameter] public IDictionary<string, object> AdditionalAttributes { get; set; }
+}

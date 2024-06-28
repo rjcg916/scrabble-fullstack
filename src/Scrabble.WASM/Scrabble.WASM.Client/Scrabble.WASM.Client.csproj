@@ -33,4 +33,10 @@
     <ProjectReference Include="..\..\Scrabble.Domain\Scrabble.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Components\ScrabbleTile.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 </Project>

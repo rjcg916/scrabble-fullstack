@@ -21,18 +21,23 @@ namespace Scrabble.Domain
         public R Row { get; init; } = row;
         public C Col { get; init; } = col;
 
+        public Coord(int row, int col) : this((R) row, (C) col)
+        { }
+        
         public static  R[] Rows => (R[])Enum.GetValues(typeof(R));
         public static  C[] Cols => (C[])Enum.GetValues(typeof(C));
 
         public int RVal => (int) Row;
-
         public int CVal => (int) Col;
 
         public override string ToString()
         {
-            return $"{RVal+1}{Col}";            
+            return $"{RVal}{Col}";            
         }
-
+        public string ToDisplayString()
+        {
+            return $"{RVal+1}{Col}";
+        }
         public List<Coord> GetAdjacent()
             =>
             [

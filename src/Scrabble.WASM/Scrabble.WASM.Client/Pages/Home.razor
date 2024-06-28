@@ -15,12 +15,12 @@
 <button @onclick="StartGame">Start New Game</button>
 <button @onclick="SwitchPlayer">Switch Player View</button>
 
-
+<BoardRack></BoardRack>
+@* 
 <ScrabbleBoard board="currentBoard" OnSquareClickedCallback ="HandleSquareClicked"/>
-
 <ScrabbleMove OnMoveSubmitted="HandleMoveSubmitted" />
-
-<BoardTileRack></BoardTileRack>
+<BoardTileRack></BoardTileRack> 
+*@
 
 @code {
     private static Lexicon lexicon = new Lexicon();

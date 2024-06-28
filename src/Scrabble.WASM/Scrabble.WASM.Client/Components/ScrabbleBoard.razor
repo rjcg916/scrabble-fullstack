@@ -13,12 +13,12 @@
                 var currentCol = col;
                 @if (IsOccupied)
                 {
-                    <td class="@GetTileClass(square?.SquareType ?? SquareType.reg)">
+                    <td class="@GetSquareClass(square?.SquareType ?? SquareType.reg)">
                         <span>@(square?.Tile.Letter.ToString())</span>
                     </td>
                 } else
                 {
-                    <td class="@GetTileClass(square?.SquareType ?? SquareType.reg)"
+                    <td class="@GetSquareClass(square?.SquareType ?? SquareType.reg)"
                         @onclick="@(() => OnSquareClicked(currentRow, currentCol))">
                         <span>.</span>
                     </td>
@@ -43,13 +43,13 @@
         OnSquareClickedCallback.InvokeAsync(coord);
     }
 
-    static string GetTileClass(SquareType st) => st switch
+    static string GetSquareClass(SquareType st) => st switch
     {
-        SquareType.dl => "tile double-letter",
-        SquareType.dw => "tile double-word",
-        SquareType.tl => "tile triple-letter",
-        SquareType.tw => "tile triple-word",
-        SquareType.start => "tile start",
-        _ => "tile"
+        SquareType.dl => "square double-letter",
+        SquareType.dw => "square double-word",
+        SquareType.tl => "square triple-letter",
+        SquareType.tw => "square triple-word",
+        SquareType.start => "square start",
+        _ => "square"
     };
 }
