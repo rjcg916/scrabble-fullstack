@@ -1,35 +1,55 @@
 ﻿@using Scrabble.Domain
 @using Scrabble.WASM.Client.Components
 
-<MudDropContainer T="DropItem" 
-                Items="_items"
+<MudDropContainer T="DropSquare" 
+                Items="_tiles"
                 ItemIsDisabled="@( (item) => item.IsLocked)"
                 CanDropClass="mud-border-info" 
                 NoDropClass="mud-border-error" 
-                CanDrop="@( (item, identifier ) => _items.Count(x => x.Identifier == identifier ) == 0)" 
+                CanDrop="@( (item, identifier ) => _tiles.Count(x => x.Identifier == identifier ) == 0)" 
                 ItemsSelector="@((item, dropzone) => item.Identifier == dropzone)" 
                 ItemDropped="ItemUpdated" 
                 Class="border-2 border-solid mud-border-lines-default">
     <ChildContent>
-        @for (int r = 0; r < 15; r++)
-        {   
-            var row = r.ToString(displayFormat);
+        <div class="tile-rack">
+            <h3>Tile Rack</h3>
             <div class="d-flex">
-                @for (int c = 0; c < 15; c++)
+                @for (int s = 0; s < 7; s++)
                 {
-                    var col = c.ToString(displayFormat);
-                    <MudDropZone T="DropItem" 
-                                Identifier="@($"{row}{col}")" 
-                                DraggingClass="mud-theme-success" 
-                                Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default" Style="height:64px;width:64px;" />
+                    var slot = s.ToString();
+                    <MudDropZone T="DropSquare"
+                                 Identifier="@($"{slot}")"
+                                 DraggingClass="mud-theme-success"
+                                 Class="justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default" Style="height:64px;width:64px;" />
                 }
             </div>
-        }
+        </div>
+        <div class="tile-board">
+            <h3>Board</h3>
+            @for (int r = 0; r < 15; r++)
+            {   
+                var rowStr = r.ToString(displayFormat);
+                <div class="d-flex">
+                    @for (int c = 0; c < 15; c++)
+                    {
+                        var colStr = c.ToString(displayFormat);
+                        var squareType = SquareType.reg;
+                        squareType = board.squares[r, c].SquareType;
+                        <MudDropZone T="DropSquare" 
+                            Identifier="@($"{rowStr}{colStr}")" 
+                            DraggingClass="mud-theme-success" 
+                            Class=@GetSquareClass(squareType) Style=@GetSquareStyle(squareType) />
+                    }
+                </div>
+            }
+        </div>
+
     </ChildContent>
     <ItemRenderer>
-        <div Disabled="@(context.IsLocked )" 
-             class="d-flex justify-center align-center flex-grow-1">
-             <ScrabbleTile Letter="@context.Name" Score="@context.Score"></ScrabbleTile>
+        <div Disabled="@(context.IsLocked)"
+             class="d-flex justify-center align-center flex-grow-1"
+             style="height: 100%; width: 100%;">
+            <ScrabbleTile Letter="@context.Name" Score="@context.Score" ></ScrabbleTile>
         </div>
     </ItemRenderer>
 </MudDropContainer>
@@ -37,36 +57,60 @@
 @code {
     private const string  displayFormat = "D2";
 
-    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    private void ItemUpdated(MudItemDropInfo<DropSquare> dropItem)
     {
         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
     }
 
-    private List<DropItem> _items = new()
-    {
-        new DropItem() { Name="B", Identifier="0707", Score=1, IsLocked=true  },        
-        new DropItem() { Name="A", Identifier="0708", Score=2, IsLocked=false },
-        new DropItem() { Name="T", Identifier="0709", Score=3, IsLocked=false }
+    private Board board = new Board((s) => true);
 
+    private List<DropSquare> _tiles = new()
+    {
+
+        // load tiles for player
+        new DropSquare() { Name="B", Identifier="0", Score=1, IsLocked=false },
+        new DropSquare() { Name="A", Identifier="1", Score=2, IsLocked=false },
+        new DropSquare() { Name="T", Identifier="2", Score=3, IsLocked=false },
+
+        // load tiles on current board
+        new DropSquare() { Name="X", Identifier="0707", Score=1, IsLocked=true },        
+        new DropSquare() { Name="Y", Identifier="0708", Score=2, IsLocked=true },
+        new DropSquare() { Name="Z", Identifier="0709", Score=3, IsLocked=true }
     };
 
-    public class DropItem
+    public class DropSquare
     {
         public string Name { get; init; }
         public string Identifier { get; set; }
         public int Score { get; init; }
         public bool IsLocked { get; set; }
     }
-    // static string GetSquareClass(SquareType st)  { 
-    //     var sqStyle = st switch
-    //     {
-    //         SquareType.dl => "tile double-letter",
-    //         SquareType.dw => "tile double-word",
-    //         SquareType.tl => "tile triple-letter",
-    //         SquareType.tw => "tile triple-word",
-    //         SquareType.start => "tile start",
-    //         _ => "tile"
-    //     };
-    //     return $"{sqStyle} d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default";
-    // }
+
+    static string GetSquareClass(SquareType st)  { 
+        var sqStyle = st switch
+        {
+            SquareType.dl => "tile double-letter",
+            SquareType.dw => "tile double-word",
+            SquareType.tl => "tile triple-letter",
+            SquareType.tw => "tile triple-word",
+            SquareType.start => "tile start",
+            _ => "tile"
+        };
+        return $"{sqStyle} d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default";
+    }
+
+    static string GetSquareStyle(SquareType st)
+    {
+        var ss = st switch
+        {
+            SquareType.dl => "background-color: #ccccff;",
+            SquareType.dw => "background-color: #ffcccc;",
+            SquareType.tl => "background-color: #9999ff;",
+            SquareType.tw => "background-color: #ff9999",
+            SquareType.start => "background-color: #ffffcc;",
+            _ => "background-color: #f4f4f4;"
+        };
+
+        return $"{ss} height:64px;width:64px;";
+    }
 }
