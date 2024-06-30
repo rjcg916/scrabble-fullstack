@@ -12,22 +12,17 @@
     <span>@(currentPlayer == 0 ? "One" : "Two")</span>
 </div>
 
-<button @onclick="StartGame">Start New Game</button>
-<button @onclick="SwitchPlayer">Switch Player View</button>
 
-<BoardRack @board="aBoard" @rack="aRack"></BoardRack>
-@* 
-<ScrabbleBoard board="currentBoard" OnSquareClickedCallback="HandleSquareClicked" />
-<ScrabbleBoard board="currentBoard" OnSquareClickedCallback ="HandleSquareClicked"/>
-<ScrabbleMove OnMoveSubmitted="HandleMoveSubmitted" />
-<BoardTileRack></BoardTileRack> 
-*@
+<MudButton Disabled="true" @onclick="MakeMove">Make Move</MudButton>
+
+<BoardRack board="board" rack="rack"></BoardRack>
+
 
 @code {
     private static Lexicon lexicon = new Lexicon();
 
-    private Board aBoard;
-    private Rack aRack;
+    private Board board = new((s) => true);
+    private Rack rack = new();
 
     private Move? currentMove;
 
@@ -37,20 +32,17 @@
 
     protected override void OnInitialized()
     {
+        // var tiles = new List<TilePlacement>
+        //     {
+        //         new(new Coord(R._8, C.H), new Tile('B')),
+        //         new(new Coord(R._8, C.I), new Tile('A')),
+        //         new(new Coord(R._8, C.J), new Tile('L')),
+        //         new(new Coord(R._8, C.K), new Tile('L'))
+        //     };
+        // board.MakeMove(MoveFactory.CreateMove(tiles));
 
-        aBoard = new Board((s) => true);
-        var tiles = new List<TilePlacement>
-            {
-                new(new Coord(R._8, C.H), new Tile('B')),
-                new(new Coord(R._8, C.I), new Tile('A')),
-                new(new Coord(R._8, C.J), new Tile('L')),
-                new(new Coord(R._8, C.K), new Tile('L'))
-            };
-        aBoard.MakeMove(MoveFactory.CreateMove(tiles));
-
-        aRack = new(); 
         var initialTiles = new List<Tile> { new('X'), new('Y') };
-        aRack = aRack.AddTiles(initialTiles);
+        rack = rack.AddTiles(initialTiles);
     }
 
     private void HandleMoveSubmitted(ScrabbleMoveModel move)
@@ -61,8 +53,7 @@
 
         //IsBoardValid = currentBoard.IsMoveValid()
 
-        var nextBoard = aBoard.MakeMove(currentMove);
-        aBoard = nextBoard;
+        board = board.MakeMove(currentMove);
 
         StateHasChanged();
     }
@@ -73,13 +64,9 @@
         Console.WriteLine($"Square at Row: {coord.RVal} Col:{coord.CVal} clicked.");
     }
 
-    private void StartGame()
+    private void MakeMove()
     {
-        Console.WriteLine("Start Game");
-    }
-    private void SwitchPlayer()
-    {
-        //if (currentBoard == 0) currentBoard = 1 else currentBoard = 0;
+        Console.WriteLine("Make Move");
     }
 
 }

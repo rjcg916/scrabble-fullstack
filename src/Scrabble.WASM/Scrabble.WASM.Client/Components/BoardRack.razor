@@ -14,13 +14,14 @@
         <div class="tile-rack">
             <h3>Tile Rack</h3>
             <div class="d-flex">
-                @for (int s = 0; s < 7; s++)
+                @for (int s = 0; s < Rack.Capacity; s++)
                 {
-                    var slotStr = s.ToString();
+                    var slot = s.ToString();
                     <MudDropZone T="DropSquare"
-                                 Identifier="@($"{slotStr}")"
+                                 Identifier="@($"{slot}")"
                                  DraggingClass="mud-theme-success"
-                                 Class="justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default" Style="height:64px;width:64px;" />
+                                 Class="justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default" 
+                                 Style="height:64px;width:64px;" />
                 }
             </div>
         </div>
@@ -28,17 +29,18 @@
             <h3>Board</h3>
             @for (int r = 0; r < 15; r++)
             {   
-                var rowStr = r.ToString(displayFormat);
+                var row = r.ToString(displayFormat);
                 <div class="d-flex">
                     @for (int c = 0; c < 15; c++)
                     {
-                        var colStr = c.ToString(displayFormat);
+                        var col = c.ToString(displayFormat);
                         var squareType = SquareType.reg;
                         squareType = board.squares[r, c].SquareType;
                         <MudDropZone T="DropSquare" 
-                            Identifier="@($"{rowStr}{colStr}")" 
-                            DraggingClass="mud-theme-success" 
-                            Class=@GetSquareClass(squareType) Style=@GetSquareStyle(squareType) />
+                            Identifier="@($"{row}{col}")" 
+                            DraggingClass="mud-theme-success"
+                            Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default" 
+                            Style=@GetSquareStyle(squareType) />
                     }
                 </div>
             }
@@ -64,6 +66,8 @@
 
     private List<DropSquare> _tiles = new();
 
+    private const string displayFormat = "D2";
+
     protected override void OnInitialized()
     {
         LoadBoard();
@@ -72,6 +76,8 @@
 
     private void LoadBoard()
     {
+
+
         for (int r = 0; r < Coord.RowCount; r++)
         {
             var row = r.ToString(displayFormat);
@@ -113,7 +119,7 @@
 
     }
 
-    private const string  displayFormat = "D2";
+
 
     private void ItemUpdated(MudItemDropInfo<DropSquare> dropItem)
     {
@@ -129,29 +135,16 @@
         public bool IsLocked { get; set; }
     }
 
-    static string GetSquareClass(SquareType st)  { 
-        var sqStyle = st switch
-        {
-            SquareType.dl => "tile double-letter",
-            SquareType.dw => "tile double-word",
-            SquareType.tl => "tile triple-letter",
-            SquareType.tw => "tile triple-word",
-            SquareType.start => "tile start",
-            _ => "tile"
-        };
-        return $"{sqStyle} d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default";
-    }
-
     static string GetSquareStyle(SquareType st)
     {
         var ss = st switch
         {
-            SquareType.dl => "background-color: #ccccff;",
-            SquareType.dw => "background-color: #ffcccc;",
-            SquareType.tl => "background-color: #9999ff;",
-            SquareType.tw => "background-color: #ff9999",
-            SquareType.start => "background-color: #ffffcc;",
-            _ => "background-color: #f4f4f4;"
+            SquareType.dl       => "background-color: #ccccff;",
+            SquareType.dw       => "background-color: #ffcccc;",
+            SquareType.tl       => "background-color: #9999ff;",
+            SquareType.tw       => "background-color: #ff9999",
+            SquareType.start    => "background-color: #ffffcc;",
+            _                   => "background-color: #f4f4f4;"
         };
 
         return $"{ss} height:64px;width:64px;";
