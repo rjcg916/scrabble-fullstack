@@ -4,11 +4,11 @@
 <MudDropContainer T="DropSquare" 
                 Items="_tiles"
                 ItemIsDisabled="@( (item) => item.IsLocked)"
-                CanDropClass="mud-border-info" 
-                NoDropClass="mud-border-error" 
                 CanDrop="@( (item, identifier ) => _tiles.Count(x => x.Identifier == identifier ) == 0)" 
                 ItemsSelector="@((item, dropzone) => item.Identifier == dropzone)" 
-                ItemDropped="ItemUpdated" 
+                ItemDropped="ItemUpdated"
+                CanDropClass="mud-border-info"
+                NoDropClass="mud-border-error"
                 Class="border-2 border-solid mud-border-lines-default">
     <ChildContent>
         <div class="tile-rack">
@@ -16,9 +16,9 @@
             <div class="d-flex">
                 @for (int s = 0; s < 7; s++)
                 {
-                    var slot = s.ToString();
+                    var slotStr = s.ToString();
                     <MudDropZone T="DropSquare"
-                                 Identifier="@($"{slot}")"
+                                 Identifier="@($"{slotStr}")"
                                  DraggingClass="mud-theme-success"
                                  Class="justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default" Style="height:64px;width:64px;" />
                 }
@@ -55,6 +55,64 @@
 </MudDropContainer>
 
 @code {
+
+    [Parameter]
+    public Board board { get; set; } = new Board((s) => true);
+
+    [Parameter]
+    public Rack rack { get; set; } = new Rack();
+
+    private List<DropSquare> _tiles = new();
+
+    protected override void OnInitialized()
+    {
+        LoadBoard();
+        LoadRack();
+    }
+
+    private void LoadBoard()
+    {
+        for (int r = 0; r < Coord.RowCount; r++)
+        {
+            var row = r.ToString(displayFormat);
+            for (int c = 0; c < Coord.ColCount; c++)
+            {
+                var col = c.ToString(displayFormat);
+
+                var square = board.squares[r, c];
+
+                if (square.IsOccupied)
+                {
+                    _tiles.Add(
+                             new DropSquare() { 
+                                        Name = square.Tile.Letter.ToString(), 
+                                        Identifier = $"{row}{col}", 
+                                        Score = square.Tile.Value, 
+                                        IsLocked = true });
+                }
+
+            }
+        }
+    }
+
+    private void LoadRack()
+    {
+       
+        for (var s = 0; s < rack.TileCount; s++)
+        {
+            var slot = s.ToString();
+            var tile = rack.Tiles[s];
+            _tiles.Add(new DropSquare()
+                    {
+                        Name = tile.Letter.ToString(),
+                        Identifier = $"{slot}",
+                        Score = tile.Value,
+                        IsLocked=false
+                    });
+        }
+
+    }
+
     private const string  displayFormat = "D2";
 
     private void ItemUpdated(MudItemDropInfo<DropSquare> dropItem)
@@ -62,21 +120,6 @@
         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
     }
 
-    private Board board = new Board((s) => true);
-
-    private List<DropSquare> _tiles = new()
-    {
-
-        // load tiles for player
-        new DropSquare() { Name="B", Identifier="0", Score=1, IsLocked=false },
-        new DropSquare() { Name="A", Identifier="1", Score=2, IsLocked=false },
-        new DropSquare() { Name="T", Identifier="2", Score=3, IsLocked=false },
-
-        // load tiles on current board
-        new DropSquare() { Name="X", Identifier="0707", Score=1, IsLocked=true },        
-        new DropSquare() { Name="Y", Identifier="0708", Score=2, IsLocked=true },
-        new DropSquare() { Name="Z", Identifier="0709", Score=3, IsLocked=true }
-    };
 
     public class DropSquare
     {

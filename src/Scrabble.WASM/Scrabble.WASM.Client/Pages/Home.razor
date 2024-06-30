@@ -15,7 +15,7 @@
 <button @onclick="StartGame">Start New Game</button>
 <button @onclick="SwitchPlayer">Switch Player View</button>
 
-<BoardRack></BoardRack>
+<BoardRack @board="aBoard" @rack="aRack"></BoardRack>
 @* 
 <ScrabbleBoard board="currentBoard" OnSquareClickedCallback="HandleSquareClicked" />
 <ScrabbleBoard board="currentBoard" OnSquareClickedCallback ="HandleSquareClicked"/>
@@ -26,7 +26,8 @@
 @code {
     private static Lexicon lexicon = new Lexicon();
 
-    public required Board currentBoard;
+    private Board aBoard;
+    private Rack aRack;
 
     private Move? currentMove;
 
@@ -36,7 +37,20 @@
 
     protected override void OnInitialized()
     {
-        currentBoard = new Board(lexicon.IsWordValid);
+
+        aBoard = new Board((s) => true);
+        var tiles = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.H), new Tile('B')),
+                new(new Coord(R._8, C.I), new Tile('A')),
+                new(new Coord(R._8, C.J), new Tile('L')),
+                new(new Coord(R._8, C.K), new Tile('L'))
+            };
+        aBoard.MakeMove(MoveFactory.CreateMove(tiles));
+
+        aRack = new(); 
+        var initialTiles = new List<Tile> { new('X'), new('Y') };
+        aRack = aRack.AddTiles(initialTiles);
     }
 
     private void HandleMoveSubmitted(ScrabbleMoveModel move)
@@ -47,8 +61,8 @@
 
         //IsBoardValid = currentBoard.IsMoveValid()
 
-        var nextBoard = currentBoard.MakeMove(currentMove);
-        currentBoard = nextBoard;
+        var nextBoard = aBoard.MakeMove(currentMove);
+        aBoard = nextBoard;
 
         StateHasChanged();
     }
