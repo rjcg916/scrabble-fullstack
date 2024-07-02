@@ -1,0 +1,173 @@
+<MudDropContainer T="DropSquare"
+                  Items="tiles"
+                  ItemIsDisabled="@( (item) => item.IsLocked)"
+                  ItemsSelector="@((item, dropzone) => item.Identifier == dropzone)"
+                  ItemDropped="OnItemDropped"
+                  CanDrop="OnCanDrop"
+                  CanDropClass="mud-border-info"
+                  NoDropClass="mud-border-error"
+                  Class="border-2 border-solid mud-border-lines-default">
+    <ChildContent>
+        <GameControl></GameControl>
+        <div class="tile-rack">
+            <h3>Tile Rack</h3>
+            <div class="d-flex">
+                @for (int s = 0; s < Domain.Rack.Capacity; s++)
+                {
+                    var slot = s.ToString();
+                    <MudDropZone T="DropSquare"
+                                 Identifier="@($"{slot}")"
+                                 DraggingClass="mud-theme-success"
+                                 Class="justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default"
+                                 Style="height:64px;width:64px;" />
+                }
+            </div>
+        </div>
+        <div class="tile-board">
+            <h3>Board</h3>
+            @for (int r = 0; r < 15; r++)
+            {
+                var row = r.ToString(displayFormat);
+                <div class="d-flex">
+                    @for (int c = 0; c < 15; c++)
+                    {
+                        var col = c.ToString(displayFormat);
+                        var squareType = SquareType.reg;
+                        squareType = board.squares[r, c].SquareType;
+                        <MudDropZone T="DropSquare"
+                                     Identifier="@($"{row}{col}")"
+                                     DraggingClass="mud-theme-success"
+                                     Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default"
+                                     Style=@GetSquareStyle(squareType) />
+                    }
+                </div>
+            }
+        </div>
+    </ChildContent>
+    <ItemRenderer>
+        <div Disabled="@(context.IsLocked)"
+             class="d-flex justify-center align-center flex-grow-1"
+             style="height: 100%; width: 100%;">
+            <BoardTile Letter="@context.Name" Score="@context.Value"> </BoardTile>
+        </div>
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+
+    [Parameter]
+    public Rack rack { get; set; } = new Rack();
+
+    [Parameter]
+    public Board board { get; set; } = new Board((s) => true);
+
+    private List<DropSquare> tiles { get; set; } = new();
+
+    private const string displayFormat = "D2";
+
+    protected override void OnInitialized()
+    {    }
+
+    private bool IsVacant(string id) =>
+        tiles.Count(x => x.Identifier == id) == 0;
+
+    private bool IsOnRack(string id) =>
+        id.Length == 1;
+
+    private bool IsOnBoard(string id) =>
+        id.Length == 4;
+
+    private int GetRow(string id) =>
+        int.Parse( id.Substring(0, 2));
+
+    private int GetCol(string id) =>
+        int.Parse(id.Substring(2, 2));
+
+    private Coord GetCoord(string id) =>
+        new Coord(GetRow(id), GetCol(id));
+
+    private bool ValidMove(DropSquare dropSquare, string identifier)
+    {
+        // is board drop location valid?
+
+        // get previously dragged Tiles
+        var proposedTiles = tiles.Where(x => IsOnBoard(x.Identifier) && !x.IsLocked);
+        var proposedTilePlacements = proposedTiles.Select(i => new TilePlacement(GetCoord(i.Identifier), new Tile(i.Name)));
+
+        // union new Tile and previously dragged tiles
+        var newTile = new TilePlacement(GetCoord(identifier), new Tile(dropSquare.Name));
+        var testTilePlacements = proposedTilePlacements.Append(newTile).ToList();
+
+        // are tiles contiguous with existing tiles?
+        var (IsContiguous, _) = board.TilesContiguous(testTilePlacements);
+
+        // check for unidirectional move
+        var IsUnidirectional = (proposedTilePlacements.Count() == 0) ||
+                                Move.UniDirectionalMove(testTilePlacements);
+
+        return IsContiguous && IsUnidirectional;
+    }
+
+    private bool OnCanDrop(DropSquare dropSquare, string identifier)
+    {
+        if (!IsVacant(identifier))
+            return false;
+
+        // drop tile on vacant rack space always allowed
+        if (IsOnRack(identifier))
+            return true;
+
+        // validate move
+        return ValidMove(dropSquare, identifier);
+
+    }
+    
+    private void OnTileDrop(Tile tile, MudDropZone<Tile> dropZone)
+    {
+
+    }
+
+    private void OnTileDragged(Tile tile)
+    {
+        // Handle logic when a tile is dragged from the player's rack
+    }
+
+    private void EndTurn()
+    {
+        // Logic to end the current player's turn
+    }
+
+    private void ShuffleTiles()
+    {
+        // Logic to shuffle the tiles in the player's rack
+    }
+
+    private void SubmitMove()
+    {
+        // Logic to submit the current move and validate it
+    }
+
+
+    private void OnItemDropped(MudItemDropInfo<DropSquare> dropItem)
+    {
+        // can check here to see if board is still valid
+        // check that all tiles now marked NOT locked are a valid move
+        dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
+        dropItem.Item.IsLocked = false;
+    }
+    static string GetSquareStyle(SquareType st)
+    {
+        var ss = st switch
+        {
+            SquareType.dl => "background-color: #ccccff;",
+            SquareType.dw => "background-color: #ffcccc;",
+            SquareType.tl => "background-color: #9999ff;",
+            SquareType.tw => "background-color: #ff9999",
+            SquareType.start => "background-color: #ffffcc;",
+            _ => "background-color: #f4f4f4;"
+        };
+
+        return $"{ss} height:64px;width:64px;";
+    }
+
+}

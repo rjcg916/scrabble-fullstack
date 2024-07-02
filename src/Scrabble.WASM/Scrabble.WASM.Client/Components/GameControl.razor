@@ -1,0 +1,26 @@
+<MudContainer>
+    <MudButton OnClick="EndTurn">End Turn</MudButton>
+    <MudButton OnClick="ShuffleTiles">Shuffle Tiles</MudButton>
+    <MudButton OnClick="SubmitMove">Submit Move</MudButton>
+</MudContainer>
+
+@code {
+    [Parameter] public EventCallback OnEndTurn { get; set; }
+    [Parameter] public EventCallback OnShuffleTiles { get; set; }
+    [Parameter] public EventCallback OnSubmitMove { get; set; }
+
+    private async Task EndTurn()
+    {
+        await OnEndTurn.InvokeAsync();
+    }
+
+    private async Task ShuffleTiles()
+    {
+        await OnShuffleTiles.InvokeAsync();
+    }
+
+    private async Task SubmitMove()
+    {
+        await OnSubmitMove.InvokeAsync();
+    }
+}

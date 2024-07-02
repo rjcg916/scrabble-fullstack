@@ -91,4 +91,3 @@ var emptySquares = game.Board.GetLocationSquares().Select( ls => ls.Coord).ToLis
 
 //    return tilePlacements;
 //}
-

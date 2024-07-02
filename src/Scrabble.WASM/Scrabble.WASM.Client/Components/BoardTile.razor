@@ -1,6 +1,4 @@
-﻿@using MudBlazor
-
-<MudCard Class="scrabble-tile" style="height: 100%; width: 100%;" >
+﻿<MudCard Class="scrabble-tile" style="height: 100%; width: 100%;" >
     <MudCardContent Style="background-color:peru">
         <div class="tile-letter">@Letter</div>
         <div class="tile-score">@Score</div>
@@ -8,6 +6,6 @@
 </MudCard>
 
 @code {
-    [Parameter] public string Letter { get; set; }
+    [Parameter] public char Letter { get; set; }
     [Parameter] public int Score { get; set; }
 }
