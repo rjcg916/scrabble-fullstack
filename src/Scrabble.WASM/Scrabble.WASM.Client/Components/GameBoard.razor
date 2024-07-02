@@ -13,10 +13,9 @@
             <h3>Tile Rack</h3>
             <div class="d-flex">
                 @for (int s = 0; s < Domain.Rack.Capacity; s++)
-                {
-                    var slot = s.ToString();
+                {                   
                     <MudDropZone T="DropSquare"
-                                 Identifier="@($"{slot}")"
+                                 Identifier="@($"{ToSlot(s)}")"
                                  DraggingClass="mud-theme-success"
                                  Class="justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default"
                                  Style="height:64px;width:64px;" />
@@ -27,15 +26,13 @@
             <h3>Board</h3>
             @for (int r = 0; r < 15; r++)
             {
-                var row = r.ToString(displayFormat);
                 <div class="d-flex">
                     @for (int c = 0; c < 15; c++)
                     {
-                        var col = c.ToString(displayFormat);
                         var squareType = SquareType.reg;
                         squareType = board.squares[r, c].SquareType;
                         <MudDropZone T="DropSquare"
-                                     Identifier="@($"{row}{col}")"
+                                     Identifier="@($"{ToCoord(r,c)}")"
                                      DraggingClass="mud-theme-success"
                                      Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default"
                                      Style=@GetSquareStyle(squareType) />
@@ -63,29 +60,49 @@
 
     private List<DropSquare> tiles { get; set; } = new();
 
-    private const string displayFormat = "D2";
 
     protected override void OnInitialized()
     {    }
 
+    private bool OnCanDrop(DropSquare dropSquare, string identifier)
+    {
+        if (!IsVacant(identifier))
+            return false;
+
+        // drop tile on vacant rack space always allowed
+        if (IsOnRack(identifier))
+            return true;
+
+        // validate move
+        return ValidMove(dropSquare, identifier);
+
+    }
+
     private bool IsVacant(string id) =>
         tiles.Count(x => x.Identifier == id) == 0;
+
+    // id format: 1 char rack, 4 char board : row (2 char), col (2 char)
 
     private bool IsOnRack(string id) =>
         id.Length == 1;
 
+    private string ToSlot(int slot) =>
+        slot.ToString("D1");
+    
     private bool IsOnBoard(string id) =>
         id.Length == 4;
 
     private int GetRow(string id) =>
-        int.Parse( id.Substring(0, 2));
+        int.Parse(id.Substring(0, 2));
 
     private int GetCol(string id) =>
         int.Parse(id.Substring(2, 2));
 
-    private Coord GetCoord(string id) =>
-        new Coord(GetRow(id), GetCol(id));
-
+    private string ToCoord(int row, int col) {
+        const string displayFormat = "D2";
+        return $"{row.ToString(displayFormat)}{col.ToString(displayFormat)}";
+    }
+   
     private bool ValidMove(DropSquare dropSquare, string identifier)
     {
         // is board drop location valid?
@@ -108,20 +125,10 @@
         return IsContiguous && IsUnidirectional;
     }
 
-    private bool OnCanDrop(DropSquare dropSquare, string identifier)
-    {
-        if (!IsVacant(identifier))
-            return false;
 
-        // drop tile on vacant rack space always allowed
-        if (IsOnRack(identifier))
-            return true;
+    private Coord GetCoord(string id) =>
+        new Coord(GetRow(id), GetCol(id));
 
-        // validate move
-        return ValidMove(dropSquare, identifier);
-
-    }
-    
     private void OnTileDrop(Tile tile, MudDropZone<Tile> dropZone)
     {
 
