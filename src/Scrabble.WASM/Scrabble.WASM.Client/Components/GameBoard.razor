@@ -78,31 +78,7 @@
 
     }
 
-    private bool IsVacant(string id) =>
-        tiles.Count(x => x.Identifier == id) == 0;
 
-    // id format: 1 char rack, 4 char board : row (2 char), col (2 char)
-
-    private bool IsOnRack(string id) =>
-        id.Length == 1;
-
-    private string ToSlot(int slot) =>
-        slot.ToString("D1");
-    
-    private bool IsOnBoard(string id) =>
-        id.Length == 4;
-
-    private int GetRow(string id) =>
-        int.Parse(id.Substring(0, 2));
-
-    private int GetCol(string id) =>
-        int.Parse(id.Substring(2, 2));
-
-    private string ToCoord(int row, int col) {
-        const string displayFormat = "D2";
-        return $"{row.ToString(displayFormat)}{col.ToString(displayFormat)}";
-    }
-   
     private bool ValidMove(DropSquare dropSquare, string identifier)
     {
         // is board drop location valid?
@@ -125,9 +101,29 @@
         return IsContiguous && IsUnidirectional;
     }
 
+    private bool IsVacant(string id) =>
+        tiles.Count(x => x.Identifier == id) == 0;
+
+    // id format: 1 char rack, 4 char board : row (2 char), col (2 char)
+
+    private bool IsOnRack(string id) =>
+        id.Length == 1;
+
+    private string ToSlot(int slot) =>
+        slot.ToString("D1");
+
+    private bool IsOnBoard(string id) =>
+        id.Length == 4;
+
+    private string ToCoord(int row, int col)
+    {
+        const string displayFormat = "D2";
+        return $"{row.ToString(displayFormat)}{col.ToString(displayFormat)}";
+    }
 
     private Coord GetCoord(string id) =>
-        new Coord(GetRow(id), GetCol(id));
+        new Coord(int.Parse(id.Substring(0, 2)), int.Parse(id.Substring(2, 2)));
+
 
     private void OnTileDrop(Tile tile, MudDropZone<Tile> dropZone)
     {
