@@ -54,32 +54,71 @@ namespace Scrabble.Domain.Tests
             var coord = new Coord(R._5, C.E);
 
             // Act
-            var result = coord.ToString();
+            var result = coord.ToDisplayString();
 
             // Assert
             Assert.Equal("5E", result);
         }
 
-        [Fact]
-        public void GetAdjacent_ShouldReturnCorrectAdjacentCoordinates()
-        {
-            // Arrange
-            var coord = new Coord(R._5, C.E);
+        //[Fact]
+        //public void GetAdjacent_ShouldReturnCorrectAdjacentCoordinates()
+        //{
+        //    // Arrange
+        //    var coord = new Coord(R._5, C.E);
 
-            // Act
-            var adjacent = coord.GetAdjacent();
+        //    // Act
+        //    var adjacent = coord.GetAdjacent();
 
-            // Assert
-            var expectedAdjacent = new List<Coord>
-            {
-                new(R._4, C.E), // Up
-                new(R._6, C.E), // Down
-                new(R._5, C.D), // Left
-                new(R._5, C.F)  // Right
-            };
+        //    // Assert
+        //    var expectedAdjacent = new List<Coord>
+        //    {
+        //        new(R._4, C.E), // Up
+        //        new(R._6, C.E), // Down
+        //        new(R._5, C.D), // Left
+        //        new(R._5, C.F)  // Right
+        //    };
 
-            Assert.Equal(expectedAdjacent, adjacent);
-        }
+        //    Assert.Equal(expectedAdjacent, adjacent);
+        //}
+
+        //[Fact]
+        //public void GetAdjacentTop_ShouldReturnCorrectAdjacentCoordinates()
+        //{
+        //    // Arrange
+        //    var coord = new Coord(R._1, C.E);
+
+        //    // Act
+        //    var adjacent = coord.GetAdjacent();
+
+        //    // Assert
+        //    var expectedAdjacent = new List<Coord>
+        //    {
+        //        new(R._2, C.E), // Down
+        //        new(R._1, C.D), // Left
+        //        new(R._1, C.F)  // Right
+        //    };
+
+        //    Assert.Equal(expectedAdjacent, adjacent);
+        //}
+
+        //[Fact]
+        //public void GetAdjacentBottomCorner_ShouldReturnCorrectAdjacentCoordinates()
+        //{
+        //    // Arrange
+        //    var coord = new Coord(R._15, C.O);
+
+        //    // Act
+        //    var adjacent = coord.GetAdjacent();
+
+        //    // Assert
+        //    var expectedAdjacent = new List<Coord>
+        //    {
+        //        new(R._14, C.O), // Up
+        //        new(R._15, C.N), // Left                
+        //    };
+
+        //    Assert.Equal(expectedAdjacent, adjacent);
+        //}
 
         [Fact]
         public void IsValidCoord_ShouldReturnTrueForValidCoord()

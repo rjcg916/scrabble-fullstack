@@ -2,7 +2,6 @@
 
 namespace Scrabble.WASM.Client.Models
 {
-
     public class DropSquare
     {
         public char Name { get; init; }

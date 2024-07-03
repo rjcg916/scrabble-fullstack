@@ -2,6 +2,7 @@
 using System.Linq;
 using System;
 using static Scrabble.Domain.Move;
+using System.Runtime.InteropServices;
 
 namespace Scrabble.Domain
 {
@@ -12,7 +13,7 @@ namespace Scrabble.Domain
         public  Square[,] squares = new Square[Coord.RowCount, Coord.ColCount];
 
         /// <summary>
-        /// "SquareBy" functions allow Higher Order Functions to operater in either Horizontal or Vertical direction
+        /// "SquareBy" functions allow Higher Order Functions to operate in Horizontal or Vertical direction
         /// </summary>       
         public Square SquareByRow(int row, int col) =>
             squares[row, col];
@@ -181,31 +182,25 @@ namespace Scrabble.Domain
             return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, null);
         }
 
-        public (bool valid, PlacementError error) TilesContiguous(List<TilePlacement> tilePlacementList)
+        public (bool valid, PlacementError) TilesContiguous(List<TilePlacement> tilePlacementList)
         {
-            // make sure each of the tiles in list is contiguous with another tile
+            var occupiedList = new List<(int, int)>();
+            for (int r = 0; r < 15; r++)
+                for (int c = 0; c < 15; c++)
+                    if (squares[r, c].IsOccupied)
+                        occupiedList.Add((r, c));
+
+            var proposedList = new List<(int, int)>();
             foreach (var (coord, _) in tilePlacementList)
             {
-                bool isContiguous = false;
-
-                var adjacentCoords = coord.GetAdjacent();
-
-                foreach (var adjCoord in adjacentCoords)
-                {
-                    if (squares[adjCoord.RVal, adjCoord.CVal].IsOccupied)
-                    {
-                        isContiguous = true;
-                        break; // no need to search for another continguous tile
-                    }
-                }
-
-                if (!isContiguous) // no need to examine other tiles
-                {
-                    return (false, new PlacementError(coord, "Tile Not Contiguous"));
-                }
+                proposedList.Add((coord.RVal, coord.CVal));
             }
+            
+            var (row, col) = proposedList.First();
+            var letters = tilePlacementList.Select( tp => tp.Tile).ToList().TilesToLetters();
 
-            return (true, new PlacementError(Board.STAR, "No Error"));
+            return (Placement.IsContiguous(occupiedList, proposedList), 
+                    new PlacementError(new Coord(row, col), letters));                                     
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Security;
 
 namespace Scrabble.Domain
 {
@@ -38,20 +39,22 @@ namespace Scrabble.Domain
         {
             return $"{RVal+1}{Col}";
         }
-        public List<Coord> GetAdjacent()
-            =>
-            [
-                new((R)( Math.Max( RVal - 1, 0)), Col), // Up
-                new((R)( Math.Min( RVal + 1, RowCount - 1) ), Col), // Down
-                new(Row, (C)( Math.Max(CVal - 1, 0))), // Left
-                new(Row, (C)( Math.Min(CVal + 1, ColCount - 1)))  // Right
-            ];
+        //public List<Coord> GetAdjacent()
+        //{   
+        //    var adjList = new List<Coord>();
+
+        //    if (RVal > 0)               adjList.Add(new((R)(RVal - 1), Col)); // Up
+        //    if (RVal < RowCount - 1)    adjList.Add(new((R)(RVal + 1), Col)); // Down
+        //    if (CVal > 0)               adjList.Add(new(Row, (C)(CVal - 1))); // Left
+        //    if (CVal < ColCount - 1)    adjList.Add(new(Row, (C)(CVal + 1)));  // Right            
+            
+        //    return adjList;            
+        //}
 
         public bool IsValidCoord() =>
             RVal >= 0 && RVal < RowCount &&
             CVal >= 0 && CVal < ColCount; 
-        
-        
+
         // Override Equals
         public override bool Equals(object obj)
         {

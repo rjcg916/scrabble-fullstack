@@ -29,8 +29,7 @@
                 <div class="d-flex">
                     @for (int c = 0; c < 15; c++)
                     {
-                        var squareType = SquareType.reg;
-                        squareType = board.squares[r, c].SquareType;
+                        var squareType = board.squares[r, c].SquareType;
                         <MudDropZone T="DropSquare"
                                      Identifier="@($"{ToCoord(r,c)}")"
                                      DraggingClass="mud-theme-success"
@@ -51,18 +50,60 @@
 </MudDropContainer>
 
 @code {
+    [Parameter]
+    public Rack rack { get; set; }
 
     [Parameter]
-    public Rack rack { get; set; } = new Rack();
-
-    [Parameter]
-    public Board board { get; set; } = new Board((s) => true);
+    public Board board { get; set; }
 
     private List<DropSquare> tiles { get; set; } = new();
 
+    //private List<TilePlacement> testTilePlacements = new();
 
     protected override void OnInitialized()
-    {    }
+    {
+        LoadRack();
+        LoadBoard();
+    }
+
+    private void LoadRack()
+    {
+
+        for (var s = 0; s < rack.TileCount; s++)
+        {
+            var tile = rack.Tiles[s];
+            tiles.Add(new DropSquare()
+                {
+                    Name = tile.Letter,
+                    Identifier = $"{ToSlot(s)}",
+                    Value = tile.Value,
+                    IsLocked = false
+                });
+        }
+    }
+
+    private void LoadBoard()
+    {
+        for (int r = 0; r < Coord.RowCount; r++)
+        {          
+            for (int c = 0; c < Coord.ColCount; c++)
+            {     
+                var square = board.squares[r, c];
+
+                if (square.IsOccupied)
+                {
+                    tiles.Add(
+                             new DropSquare()
+                                 {
+                                     Name = square.Tile.Letter,
+                                     Identifier = $"{ToCoord(r,c)}",
+                                     Value = square.Tile.Value,
+                                     IsLocked = true
+                                 });
+                }
+            }
+        }
+    }
 
     private bool OnCanDrop(DropSquare dropSquare, string identifier)
     {
@@ -73,11 +114,9 @@
         if (IsOnRack(identifier))
             return true;
 
-        // validate move
+        // validate board move
         return ValidMove(dropSquare, identifier);
-
     }
-
 
     private bool ValidMove(DropSquare dropSquare, string identifier)
     {
@@ -86,6 +125,7 @@
         // get previously dragged Tiles
         var proposedTiles = tiles.Where(x => IsOnBoard(x.Identifier) && !x.IsLocked);
         var proposedTilePlacements = proposedTiles.Select(i => new TilePlacement(GetCoord(i.Identifier), new Tile(i.Name)));
+        var IsFirstMove = (proposedTilePlacements.Count() == 0);
 
         // union new Tile and previously dragged tiles
         var newTile = new TilePlacement(GetCoord(identifier), new Tile(dropSquare.Name));
@@ -94,8 +134,7 @@
         // are tiles contiguous with existing tiles?
         var (IsContiguous, _) = board.TilesContiguous(testTilePlacements);
 
-        // check for unidirectional move
-        var IsUnidirectional = (proposedTilePlacements.Count() == 0) ||
+        var IsUnidirectional = IsFirstMove ||
                                 Move.UniDirectionalMove(testTilePlacements);
 
         return IsContiguous && IsUnidirectional;
@@ -153,10 +192,9 @@
 
     private void OnItemDropped(MudItemDropInfo<DropSquare> dropItem)
     {
-        // can check here to see if board is still valid
-        // check that all tiles now marked NOT locked are a valid move
         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
         dropItem.Item.IsLocked = false;
+
     }
     static string GetSquareStyle(SquareType st)
     {
@@ -172,5 +210,4 @@
 
         return $"{ss} height:64px;width:64px;";
     }
-
 }

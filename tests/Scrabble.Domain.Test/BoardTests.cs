@@ -143,7 +143,13 @@ namespace Scrabble.Domain.Tests
             };
             board.MakeMove(MoveFactory.CreateMove(tiles));
 
-            Assert.True(board.TilesContiguous(tiles).valid);
+            var proposedTiles = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.J), new Tile('A')),
+                new(new Coord(R._8, C.K), new Tile('B'))
+            };
+            
+            Assert.True(board.TilesContiguous(proposedTiles).valid);
         }
 
         [Fact]
@@ -152,12 +158,18 @@ namespace Scrabble.Domain.Tests
             var board = new Board(MockWordValidator);
             var tiles = new List<TilePlacement>
             {
-                new(new Coord(R._8, C.H), new Tile('A')),
-                new(new Coord(R._8, C.J), new Tile('B'))
+                new(new Coord(R._8, C.G), new Tile('A')),
+                new(new Coord(R._8, C.H), new Tile('B'))
             };
             board.MakeMove(MoveFactory.CreateMove(tiles));
 
-            Assert.False(board.TilesContiguous(tiles).valid);
+            var proposedTiles = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.J), new Tile('A')),
+                new(new Coord(R._8, C.K), new Tile('B'))
+            };
+
+            Assert.False(board.TilesContiguous(proposedTiles).valid);
         }
 
         [Fact]
