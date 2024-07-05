@@ -180,19 +180,4 @@
         var score = new Score(board, move).Calculate();           
     }
 
-    static string GetSquareStyle(SquareType st)
-    {
-        var squareStyle = st switch
-        {
-            SquareType.dl => "background-color: #ccccff;",
-            SquareType.dw => "background-color: #ffcccc;",
-            SquareType.tl => "background-color: #9999ff;",
-            SquareType.tw => "background-color: #ff9999",
-            SquareType.start => "background-color: #ffffcc;",
-            _ => "background-color: #f4f4f4;"
-        };
-
-        return $"{squareStyle} height:64px;width:64px;";
-    }
-
 }
