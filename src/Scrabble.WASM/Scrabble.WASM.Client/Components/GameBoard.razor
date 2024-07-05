@@ -1,8 +1,24 @@
 @inject Services.GameService GameService
+@using static Scrabble.WASM.Client.Helpers.DropZoneId
 
-@using Scrabble.WASM.Client.Helpers
-@using static Scrabble.WASM.Client.Helpers.DropZoneId  
+<style>
+    .tile-rack h3 {
+        margin: 0;
+    }
 
+    .tile-rack .d-flex {
+        display: flex;
+    }
+
+    .tile-board h3 {
+        margin: 0;
+    }
+
+    .tile-board .d-flex {
+        display: flex;
+    }
+
+</style>
 <MudDropContainer T="DropSquare"
                   Items="tiles"
                   ItemIsDisabled="@( (item) => item.IsLocked)"
@@ -13,8 +29,28 @@
                   NoDropClass="mud-border-error"
                   Class="border-2 border-solid mud-border-lines-default">
     <ChildContent>
-        <RackSquares ToId="@(DropZoneId.ToId)" rack="rack" tiles="tiles"></RackSquares>
-        <BoardSquares ToId="@(DropZoneId.ToId)" board="board" tiles="tiles"></BoardSquares>
+        <div class="tile-rack">
+            <h3>Tile Rack</h3>
+            <div class="d-flex">
+                @for (int s = 0; s < Domain.Rack.Capacity; s++)
+                {              
+                    <RackSquare squareId="@ToId(s)"></RackSquare>             
+                }
+            </div>
+        </div>
+        <div class="tile-board">
+            <h3>Board</h3>
+            @for (int r = 0; r < 15; r++)
+            {
+                <div class="d-flex">
+                    @for (int c = 0; c < 15; c++)
+                    {
+                        var squareType = board.squares[r, c].SquareType;
+                        <BoardSquare squareType="@squareType" squareId="@ToId(r,c)"></BoardSquare>
+                    }
+                </div>
+            }
+        </div>
     </ChildContent>
     <ItemRenderer>
         <div Disabled="@(context.IsLocked)"
@@ -45,10 +81,41 @@
 
     private async Task HandleMoveRequest()
     {
-        SubmitMove();
-        await InvokeAsync(StateHasChanged);
+        for (var s = 0; s < rack.TileCount; s++)
+        {
+            var tile = rack.Tiles[s];
+            tiles.Add(new DropSquare()
+                {
+                    Name = tile.Letter,
+                    Identifier = $"{ToId(s)}",
+                    Value = tile.Value,
+                    IsLocked = false
+                });
+        }
     }
 
+    private void LoadBoard()
+    {
+        for (int r = 0; r < Coord.RowCount; r++)
+        {          
+            for (int c = 0; c < Coord.ColCount; c++)
+            {     
+                var square = board.squares[r, c];
+
+                if (square.IsOccupied)
+                {
+                    tiles.Add(
+                             new DropSquare()
+                                 {
+                                     Name = square.Tile.Letter,
+                                     Identifier = $"{ToId(r,c)}",
+                                     Value = square.Tile.Value,
+                                     IsLocked = true
+                                 });
+                }
+            }
+        }
+    }
     private bool OnCanDrop(DropSquare dropSquare, string identifier)
     {
         if (IsOccupied(identifier))
@@ -92,6 +159,7 @@
     private bool IsOccupied(string id) =>
         tiles.Count(x => x.Identifier == id) > 0;
 
+ 
     private void SubmitMove()
     {
         // get move and submit
@@ -115,4 +183,5 @@
         var move = MoveFactory.CreateMove(GetCurrentMoveTiles().ToList());
         var score = new Score(board, move).Calculate();           
     }
+
 }
