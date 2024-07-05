@@ -1,0 +1,68 @@
+﻿/* Tile Rack */
+.tile-rack h3 {
+    margin: 0;
+}
+
+.tile-rack .d-flex {
+    display: flex;
+}
+
+/* Tile Board */
+.tile-board h3 {
+    margin: 0;
+}
+
+.tile-board .d-flex {
+    display: flex;
+}
+
+/* DropZone Styles */
+.dropzone {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid var(--mud-border-lines-default);
+    background-color: var(--docs-gray-bg);
+    height: 64px;
+    width: 64px;
+}
+
+/* DropZone Dragging Class */
+.dropzone-dragging {
+    background-color: var(--mud-theme-success);
+}
+
+/* BoardTile Styles */
+.board-tile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    height: 100%;
+    width: 100%;
+}
+
+/* Square Types */
+.square-dl {
+    background-color: #ccccff;
+}
+
+.square-dw {
+    background-color: #ffcccc;
+}
+
+.square-tl {
+    background-color: #9999ff;
+}
+
+.square-tw {
+    background-color: #ff9999;
+}
+
+.square-start {
+    background-color: #ffffcc;
+}
+
+.square-default {
+    background-color: #f4f4f4;
+}

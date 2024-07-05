@@ -1,5 +1,8 @@
 @inject Services.GameService GameService
 
+@using Scrabble.WASM.Client.Helpers
+@using static Scrabble.WASM.Client.Helpers.DropZoneId  
+
 <MudDropContainer T="DropSquare"
                   Items="tiles"
                   ItemIsDisabled="@( (item) => item.IsLocked)"
@@ -10,41 +13,12 @@
                   NoDropClass="mud-border-error"
                   Class="border-2 border-solid mud-border-lines-default">
     <ChildContent>
-        <div class="tile-rack">
-            <h3>Tile Rack</h3>
-            <div class="d-flex">
-                @for (int s = 0; s < Domain.Rack.Capacity; s++)
-                {                   
-                    <MudDropZone T="DropSquare"
-                                 Identifier="@($"{ToSlot(s)}")"
-                                 DraggingClass="mud-theme-success"
-                                 Class="justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default"
-                                 Style="height:64px;width:64px;" />
-                }
-            </div>
-        </div>
-        <div class="tile-board">
-            <h3>Board</h3>
-            @for (int r = 0; r < 15; r++)
-            {
-                <div class="d-flex">
-                    @for (int c = 0; c < 15; c++)
-                    {
-                        var squareType = board.squares[r, c].SquareType;
-                        <MudDropZone T="DropSquare"
-                                     Identifier="@($"{ToCoord(r,c)}")"
-                                     DraggingClass="mud-theme-success"
-                                     Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default"
-                                     Style="@($"height:64px;width:64px;{GetSquareStyle(squareType)}")" />
-                    }
-                </div>
-            }
-        </div>
+        <RackSquares ToId="@(DropZoneId.ToId)" rack="rack" tiles="tiles"></RackSquares>
+        <BoardSquares ToId="@(DropZoneId.ToId)" board="board" tiles="tiles"></BoardSquares>
     </ChildContent>
     <ItemRenderer>
         <div Disabled="@(context.IsLocked)"
-             class="d-flex justify-center align-center flex-grow-1"
-             style="height: 100%; width: 100%;">
+             class="board-tile">
             <BoardTile Letter="@context.Name" Score="@context.Value"> </BoardTile>
         </div>
     </ItemRenderer>
@@ -62,10 +36,7 @@
     protected override void OnInitialized()
     {
         GameService.OnMoveRequest += HandleMoveRequest;
-        LoadRack();
-        LoadBoard();
     }
-
 
     public void Dispose()
     {
@@ -76,44 +47,6 @@
     {
         SubmitMove();
         await InvokeAsync(StateHasChanged);
-    }
-
-    private void LoadRack()
-    {
-        for (var s = 0; s < rack.TileCount; s++)
-        {
-            var tile = rack.Tiles[s];
-            tiles.Add(new DropSquare()
-                {
-                    Name = tile.Letter,
-                    Identifier = $"{ToSlot(s)}",
-                    Value = tile.Value,
-                    IsLocked = false
-                });
-        }
-    }
-
-    private void LoadBoard()
-    {
-        for (int r = 0; r < Coord.RowCount; r++)
-        {          
-            for (int c = 0; c < Coord.ColCount; c++)
-            {     
-                var square = board.squares[r, c];
-
-                if (square.IsOccupied)
-                {
-                    tiles.Add(
-                             new DropSquare()
-                                 {
-                                     Name = square.Tile.Letter,
-                                     Identifier = $"{ToCoord(r,c)}",
-                                     Value = square.Tile.Value,
-                                     IsLocked = true
-                                 });
-                }
-            }
-        }
     }
 
     private bool OnCanDrop(DropSquare dropSquare, string identifier)
@@ -159,35 +92,15 @@
     private bool IsOccupied(string id) =>
         tiles.Count(x => x.Identifier == id) > 0;
 
-    // id format: 1 char rack, 4 char board : row (2 char), col (2 char)
-
-    private bool IsOnRack(string id) =>
-        id.Length == 1;
-
-    private string ToSlot(int slot) =>
-        slot.ToString("D1");
-
-    private bool IsOnBoard(string id) =>
-        id.Length == 4;
-
-    private string ToCoord(int row, int col)
-    {
-        const string displayFormat = "D2";
-        return $"{row.ToString(displayFormat)}{col.ToString(displayFormat)}";
-    }
-
-    private Coord GetCoord(string id) =>
-        new Coord(int.Parse(id.Substring(0, 2)), int.Parse(id.Substring(2, 2)));
-
     private void SubmitMove()
     {
         // get move and submit
         // move tiles are only allowed if valid
 
         var proposedTilePlacements = GetCurrentMoveTiles();
+        // check for valid words
         // lock tiles on display board
         // add tiles to "board" data structure 
-
     }
 
     private void OnItemDropped(MudItemDropInfo<DropSquare> dropItem)
@@ -202,19 +115,4 @@
         var move = MoveFactory.CreateMove(GetCurrentMoveTiles().ToList());
         var score = new Score(board, move).Calculate();           
     }
-
-    static string GetSquareStyle(SquareType st)
-    {
-        return st switch
-        {
-            SquareType.dl => "background-color: #ccccff;",
-            SquareType.dw => "background-color: #ffcccc;",
-            SquareType.tl => "background-color: #9999ff;",
-            SquareType.tw => "background-color: #ff9999",
-            SquareType.start => "background-color: #ffffcc;",
-            _ => "background-color: #f4f4f4;"
-        };
-
-    }
-
 }

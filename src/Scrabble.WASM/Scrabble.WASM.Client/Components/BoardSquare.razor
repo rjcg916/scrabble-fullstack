@@ -1,0 +1,26 @@
+﻿<MudDropZone T="DropSquare"
+             Identifier="@squareId"
+             DraggingClass="dropzone-dragging"
+             Class="@($"dropzone {GetSquareClass(squareType)}")" />
+
+@code {
+
+    [Parameter]
+    public SquareType squareType { get; set; }
+
+    [Parameter]
+    public string squareId { get; set; }
+
+    static string GetSquareClass(SquareType st)
+    {
+        return st switch
+        {
+            SquareType.dl => "square-dl",
+            SquareType.dw => "square-dw",
+            SquareType.tl => "square-tl",
+            SquareType.tw => "square-tw",
+            SquareType.start => "square-start",
+            _ => "square-default"
+        };
+    }
+}

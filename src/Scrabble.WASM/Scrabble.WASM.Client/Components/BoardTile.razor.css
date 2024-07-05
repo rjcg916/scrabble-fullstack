@@ -1,0 +1,18 @@
+﻿.scrabble-tile {
+    height: 100%;
+    width: 100%;
+}
+
+.scrabble-tile-content {
+    background-color: peru;
+}
+
+.tile-letter {
+    font-size: 2em; /* Adjust as needed */
+    font-weight: bold;
+}
+
+.tile-score {
+    font-size: 1em; /* Adjust as needed */
+    color: #000; /* Adjust as needed */
+}
