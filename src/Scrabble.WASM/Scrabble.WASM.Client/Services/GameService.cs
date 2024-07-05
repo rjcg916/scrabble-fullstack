@@ -2,13 +2,13 @@
 {
     public class GameService
     {
-        public event Func<Task> OnMoveButtonClicked;
+        public event Func<Task> OnMoveRequest;
 
-        public async Task MoveButtonClicked()
+        public async Task Move()
         {
-            if (OnMoveButtonClicked != null)
+            if (OnMoveRequest != null)
             {
-                await OnMoveButtonClicked.Invoke();
+                await OnMoveRequest.Invoke();
             }
         }
     }

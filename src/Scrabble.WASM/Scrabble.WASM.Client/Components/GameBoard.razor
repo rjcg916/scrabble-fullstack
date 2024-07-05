@@ -35,7 +35,7 @@
                                      Identifier="@($"{ToCoord(r,c)}")"
                                      DraggingClass="mud-theme-success"
                                      Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default"
-                                     Style=@GetSquareStyle(squareType) />
+                                     Style="@($"height:64px;width:64px;{GetSquareStyle(squareType)}")" />
                     }
                 </div>
             }
@@ -61,20 +61,21 @@
 
     protected override void OnInitialized()
     {
-        GameService.OnMoveButtonClicked += HandleMoveButtonClicked;
+        GameService.OnMoveRequest += HandleMoveRequest;
         LoadRack();
         LoadBoard();
     }
 
-    private async Task HandleMoveButtonClicked()
-    {
-        SubmitMove();
-        await InvokeAsync(StateHasChanged);
-    }
 
     public void Dispose()
     {
-        GameService.OnMoveButtonClicked -= HandleMoveButtonClicked;
+        GameService.OnMoveRequest -= HandleMoveRequest;
+    }
+
+    private async Task HandleMoveRequest()
+    {
+        SubmitMove();
+        await InvokeAsync(StateHasChanged);
     }
 
     private void LoadRack()
@@ -204,7 +205,7 @@
 
     static string GetSquareStyle(SquareType st)
     {
-        var squareStyle = st switch
+        return st switch
         {
             SquareType.dl => "background-color: #ccccff;",
             SquareType.dw => "background-color: #ffcccc;",
@@ -214,7 +215,6 @@
             _ => "background-color: #f4f4f4;"
         };
 
-        return $"{squareStyle} height:64px;width:64px;";
     }
 
 }

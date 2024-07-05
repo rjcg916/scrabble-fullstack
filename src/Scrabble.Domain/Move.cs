@@ -46,6 +46,7 @@ namespace Scrabble.Domain
 
         public static bool IsVertical(List<TilePlacement> tileList) =>
             tileList.Select(c => c.Coord.CVal).Distinct().Count() == 1;
+     
         public static class MoveFactory
         {
             public static Move CreateMove(List<TilePlacement> tilePlacements)
@@ -144,7 +145,6 @@ namespace Scrabble.Domain
 
         public override (bool valid, string msg) IsValid(List<TilePlacement> tilePlacements)
         {
-
             if (!IsVertical(tilePlacements))
                 return (false, "Move is not vertical");
 
@@ -155,5 +155,4 @@ namespace Scrabble.Domain
             return (true, "Valid Move");
         }
     }
-
 }
