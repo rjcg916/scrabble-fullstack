@@ -1,5 +1,6 @@
 ﻿@page "/"
 @rendermode InteractiveWebAssembly
+@inject Services.GameService GameService
 
 <PageTitle>Scrabble</PageTitle>
 
@@ -12,6 +13,7 @@
     <span>@(currentPlayer == 0 ? "One" : "Two")</span>
 </div>
 
+<GameControl></GameControl>
 <GameBoard board="@board" rack="@rack" ></GameBoard>
 
 @code {
@@ -28,6 +30,8 @@
 
     protected override void OnInitialized()
     {
+        GameService.OnMoveButtonClicked += HandleMoveButtonClicked;
+
         var tiles = new List<TilePlacement>
             {
                 new(new Coord(R._8, C.H), new Tile('B')),
@@ -39,6 +43,20 @@
 
         var initialTiles = new List<Domain.Tile> { new('X'), new('Y') };
         rack = rack.AddTiles(initialTiles);
+    }
+
+    private async Task HandleMoveButtonClicked()
+    {
+        //
+        // see if game is over
+        // replace used tiles on rack
+        //
+         await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+         GameService.OnMoveButtonClicked -= HandleMoveButtonClicked;
     }
 
     private void HandleMoveSubmitted(ScrabbleMoveModel move)

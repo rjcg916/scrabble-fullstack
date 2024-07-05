@@ -1,3 +1,5 @@
+@inject Services.GameService GameService
+
 <MudContainer>
     <MudButton OnClick="EndTurn">End Turn</MudButton>
     <MudButton OnClick="ShuffleTiles">Shuffle Tiles</MudButton>
@@ -7,7 +9,7 @@
 @code {
     [Parameter] public EventCallback OnEndTurn { get; set; }
     [Parameter] public EventCallback OnShuffleTiles { get; set; }
-    [Parameter] public EventCallback OnSubmitMove { get; set; }
+  //  [Parameter] public EventCallback OnSubmitMove { get; set; }
 
     private async Task EndTurn()
     {
@@ -21,6 +23,7 @@
 
     private async Task SubmitMove()
     {
-        await OnSubmitMove.InvokeAsync();
+        await GameService.MoveButtonClicked();
+        //await OnSubmitMove.InvokeAsync();
     }
 }

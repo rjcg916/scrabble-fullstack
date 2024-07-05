@@ -1,5 +1,6 @@
 using MudBlazor.Services;
 using Scrabble.WASM.Components;
+using Scrabble.WASM.Client.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddMudServices();
+builder.Services.AddScoped<GameService>();
 
 var app = builder.Build();
 

@@ -1,3 +1,5 @@
+@inject Services.GameService GameService
+
 <MudDropContainer T="DropSquare"
                   Items="tiles"
                   ItemIsDisabled="@( (item) => item.IsLocked)"
@@ -8,7 +10,6 @@
                   NoDropClass="mud-border-error"
                   Class="border-2 border-solid mud-border-lines-default">
     <ChildContent>
-        <GameControl></GameControl>
         <div class="tile-rack">
             <h3>Tile Rack</h3>
             <div class="d-flex">
@@ -58,17 +59,26 @@
 
     private List<DropSquare> tiles { get; set; } = new();
 
-    //private List<TilePlacement> testTilePlacements = new();
-
     protected override void OnInitialized()
     {
+        GameService.OnMoveButtonClicked += HandleMoveButtonClicked;
         LoadRack();
         LoadBoard();
     }
 
+    private async Task HandleMoveButtonClicked()
+    {
+        SubmitMove();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        GameService.OnMoveButtonClicked -= HandleMoveButtonClicked;
+    }
+
     private void LoadRack()
     {
-
         for (var s = 0; s < rack.TileCount; s++)
         {
             var tile = rack.Tiles[s];
@@ -107,7 +117,7 @@
 
     private bool OnCanDrop(DropSquare dropSquare, string identifier)
     {
-        if (!IsVacant(identifier))
+        if (IsOccupied(identifier))
             return false;
 
         // drop tile on vacant rack space always allowed
@@ -123,9 +133,7 @@
         // is board drop location valid?
 
         // get previously dragged Tiles
-        var proposedTiles = tiles.Where(x => IsOnBoard(x.Identifier) && !x.IsLocked);
-        var proposedTilePlacements = proposedTiles.Select(i => new TilePlacement(GetCoord(i.Identifier), new Tile(i.Name)));
-        var IsFirstMove = (proposedTilePlacements.Count() == 0);
+        var proposedTilePlacements = GetCurrentMoveTiles();
 
         // union new Tile and previously dragged tiles
         var newTile = new TilePlacement(GetCoord(identifier), new Tile(dropSquare.Name));
@@ -134,14 +142,21 @@
         // are tiles contiguous with existing tiles?
         var (IsContiguous, _) = board.TilesContiguous(testTilePlacements);
 
+        var IsFirstMove = (proposedTilePlacements.Count() == 0);
         var IsUnidirectional = IsFirstMove ||
                                 Move.UniDirectionalMove(testTilePlacements);
 
         return IsContiguous && IsUnidirectional;
     }
 
-    private bool IsVacant(string id) =>
-        tiles.Count(x => x.Identifier == id) == 0;
+    private IEnumerable<TilePlacement> GetCurrentMoveTiles()
+    {
+        var proposedTiles = tiles.Where(x => IsOnBoard(x.Identifier) && !x.IsLocked);
+        return proposedTiles.Select(i => new TilePlacement(GetCoord(i.Identifier), new Tile(i.Name)));
+    }
+
+    private bool IsOccupied(string id) =>
+        tiles.Count(x => x.Identifier == id) > 0;
 
     // id format: 1 char rack, 4 char board : row (2 char), col (2 char)
 
@@ -163,42 +178,33 @@
     private Coord GetCoord(string id) =>
         new Coord(int.Parse(id.Substring(0, 2)), int.Parse(id.Substring(2, 2)));
 
-
-    private void OnTileDrop(Tile tile, MudDropZone<Tile> dropZone)
-    {
-
-    }
-
-    private void OnTileDragged(Tile tile)
-    {
-        // Handle logic when a tile is dragged from the player's rack
-    }
-
-    private void EndTurn()
-    {
-        // Logic to end the current player's turn
-    }
-
-    private void ShuffleTiles()
-    {
-        // Logic to shuffle the tiles in the player's rack
-    }
-
     private void SubmitMove()
     {
-        // Logic to submit the current move and validate it
-    }
+        // get move and submit
+        // move tiles are only allowed if valid
 
+        var proposedTilePlacements = GetCurrentMoveTiles();
+        // lock tiles on display board
+        // add tiles to "board" data structure 
+
+    }
 
     private void OnItemDropped(MudItemDropInfo<DropSquare> dropItem)
     {
         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
         dropItem.Item.IsLocked = false;
-
+        DisplayCurrentMoveScore();
     }
+
+    private void DisplayCurrentMoveScore()
+    {
+        var move = MoveFactory.CreateMove(GetCurrentMoveTiles().ToList());
+        var score = new Score(board, move).Calculate();           
+    }
+
     static string GetSquareStyle(SquareType st)
     {
-        var ss = st switch
+        var squareStyle = st switch
         {
             SquareType.dl => "background-color: #ccccff;",
             SquareType.dw => "background-color: #ffcccc;",
@@ -208,6 +214,7 @@
             _ => "background-color: #f4f4f4;"
         };
 
-        return $"{ss} height:64px;width:64px;";
+        return $"{squareStyle} height:64px;width:64px;";
     }
+
 }
