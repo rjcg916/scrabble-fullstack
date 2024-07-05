@@ -1,7 +1,30 @@
-﻿<MudCard Class="scrabble-tile" style="height: 100%; width: 100%;" >
-    <MudCardContent Style="background-color:peru">
-        <div class="tile-letter">@Letter</div>
-        <div class="tile-score">@Score</div>
+﻿<style>
+    /* ScrabbleTile.razor.css */
+    .scrabble-tile {
+        height: 100%;
+        width: 100%;
+    }
+
+    .tile-content {
+        background-color: peru;
+    }
+
+    .tile-letter {
+        color: red
+        /* Add your styling for tile-letter here */
+    }
+
+    .tile-score {
+        /* Add your styling for tile-score here */
+        color: blue
+    }
+
+</style>
+
+<MudCard  Class="scrabble-tile">
+    <MudCardContent  Class="tile-content">
+        <MudText Class="tile-letter">@Letter</MudText>
+        <MudText Class="tile-score">@Score</MudText>
     </MudCardContent>
 </MudCard>
 

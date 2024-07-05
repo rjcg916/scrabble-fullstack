@@ -1,4 +1,5 @@
 @inject Services.GameService GameService
+@using static Scrabble.WASM.Client.Helpers.DropZoneId
 
 <MudDropContainer T="DropSquare"
                   Items="tiles"
@@ -16,7 +17,7 @@
                 @for (int s = 0; s < Domain.Rack.Capacity; s++)
                 {                   
                     <MudDropZone T="DropSquare"
-                                 Identifier="@($"{ToSlot(s)}")"
+                                 Identifier="@($"{ToId(s)}")"
                                  DraggingClass="mud-theme-success"
                                  Class="justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default"
                                  Style="height:64px;width:64px;" />
@@ -32,7 +33,7 @@
                     {
                         var squareType = board.squares[r, c].SquareType;
                         <MudDropZone T="DropSquare"
-                                     Identifier="@($"{ToCoord(r,c)}")"
+                                     Identifier="@($"{ToId(r,c)}")"
                                      DraggingClass="mud-theme-success"
                                      Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default"
                                      Style=@GetSquareStyle(squareType) />
@@ -85,7 +86,7 @@
             tiles.Add(new DropSquare()
                 {
                     Name = tile.Letter,
-                    Identifier = $"{ToSlot(s)}",
+                    Identifier = $"{ToId(s)}",
                     Value = tile.Value,
                     IsLocked = false
                 });
@@ -106,7 +107,7 @@
                              new DropSquare()
                                  {
                                      Name = square.Tile.Letter,
-                                     Identifier = $"{ToCoord(r,c)}",
+                                     Identifier = $"{ToId(r,c)}",
                                      Value = square.Tile.Value,
                                      IsLocked = true
                                  });
@@ -158,26 +159,7 @@
     private bool IsOccupied(string id) =>
         tiles.Count(x => x.Identifier == id) > 0;
 
-    // id format: 1 char rack, 4 char board : row (2 char), col (2 char)
-
-    private bool IsOnRack(string id) =>
-        id.Length == 1;
-
-    private string ToSlot(int slot) =>
-        slot.ToString("D1");
-
-    private bool IsOnBoard(string id) =>
-        id.Length == 4;
-
-    private string ToCoord(int row, int col)
-    {
-        const string displayFormat = "D2";
-        return $"{row.ToString(displayFormat)}{col.ToString(displayFormat)}";
-    }
-
-    private Coord GetCoord(string id) =>
-        new Coord(int.Parse(id.Substring(0, 2)), int.Parse(id.Substring(2, 2)));
-
+ 
     private void SubmitMove()
     {
         // get move and submit
