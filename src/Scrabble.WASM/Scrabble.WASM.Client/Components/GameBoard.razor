@@ -1,6 +1,24 @@
 @inject Services.GameService GameService
 @using static Scrabble.WASM.Client.Helpers.DropZoneId
 
+<style>
+    .tile-rack h3 {
+        margin: 0;
+    }
+
+    .tile-rack .d-flex {
+        display: flex;
+    }
+
+    .tile-board h3 {
+        margin: 0;
+    }
+
+    .tile-board .d-flex {
+        display: flex;
+    }
+
+</style>
 <MudDropContainer T="DropSquare"
                   Items="tiles"
                   ItemIsDisabled="@( (item) => item.IsLocked)"
@@ -15,12 +33,8 @@
             <h3>Tile Rack</h3>
             <div class="d-flex">
                 @for (int s = 0; s < Domain.Rack.Capacity; s++)
-                {                   
-                    <MudDropZone T="DropSquare"
-                                 Identifier="@($"{ToId(s)}")"
-                                 DraggingClass="mud-theme-success"
-                                 Class="justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default"
-                                 Style="height:64px;width:64px;" />
+                {              
+                    <RackSquare squareId="@ToId(s)"></RackSquare>             
                 }
             </div>
         </div>
@@ -111,7 +125,6 @@
             }
         }
     }
-
     private bool OnCanDrop(DropSquare dropSquare, string identifier)
     {
         if (IsOccupied(identifier))

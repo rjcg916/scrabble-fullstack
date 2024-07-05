@@ -1,0 +1,23 @@
+﻿<style>
+    .dropzone {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 2px solid var(--mud-border-lines-default);
+        background-color: var(--docs-gray-bg);
+        height: 64px;
+        width: 64px;
+    }
+
+    .dropzone-dragging {
+        background-color: var(--mud-theme-success);
+    }
+</style>﻿
+<MudDropZone T="DropSquare"
+             Identifier="@squareId"
+             DraggingClass="dropzone-dragging"
+             Class="dropzone" />
+@code {
+    [Parameter]
+    public string squareId { get; set; }
+}
