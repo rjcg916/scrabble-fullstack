@@ -256,6 +256,28 @@ namespace Scrabble.Domain.Tests
         }
 
         [Fact]
+        public void IsMoveValid_DoesNotChangeBoard_True()
+        {
+            var tiles = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.G), new Tile('A')),
+                new(new Coord(R._8, C.H), new Tile('B')),
+                new(new Coord(R._8, C.I), new Tile('C')),
+            };
+            var board = new Board(MockWordValidator, Move.MoveFactory.CreateMove(tiles));
+            var originalBoard = new Board(board);
+
+            var moveTiles = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.A), new Tile('A')),
+                new(new Coord(R._8, C.K), new Tile('C')),
+            };
+            var result = board.IsMoveValid(moveTiles);
+
+            Assert.Equal(originalBoard, board);
+        }
+
+        [Fact]
         public void IsMoveValid_FirstMoveOnStar_True()
         {
             var board = new Board(MockWordValidator);
@@ -275,6 +297,18 @@ namespace Scrabble.Domain.Tests
             {
                 new(new Coord(R._8, C.A), new Tile('A')),
                 new(new Coord(R._8, C.B), new Tile('B'))
+            };
+            Assert.False(board.IsMoveValid(tiles).valid);
+        }
+
+        [Fact]
+        public void IsMoveValid_FirstMoveInvalidWord_False()
+        {
+            var board = new Board((s) => false); // any word invalid
+            var tiles = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.G), new Tile('A')),
+                new(new Coord(R._8, C.H), new Tile('B'))
             };
             Assert.False(board.IsMoveValid(tiles).valid);
         }
@@ -366,28 +400,5 @@ namespace Scrabble.Domain.Tests
 
             Assert.False(result.valid);
         }
-
-        [Fact]
-        public void IsMoveValid_DoesNotChangeBoard_True()
-        {
-            var tiles = new List<TilePlacement>
-            {
-                new(new Coord(R._8, C.G), new Tile('A')),
-                new(new Coord(R._8, C.H), new Tile('B')),
-                new(new Coord(R._8, C.I), new Tile('C')),
-            };
-            var board = new Board(MockWordValidator, Move.MoveFactory.CreateMove(tiles));
-            var originalBoard = new Board(board);
-
-            var moveTiles = new List<TilePlacement>
-            {
-                new(new Coord(R._8, C.A), new Tile('A')),
-                new(new Coord(R._8, C.K), new Tile('C')),
-            };
-            var result = board.IsMoveValid(moveTiles);
-
-            Assert.Equal(originalBoard, board);
-        }
-
     }
 }
