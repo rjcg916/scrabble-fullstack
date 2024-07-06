@@ -54,7 +54,8 @@
     </ChildContent>
     <ItemRenderer>
         <div Disabled="@(context.IsLocked)"
-             class="board-tile">
+             class="d-flex justify-center align-center flex-grow-1"
+             style="height: 100%; width: 100%;">
             <BoardTile Letter="@context.Name" Score="@context.Value"> </BoardTile>
         </div>
     </ItemRenderer>
@@ -72,6 +73,8 @@
     protected override void OnInitialized()
     {
         GameService.OnMoveRequest += HandleMoveRequest;
+        LoadBoard();
+        LoadRack();
     }
 
     public void Dispose()
@@ -94,6 +97,21 @@
         }
     }
 
+    private void LoadRack()
+    {
+
+        for (var s = 0; s < rack.TileCount; s++)
+        {
+            var tile = rack.Tiles[s];
+            tiles.Add(new DropSquare()
+                {
+                    Name = tile.Letter,
+                    Identifier = $"{ToId(s)}",
+                    Value = tile.Value,
+                    IsLocked = false
+                });
+        }
+    }
     private void LoadBoard()
     {
         for (int r = 0; r < Coord.RowCount; r++)
