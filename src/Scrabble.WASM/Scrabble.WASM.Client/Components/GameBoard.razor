@@ -17,8 +17,8 @@
     .tile-board .d-flex {
         display: flex;
     }
-
 </style>
+
 <MudCard>
     <MudCardContent>
         <MudTextField @bind-Value="DoTilesFormValidMove" Label="Valid Move" Variant="Variant.Outlined"></MudTextField>
@@ -94,22 +94,11 @@
 
     private async Task HandleMoveRequest()
     {
-        for (var s = 0; s < rack.TileCount; s++)
-        {
-            var tile = rack.Tiles[s];
-            tiles.Add(new DropSquare()
-                {
-                    Name = tile.Letter,
-                    Identifier = $"{ToId(s)}",
-                    Value = tile.Value,
-                    IsLocked = false
-                });
-        }
+        SubmitMove();
     }
 
     private void LoadRack()
     {
-
         for (var s = 0; s < rack.TileCount; s++)
         {
             var tile = rack.Tiles[s];
@@ -122,6 +111,7 @@
                 });
         }
     }
+
     private void LoadBoard()
     {
         for (int r = 0; r < Coord.RowCount; r++)
@@ -144,6 +134,7 @@
             }
         }
     }
+
     private bool OnCanDrop(DropSquare dropSquare, string identifier)
     {
         // don't allow tiles on top of existing tiles
@@ -178,14 +169,6 @@
         ValidMoveMessage = msg.FirstOrDefault().ToString();
 
         return valid;
-        // are tiles contiguous with existing tiles?
-        //var (IsContiguous, _) = board.TilesContiguous(testTilePlacements);
-
-        //var IsFirstMove = (proposedTilePlacements.Count() == 0);
-        //var IsUnidirectional = IsFirstMove ||
-        //                        Move.UniDirectionalMove(testTilePlacements);
-
-        //return IsContiguous && IsUnidirectional;
     }
 
     private IEnumerable<TilePlacement> GetCurrentMoveTiles()
@@ -196,7 +179,6 @@
 
     private bool IsOccupied(string id) =>
         tiles.Count(x => x.Identifier == id) > 0;
-
  
     private void SubmitMove()
     {
@@ -222,5 +204,4 @@
         var move = MoveFactory.CreateMove(GetCurrentMoveTiles().ToList());
         var score = new Score(board, move).Calculate();           
     }
-
 }

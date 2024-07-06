@@ -6,8 +6,6 @@ namespace Scrabble.Domain
 {
     public abstract class Move
     {
-        protected static readonly int MAX_TILES_IN_MOVE = Rack.Capacity;
-
         public List<TilePlacement> TilePlacements { get; init; }
 
         protected Move(List<TilePlacement> tilePlacements)
@@ -34,18 +32,16 @@ namespace Scrabble.Domain
             Move.IsValidTilePlacement(tilePlacements);
 
         protected static bool AllowedNumberOfTiles(int tileCount) =>
-            tileCount <= MAX_TILES_IN_MOVE;
+            tileCount <= Rack.Capacity;
 
         public static bool UniDirectionalMove(List<TilePlacement> tilePlacements) =>
-            (IsHorizontal(tilePlacements) && !IsVertical(tilePlacements)) ||
-            (!IsHorizontal(tilePlacements) && IsVertical(tilePlacements)) ||
-            (tilePlacements.Count == 1);
+            tilePlacements.Count == 1 || IsHorizontal(tilePlacements) ^ IsVertical(tilePlacements);
 
         public static bool IsHorizontal(List<TilePlacement> tileList) =>
-            tileList.Select(c => c.Coord.RVal).Distinct().Count() == 1;
+            tileList.All(c => c.Coord.RVal == tileList[0].Coord.RVal);
 
         public static bool IsVertical(List<TilePlacement> tileList) =>
-            tileList.Select(c => c.Coord.CVal).Distinct().Count() == 1;
+            tileList.All(c => c.Coord.CVal == tileList[0].Coord.CVal);
      
         public static class MoveFactory
         {
@@ -80,7 +76,7 @@ namespace Scrabble.Domain
         {
         }
 
-        public MoveHorizontal(Coord startFrom, List<Tile> tiles)
+        internal MoveHorizontal(Coord startFrom, List<Tile> tiles)
             : base(tiles.Select((tile, index) =>
                 new TilePlacement(new Coord(startFrom.Row, (C)(startFrom.CVal + index)), tile)).ToList())
         {
@@ -89,7 +85,7 @@ namespace Scrabble.Domain
                 throw new Exception(msg);
         }
 
-        public static (bool valid, string msg) IsValidCoordTileList(Coord startFrom, List<Tile> tiles)
+        internal static (bool valid, string msg) IsValidCoordTileList(Coord startFrom, List<Tile> tiles)
         {
             var count = tiles.Count;
 
@@ -121,7 +117,7 @@ namespace Scrabble.Domain
         {
         }
 
-        public MoveVertical(Coord startFrom, List<Tile> tiles)
+        internal MoveVertical(Coord startFrom, List<Tile> tiles)
             : base(tiles.Select((tile, index) =>
                     new TilePlacement(new Coord((R)(startFrom.RVal + index), startFrom.Col), tile)).ToList())
         {
@@ -130,7 +126,7 @@ namespace Scrabble.Domain
                 throw new Exception(msg);
         }
 
-        public static (bool valid, string msg) IsValidCoordTileList(Coord startFrom, List<Tile> tiles)
+        internal static (bool valid, string msg) IsValidCoordTileList(Coord startFrom, List<Tile> tiles)
         {
             var count = tiles.Count;
 
