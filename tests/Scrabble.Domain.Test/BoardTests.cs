@@ -210,8 +210,6 @@ namespace Scrabble.Domain.Tests
             Assert.Equal<Coord>(new Coord(R._8, C.A), errorList[0].Location);
         }
 
-      
-
 
         [Fact]
         public void GetSlice_ReturnsCorrectRowSlice()
@@ -246,7 +244,6 @@ namespace Scrabble.Domain.Tests
             Assert.Equal(2, result.Count);
         }
 
-
         [Fact]
         public void ValidateBoardSlices_NoErrorsOnEmptyBoard()
         {
@@ -257,7 +254,6 @@ namespace Scrabble.Domain.Tests
 
             Assert.Empty(errors);
         }
-
 
         [Fact]
         public void IsMoveValid_FirstMoveOnStar_True()
@@ -369,6 +365,28 @@ namespace Scrabble.Domain.Tests
             var result = board.IsMoveValid(moveTiles);
 
             Assert.False(result.valid);
+        }
+
+        [Fact]
+        public void IsMoveValid_DoesNotChangeBoard_True()
+        {
+            var tiles = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.G), new Tile('A')),
+                new(new Coord(R._8, C.H), new Tile('B')),
+                new(new Coord(R._8, C.I), new Tile('C')),
+            };
+            var board = new Board(MockWordValidator, Move.MoveFactory.CreateMove(tiles));
+            var originalBoard = new Board(board);
+
+            var moveTiles = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.A), new Tile('A')),
+                new(new Coord(R._8, C.K), new Tile('C')),
+            };
+            var result = board.IsMoveValid(moveTiles);
+
+            Assert.Equal(originalBoard, board);
         }
 
     }
