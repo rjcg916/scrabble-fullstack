@@ -21,7 +21,6 @@
 
 <MudCard>
     <MudCardContent>
-        <MudTextField @bind-Value="DoTilesFormValidMove" Label="Valid Move" Variant="Variant.Outlined"></MudTextField>
         <MudTextField @bind-Value="ValidMoveMessage"> </MudTextField>
     </MudCardContent>
 </MudCard>
@@ -77,7 +76,6 @@
 
     private List<DropSquare> tiles { get; set; } = new();
 
-    private bool DoTilesFormValidMove { get; set; }  = false;
     private string ValidMoveMessage { get; set; } = "No Tiles Placed";
 
     protected override void OnInitialized()
@@ -99,77 +97,34 @@
 
     private void LoadRack()
     {
-        for (var s = 0; s < rack.TileCount; s++)
+        tiles.AddRange(
+            rack.Tiles.Select((tile, s) => new DropSquare
         {
-            var tile = rack.Tiles[s];
-            tiles.Add(new DropSquare()
-                {
-                    Name = tile.Letter,
-                    Identifier = $"{ToId(s)}",
-                    Value = tile.Value,
-                    IsLocked = false
-                });
-        }
+            Name = tile.Letter,
+            Identifier = $"{ToId(s)}",
+            Value = tile.Value,
+            IsLocked = false
+        })
+        );
     }
-
     private void LoadBoard()
     {
-        for (int r = 0; r < Coord.RowCount; r++)
-        {          
-            for (int c = 0; c < Coord.ColCount; c++)
-            {     
-                var square = board.squares[r, c];
-
-                if (square.IsOccupied)
-                {
-                    tiles.Add(
-                             new DropSquare()
-                                 {
-                                     Name = square.Tile.Letter,
-                                     Identifier = $"{ToId(r,c)}",
-                                     Value = square.Tile.Value,
-                                     IsLocked = true
-                                 });
-                }
-            }
-        }
+        tiles = (from r in Enumerable.Range(0, Coord.RowCount)
+                 from c in Enumerable.Range(0, Coord.ColCount)
+                 let square = board.squares[r, c]
+                 where square.IsOccupied
+                 select new DropSquare
+                     {
+                         Name = square.Tile.Letter,
+                         Identifier = $"{ToId(r, c)}",
+                         Value = square.Tile.Value,
+                         IsLocked = true
+                     }).ToList();
     }
 
-    private bool OnCanDrop(DropSquare dropSquare, string identifier)
-    {
-        // don't allow tiles on top of existing tiles
 
-        if (IsOccupied(identifier))
-            return false;
-
-        // drop tile on vacant rack space always allowed
-        if (IsOnRack(identifier))
-            return true;
-
-        // update move valid status
-
-        DoTilesFormValidMove = ValidMove(dropSquare, identifier);
-
-        return true;
-    }
-
-    private bool ValidMove(DropSquare dropSquare, string identifier)
-    {
-        // is board drop location valid?
-
-        // get previously dragged Tiles
-        var proposedTilePlacements = GetCurrentMoveTiles();
-
-        // union new Tile and previously dragged tiles
-        var newTile = new TilePlacement(GetCoord(identifier), new Tile(dropSquare.Name));
-        var testTilePlacements = proposedTilePlacements.Append(newTile).ToList();
-
-        var (valid, msg ) = board.IsMoveValid(testTilePlacements);
-        DoTilesFormValidMove = valid;
-        ValidMoveMessage = msg.FirstOrDefault().ToString();
-
-        return valid;
-    }
+    private bool OnCanDrop(DropSquare dropSquare, string identifier) =>
+        !IsOccupied(identifier);
 
     private IEnumerable<TilePlacement> GetCurrentMoveTiles()
     {
@@ -179,7 +134,7 @@
 
     private bool IsOccupied(string id) =>
         tiles.Count(x => x.Identifier == id) > 0;
- 
+
     private void SubmitMove()
     {
         // get move and submit
@@ -191,12 +146,19 @@
         // add tiles to "board" data structure 
     }
 
+    private void UpdateMoveMessage()
+    {
+        var currentTilePlacements = GetCurrentMoveTiles().ToList();
+        var (valid, msg) = board.IsMoveValid(currentTilePlacements);
+        ValidMoveMessage = valid ? "Valid" : String.Join(", ", msg.Select( i => i.ToString()));
+    }
+
     private void OnItemDropped(MudItemDropInfo<DropSquare> dropItem)
     {
-        dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
-       // dropItem.Item.IsLocked = false;
-       // DisplayCurrentMoveScore();
+        Console.WriteLine($"tile: source (name): {dropItem.Item.Name} source(id): {dropItem.Item.Identifier} target: {dropItem.DropzoneIdentifier}");
 
+        dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
+        UpdateMoveMessage();
     }
 
     private void DisplayCurrentMoveScore()

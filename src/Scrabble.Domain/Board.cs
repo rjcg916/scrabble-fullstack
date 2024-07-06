@@ -185,7 +185,7 @@ namespace Scrabble.Domain
             invalidMessages.AddRange(ValidateWordSlices(r => GetSquares(SquareByColumn, r, (0, Coord.ColCount - 1)), Coord.ColCount, true));
             invalidMessages.AddRange(ValidateWordSlices(c => GetSquares(SquareByRow, c, (0, Coord.RowCount - 1)), Coord.RowCount, false));
 
-            return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, null);
+            return invalidMessages.Count > 0 ? (false, invalidMessages) : (true, new List<PlacementError>());
         }
 
         public (bool valid, PlacementError) TilesContiguous(List<TilePlacement> tilePlacementList)

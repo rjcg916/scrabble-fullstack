@@ -2,7 +2,7 @@
 {
     public class GameService
     {
-        public event Func<Task> OnMoveRequest;
+        public event Func<Task>? OnMoveRequest;
 
         public async Task Move()
         {

@@ -17,7 +17,7 @@ namespace Scrabble.Console
             do
             {
                 Console.Write("Letter: ");
-                string input = Console.ReadLine().ToUpper();
+                string input = (Console.ReadLine() ?? "").ToUpper();
                 if (char.TryParse(input, out validLetter))
                 {
                     isLetteRValid = validChoices.Any(l => l.Equals(validLetter));
@@ -46,9 +46,9 @@ namespace Scrabble.Console
             do
             {
                 Console.Write("Row: ");
-                string rowStr = Console.ReadLine();
+                string rowStr = Console.ReadLine() ?? "";
                 Console.Write("Col: ");
-                string colStr = Console.ReadLine();
+                string colStr = Console.ReadLine() ?? "";
 
                 if (int.TryParse(rowStr, out int row) && int.TryParse(colStr, out int col))
                 {
@@ -78,7 +78,7 @@ namespace Scrabble.Console
             do
             {
                 Console.Write("Make Move (yes/no)? ");
-                string response = Console.ReadLine().Trim().ToLower();
+                string response = (Console.ReadLine() ?? "").Trim().ToLower();
                 if (response == "yes")
                 {
                     return true;
