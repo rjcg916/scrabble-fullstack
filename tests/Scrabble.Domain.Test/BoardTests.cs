@@ -259,6 +259,75 @@ namespace Scrabble.Domain.Tests
         }
 
 
+        [Fact]
+        public void IsMoveValid_FirstMoveOnStar_True()
+        {
+            var board = new Board(MockWordValidator);
+            var tiles = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.G), new Tile('A')),
+                new(new Coord(R._8, C.H), new Tile('B'))
+            };
+            Assert.True(board.IsMoveValid(tiles).valid);
+        }
+
+        [Fact]
+        public void IsMoveValid_FirstMoveNotOnStar_False()
+        {
+            var board = new Board(MockWordValidator);
+            var tiles = new List<TilePlacement>
+            {
+                new(new Coord(R._8, C.A), new Tile('A')),
+                new(new Coord(R._8, C.B), new Tile('B'))
+            };
+            Assert.False(board.IsMoveValid(tiles).valid);
+        }
+
+        [Fact]
+        public void IsMoveValid_FirstHorizontalMoveNotContiguous_False()
+        {
+            var board = new Board(MockWordValidator);
+            var tiles = new List<TilePlacement>
+            {
+                
+                new(new Coord(R._8, C.G), new Tile('A')),
+                new(new Coord(R._8, C.H), new Tile('B')),
+                new(new Coord(R._8, C.J), new Tile('C')),
+            };
+            Assert.False(board.IsMoveValid(tiles).valid);
+        }
+
+        [Fact]
+        public void IsMoveValid_FirstVerticalMoveNotContiguous_False()
+        {
+            var board = new Board(MockWordValidator);
+            var tiles = new List<TilePlacement>
+            {
+
+                new(new Coord(R._7, C.H), new Tile('A')),
+                new(new Coord(R._8, C.H), new Tile('B')),
+                new(new Coord(R._10, C.H), new Tile('C')),
+            };
+            var result = board.IsMoveValid(tiles);
+
+            Assert.False(result.valid);
+        }
+
+        [Fact]
+        public void IsMoveValid_FirstMoveOnDiagonal_False()
+        {
+            var board = new Board(MockWordValidator);
+            var tiles = new List<TilePlacement>
+            {
+
+                new(new Coord(R._8, C.G), new Tile('A')),
+                new(new Coord(R._8, C.H), new Tile('B')),
+                new(new Coord(R._9, C.I), new Tile('C')),
+            };
+            var result = board.IsMoveValid(tiles);
+
+            Assert.False(result.valid);
+        }
 
     }
 }

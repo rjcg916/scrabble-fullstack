@@ -19,6 +19,13 @@
     }
 
 </style>
+<MudCard>
+    <MudCardContent>
+        <MudTextField @bind-Value="DoTilesFormValidMove" Label="Valid Move" Variant="Variant.Outlined"></MudTextField>
+        <MudTextField @bind-Value="ValidMoveMessage"> </MudTextField>
+    </MudCardContent>
+</MudCard>
+
 <MudDropContainer T="DropSquare"
                   Items="tiles"
                   ItemIsDisabled="@( (item) => item.IsLocked)"
@@ -52,7 +59,7 @@
             }
         </div>
     </ChildContent>
-    <ItemRenderer>
+    <ItemRenderer >
         <div Disabled="@(context.IsLocked)"
              class="d-flex justify-center align-center flex-grow-1"
              style="height: 100%; width: 100%;">
@@ -69,6 +76,9 @@
     public Board board { get; set; }
 
     private List<DropSquare> tiles { get; set; } = new();
+
+    private bool DoTilesFormValidMove { get; set; }  = false;
+    private string ValidMoveMessage { get; set; } = "No Tiles Placed";
 
     protected override void OnInitialized()
     {
@@ -136,6 +146,8 @@
     }
     private bool OnCanDrop(DropSquare dropSquare, string identifier)
     {
+        // don't allow tiles on top of existing tiles
+
         if (IsOccupied(identifier))
             return false;
 
@@ -143,8 +155,11 @@
         if (IsOnRack(identifier))
             return true;
 
-        // validate board move
-        return ValidMove(dropSquare, identifier);
+        // update move valid status
+
+        DoTilesFormValidMove = ValidMove(dropSquare, identifier);
+
+        return true;
     }
 
     private bool ValidMove(DropSquare dropSquare, string identifier)
@@ -158,14 +173,19 @@
         var newTile = new TilePlacement(GetCoord(identifier), new Tile(dropSquare.Name));
         var testTilePlacements = proposedTilePlacements.Append(newTile).ToList();
 
+        var (valid, msg ) = board.IsMoveValid(testTilePlacements);
+        DoTilesFormValidMove = valid;
+        ValidMoveMessage = msg.FirstOrDefault().ToString();
+
+        return valid;
         // are tiles contiguous with existing tiles?
-        var (IsContiguous, _) = board.TilesContiguous(testTilePlacements);
+        //var (IsContiguous, _) = board.TilesContiguous(testTilePlacements);
 
-        var IsFirstMove = (proposedTilePlacements.Count() == 0);
-        var IsUnidirectional = IsFirstMove ||
-                                Move.UniDirectionalMove(testTilePlacements);
+        //var IsFirstMove = (proposedTilePlacements.Count() == 0);
+        //var IsUnidirectional = IsFirstMove ||
+        //                        Move.UniDirectionalMove(testTilePlacements);
 
-        return IsContiguous && IsUnidirectional;
+        //return IsContiguous && IsUnidirectional;
     }
 
     private IEnumerable<TilePlacement> GetCurrentMoveTiles()
@@ -192,8 +212,9 @@
     private void OnItemDropped(MudItemDropInfo<DropSquare> dropItem)
     {
         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
-        dropItem.Item.IsLocked = false;
-        DisplayCurrentMoveScore();
+       // dropItem.Item.IsLocked = false;
+       // DisplayCurrentMoveScore();
+
     }
 
     private void DisplayCurrentMoveScore()

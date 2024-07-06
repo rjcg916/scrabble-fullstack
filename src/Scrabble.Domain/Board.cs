@@ -155,9 +155,15 @@ namespace Scrabble.Domain
         {
             Board board = new(this);
 
-            board.MakeMove(MoveFactory.CreateMove(moveToTest));
+            try
+            {
+                board = board.MakeMove(MoveFactory.CreateMove(moveToTest));
+            } catch (Exception e)
+            {               
+                return (false, [new(moveToTest.First().Coord, e.Message)]);
+            }
 
-            if (!IsOccupied(STAR))
+            if (!board.IsOccupied(STAR))
             {
                 return (false, [new(Board.STAR, "STAR not occupied")]);
             }
