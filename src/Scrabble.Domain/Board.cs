@@ -89,7 +89,10 @@ namespace Scrabble.Domain
 
         public int ScoreMove(Move move)
         {
-            return new Score(this, move).Calculate();
+            // put tiles on a board and compute score
+            var scoreBoard = new Board(this);
+            scoreBoard.MakeMove(move);
+            return new Score(scoreBoard, move).Calculate();
         }
 
         // fetch all squares in a range of a slice

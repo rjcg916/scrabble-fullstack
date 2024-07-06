@@ -11,14 +11,11 @@ namespace Scrabble.Domain.Tests
         [Fact]
         public void ScoreMove_AllBlanks_ReturnsCorrectScore()
         {
+
             //starting board
+            var board = new Board(MockWordValidator);
 
-            var startFrom = new Coord(R._8, C.H);
-            var tiles = new List<Tile> { new(' '), new(' '), new(' ') };
-
-            var board = new Board(MockWordValidator, startFrom, tiles, isHorizontal: true);
-
-            // score initial move
+            // define move
             var tilesAsPlacement = new List<TilePlacement>
             {
                 new(new Coord(R._8, C.H), new Tile(' ')),
@@ -26,6 +23,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.J), new Tile(' ')),
             };
 
+            // score initial move
             Assert.Equal(0, board.ScoreMove(MoveFactory.CreateMove(tilesAsPlacement)));
         }
 
@@ -33,13 +31,9 @@ namespace Scrabble.Domain.Tests
         public void ScoreMove_SomeBlanks_ReturnsCorrectScore()
         {
             //starting board
+            var board = new Board(MockWordValidator);
 
-            var startFrom = new Coord(R._8, C.H);
-            var tiles = new List<Tile> { new('A'), new(' '), new('Z') };
-
-            var board = new Board(MockWordValidator, startFrom, tiles, isHorizontal: true);
-
-            // score initial move
+            // initial move
             var tilesAsPlacement = new List<TilePlacement>
             {
                 new(new Coord(R._8, C.H), new Tile('A')),
@@ -47,6 +41,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.J), new Tile('Z')),
             };
 
+            // score
             Assert.Equal(11, board.ScoreMove(MoveFactory.CreateMove(tilesAsPlacement)));
         }
 
@@ -54,10 +49,8 @@ namespace Scrabble.Domain.Tests
         public void ScoreMove_InitialHorizontal_ReturnsCorrectScore()
         {
             //starting board
-            var startFrom = new Coord(R._8, C.H);
-            var tiles = new List<Tile> { new('B'), new('Z'), new('D') };
 
-            var board = new Board(MockWordValidator, startFrom, tiles, isHorizontal: true);
+            var board = new Board(MockWordValidator);
 
             // score initial move
             var tilesAsPlacement = new List<TilePlacement>
@@ -76,11 +69,7 @@ namespace Scrabble.Domain.Tests
         public void ScoreMove_InitialHorizontalDoubleLetter_ReturnsCorrectScore()
         {
             //starting board
-
-            var tiles = new List<Tile> { new('B'), new('C'), new('D'), new('B'), new('C'), new('D') };
-            var startFrom = new Coord(R._8, C.H);
-            var tileLocations = new List<int> { ((int)R._8), ((int)R._9), ((int)R._10), ((int)R._11), ((int)R._12), ((int)R._13) };
-
+            var board = new Board(MockWordValidator);
 
             var tilesAsPlacement = new List<TilePlacement>
             {
@@ -92,12 +81,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.M), new Tile('D')),
             };
 
-            var board = new Board(MockWordValidator, startFrom, tiles, isHorizontal: true);
-
-            // score initial move
-            var expectedScore = 19;
-
-            Assert.Equal(expectedScore, board.ScoreMove(MoveFactory.CreateMove(tilesAsPlacement)));
+            Assert.Equal(19, board.ScoreMove(MoveFactory.CreateMove(tilesAsPlacement)));
         }
 
 
@@ -105,10 +89,7 @@ namespace Scrabble.Domain.Tests
         public void ScoreMove_InitialVertical_ReturnsCorrectScore()
         {
             //starting board
-
-            var tiles = new List<Tile> { new('B'), new('C'), new('D') };
-            var startFrom = new Coord(R._7, C.H);
-            var tileLocations = new List<int> { ((int)R._7), ((int)R._8), ((int)R._9) };
+            var board = new Board(MockWordValidator);
 
             var tilesAsPlacement = new List<TilePlacement>
             {
@@ -117,13 +98,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._9, C.H), new Tile('D')),
 
             };
-
-            var board = new Board(MockWordValidator, startFrom, tiles, isHorizontal: false);
-
-
-            // score initial move
-            var expectedScore = 8;
-            Assert.Equal(expectedScore, board.ScoreMove(MoveFactory.CreateMove(tilesAsPlacement)));
+            Assert.Equal(8, board.ScoreMove(MoveFactory.CreateMove(tilesAsPlacement)));
         }
 
         [Fact]
@@ -131,8 +106,8 @@ namespace Scrabble.Domain.Tests
         {
             //starting board
 
-            var tiles = new List<Tile> { new('B'), new('C'), new('D') };
-            var startFrom = new Coord(R._8, C.H);
+            var board = new Board(MockWordValidator);
+
 
             var tilesAsPlacement = new List<TilePlacement>
             {
@@ -140,24 +115,23 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.I), new Tile('C')),
                 new(new Coord(R._8, C.J), new Tile('D')),
             };
+            var firstMove = MoveFactory.CreateMove(tilesAsPlacement);
 
-            var board = new Board(MockWordValidator, startFrom, tiles, isHorizontal: true);
-
-            // score move
-            var initialScore = board.ScoreMove(MoveFactory.CreateMove(tilesAsPlacement));
+            // score first move
+            var initialScore = board.ScoreMove(firstMove);
             Assert.Equal(8, initialScore);
 
-            // make a move
+            // make the first move
+            board = board.MakeMove(firstMove);
+
+            // score next move
             var newTiles = new List<TilePlacement>
             {
                 new(new Coord(R._8, C.G), new Tile('A')),
                 new(new Coord(R._8, C.K), new Tile('J'))
             };
 
-            var move = MoveFactory.CreateMove(newTiles);
-
-            board.MakeMove(move);
-            var moveScore = board.ScoreMove(move);
+            var moveScore = board.ScoreMove(MoveFactory.CreateMove(newTiles));
 
             Assert.Equal(17, moveScore);
         }
@@ -165,10 +139,11 @@ namespace Scrabble.Domain.Tests
         [Fact]
         public void ScoreMove_VerticalNextExtends_ReturnsCorrectScore()
         {
-            //starting board
+            //starting board with tiles
             var board = new Board(MockWordValidator, new Coord(R._8, C.G), [new Tile('J')], isHorizontal: false);
 
 
+            // next move
             var tileList = new List<TilePlacement>
             {
                 new(new Coord(R._7, C.G), new Tile('A')),
@@ -176,11 +151,7 @@ namespace Scrabble.Domain.Tests
             };
             var move = MoveFactory.CreateMove(tileList);
 
-            board.MakeMove(move);
-            var initialScore = board.ScoreMove(move);
-
-            Assert.Equal(30, initialScore);
-
+            Assert.Equal(30, board.ScoreMove(move));
         }
 
         [Fact]
@@ -205,6 +176,7 @@ namespace Scrabble.Domain.Tests
             Assert.Equal(8, initialScore);
 
 
+            // next move
             var newTiles = new List<TilePlacement>
             {
                 new(new Coord(R._9, C.J), new Tile('A')),
@@ -213,7 +185,6 @@ namespace Scrabble.Domain.Tests
 
             var move = MoveFactory.CreateMove(newTiles);
 
-            board.MakeMove(move);
             var moveScore = board.ScoreMove(move);
 
             Assert.Equal(12, moveScore);
@@ -249,8 +220,6 @@ namespace Scrabble.Domain.Tests
 
             var move = MoveFactory.CreateMove(newTiles);
 
-            board.MakeMove(move);
-
             // score move
             var moveScore = board.ScoreMove(move);
 
@@ -261,10 +230,10 @@ namespace Scrabble.Domain.Tests
         public void ScoreMove_AlternateScorers_ReturnSameScore()
         {
             //starting board
+            var board = new Board(MockWordValidator);
 
             var tiles = new List<Tile> { new('B'), new('C'), new('D'), new('B'), new('C'), new('D') };
             var startFrom = new Coord(R._8, C.H);
-            var tileLocations = new List<int> { ((int)R._8), ((int)R._9), ((int)R._10), ((int)R._11), ((int)R._12), ((int)R._13) };
 
             var tilesAsPlacement = new List<TilePlacement>
             {
@@ -276,12 +245,9 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.M), new Tile('D')),
             };
 
-            var board = new Board(MockWordValidator, startFrom, tiles, isHorizontal: true);
+            // score two alternate moves should be equal
+            Assert.Equal(board.ScoreMove(MoveFactory.CreateMove(startFrom, tiles, isHorizontal:true)), board.ScoreMove(MoveFactory.CreateMove(tilesAsPlacement)));
 
-            // score initial move
-            var expectedScore = 19;
-            Assert.Equal(expectedScore, board.ScoreMove(MoveFactory.CreateMove(tilesAsPlacement)));
-           // Assert.Equal(expectedScore, board.ScoreMove(new Move(startFrom, tiles, isHorizontal: true));
         }
 
         [Fact]
@@ -296,7 +262,6 @@ namespace Scrabble.Domain.Tests
                     ];
             var move = MoveFactory.CreateMove(tiles);
 
-            board.MakeMove(move);
 
             var score = board.ScoreMove(move);
             Assert.Equal(7, score);
