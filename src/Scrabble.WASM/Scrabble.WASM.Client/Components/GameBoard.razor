@@ -48,10 +48,10 @@
         </div>
         <div class="tile-board">
             <h3>Board</h3>
-            @for (int r = 0; r < 15; r++)
+            @for (int r = 0; r < Coord.RowCount; r++)
             {
                 <div class="d-flex">
-                    @for (int c = 0; c < 15; c++)
+                    @for (int c = 0; c < Coord.ColCount; c++)
                     {
                         var squareType = board.squares[r, c].SquareType;
                         <BoardSquare squareType="@squareType" squareId="@ToId(r,c)"></BoardSquare>
