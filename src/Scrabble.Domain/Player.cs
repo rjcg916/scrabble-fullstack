@@ -26,7 +26,7 @@ namespace Scrabble.Domain
     {
         public Rack Rack { get; set; } = new Rack();
         public string Name { get; set; } = name;
-        public int Score { get; } = 0;
+        public int Score { get; set; } = 0;
     }
 
 }

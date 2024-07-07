@@ -1,21 +1,18 @@
-﻿@inject Services.GameService GameService
+﻿@page "/"
+@inject Services.GameService GameService
+<PageTitle>Scrabble</PageTitle>
 
-<div>
-    <label>Valid State? </label>
-    <span>@(IsBoardValid ? "Yes" : "No")</span>
-</div>
-<div>
-    <label>Player</label>
-    <span>@(currentPlayer == 0 ? "One" : "Two")</span>
-</div>
-
-<GameBoard board="@board" rack="@rack" ></GameBoard>
+<GameControl></GameControl>
+<ScoreComponent PlayerScores="@playerScores" ></ScoreComponent>
+<GameBoard board="@board" rack="@playerList.List[currentPlayer].Rack" CurrentPlayer="@currentPlayer" ></GameBoard>
 
 @code {
     private static Lexicon lexicon = new Lexicon();
 
     private Board board = new((s) => true);
-    private Rack rack = new();
+
+    private PlayerList playerList = new PlayerList(new List<Player>() { new Player("1"), new Player("2")});
+    private Dictionary<int, int> playerScores = new();
 
     private Move? currentMove;
 
@@ -23,9 +20,26 @@
 
     private bool IsBoardValid = true;
 
+
     protected override void OnInitialized()
     {
         GameService.OnMoveRequest += HandleMoveButtonClicked;
+
+
+        // build player list with racks
+        var p1 = playerList.List[0];
+        p1.Rack = new Rack();
+        p1.Rack = p1.Rack.AddTiles(new List<Domain.Tile> { new('A'), new('B') });
+        p1.Score = 10;
+        playerScores.Add(0, p1.Score);
+
+        var p2 = playerList.List[1];
+        p2.Rack = new Rack();
+        p2.Rack = p2.Rack.AddTiles(new List<Domain.Tile> { new('C'), new('D') });
+        p2.Score = 20;
+        playerScores.Add(1, p2.Score);
+
+        // initialize board
 
         var tiles = new List<TilePlacement>
             {
@@ -36,8 +50,6 @@
             };
         board.MakeMove(MoveFactory.CreateMove(tiles));
 
-        var initialTiles = new List<Domain.Tile> { new('X'), new('Y') };
-        rack = rack.AddTiles(initialTiles);
     }
 
     private async Task HandleMoveButtonClicked()
@@ -46,12 +58,12 @@
         // see if game is over
         // replace used tiles on rack
         //
-         await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
     {
-         GameService.OnMoveRequest -= HandleMoveButtonClicked;
+        GameService.OnMoveRequest -= HandleMoveButtonClicked;
     }
 
     private void HandleMoveSubmitted(ScrabbleMove move)

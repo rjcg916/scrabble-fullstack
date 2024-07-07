@@ -76,6 +76,9 @@
     [Parameter]
     public Board board { get; set; }
 
+    [Parameter]
+    public int CurrentPlayer { get; set; }
+
     private List<DropSquare> tiles { get; set; } = new();
 
     private const string VALIDMOVEMSG = "Valid";
