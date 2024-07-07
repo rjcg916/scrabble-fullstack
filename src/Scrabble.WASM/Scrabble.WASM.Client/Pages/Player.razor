@@ -1,0 +1,19 @@
+﻿@page "/player/{Id:int}"
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Player </PageTitle>
+
+<div>Hi Player @Id</div>
+<GameHome></GameHome>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        // You can use the Id parameter here
+        Console.WriteLine($"Id: {Id}");
+    }
+
+}
