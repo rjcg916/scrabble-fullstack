@@ -13,7 +13,7 @@ namespace Scrabble.Domain.Tests
             // Arrange
             var gameManager = new GameManager();
             var players = new List<Player> { new("Alice"), new("Bob") };
-            var game = Game.GameFactory.CreateGame(new Lexicon(), new PlayerList(players));
+            var game = Game.GameFactory.CreateGame(new Lexicon(), players);
 
             // Act
             var gameId = gameManager.AddGame(game);
@@ -34,8 +34,8 @@ namespace Scrabble.Domain.Tests
             var players2 = new List<Player> { new("Alice"), new("Bob"), new("Sam") };
 
             // Act
-            var game1 = Game.GameFactory.CreateGame(new Lexicon(), new PlayerList(players1));
-            var _ = Game.GameFactory.CreateGame(new Lexicon(), new PlayerList(players2));
+            var game1 = Game.GameFactory.CreateGame(new Lexicon(), players1);
+            var _ = Game.GameFactory.CreateGame(new Lexicon(), players2);
             var gameId = gameManager.AddGame(game1);
 
             var fetchedGame = gameManager.GetGame(gameId);
@@ -62,7 +62,7 @@ namespace Scrabble.Domain.Tests
             // Arrange
             var gameManager = new GameManager();
             var players = new List<Player> { new("Alice"), new("Bob") };
-            var game = Game.GameFactory.CreateGame(new Lexicon(), new PlayerList( players));
+            var game = Game.GameFactory.CreateGame(new Lexicon(), players);
 
             var gameId = gameManager.AddGame(game);
 
@@ -96,8 +96,8 @@ namespace Scrabble.Domain.Tests
             var gameManager = new GameManager();
             var players1 = new List<Player> { new("Alice"), new("Bob") };
             var players2 = new List<Player> { new("Charlie"), new("Dave") };
-            var game1 = Game.GameFactory.CreateGame(new Lexicon(), new PlayerList(players1));
-            var game2 = Game.GameFactory.CreateGame(new Lexicon(), new PlayerList(players2));
+            var game1 = Game.GameFactory.CreateGame(new Lexicon(), players1);
+            var game2 = Game.GameFactory.CreateGame(new Lexicon(), players2);
 
             // Act
             gameManager.AddGame(game1);

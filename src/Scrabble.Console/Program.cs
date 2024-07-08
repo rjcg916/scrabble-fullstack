@@ -7,7 +7,7 @@ var gameManager = new GameManager();
 
 //// create first game
 var game = Game.GameFactory.CreateGame(lexicon, 
-    new PlayerList( [new("A"), new("B")]));
+    new List<Player>( [new("A"), new("B")]));
 gameManager.AddGame(game);
 
 //// get current board for move

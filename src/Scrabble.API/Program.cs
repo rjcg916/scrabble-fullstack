@@ -26,7 +26,7 @@ app.MapGet("/api/Games/{Id}", (Guid Id, IGameManager GameManager) =>
 
 app.MapPost("/api/Games", (string names, IGameManager GameManager) =>
 {
-    var game = Game.GameFactory.CreateGame(new Lexicon(), new PlayerList( names.Split(",", StringSplitOptions.RemoveEmptyEntries).Select( name => new Player(name) ).ToList()  ));
+    var game = Game.GameFactory.CreateGame(new Lexicon(), new List<Player>( names.Split(",", StringSplitOptions.RemoveEmptyEntries).Select( name => new Player(name) ).ToList()  ));
     var Id = GameManager.AddGame(game);
     return Results.Ok(Id);
 });

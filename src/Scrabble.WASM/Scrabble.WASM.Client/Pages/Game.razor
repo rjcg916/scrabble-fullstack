@@ -4,14 +4,14 @@
 
 <GameControl></GameControl>
 <ScoreComponent PlayerScores="@playerScores" ></ScoreComponent>
-<GameBoard board="@board" rack="@playerList.List[currentPlayer].Rack" CurrentPlayer="@currentPlayer" ></GameBoard>
+<GameBoard board="@board" rack="@playerList[currentPlayer].Rack" CurrentPlayer="@currentPlayer" ></GameBoard>
 
 @code {
     private static Lexicon lexicon = new Lexicon();
 
     private Board board = new((s) => true);
 
-    private PlayerList playerList = new PlayerList(new List<Player>() { new Player("1"), new Player("2")});
+    private List<Player>  playerList = new List<Player>(new List<Player>() { new Player("1"), new Player("2")});
     private Dictionary<int, int> playerScores = new();
 
     private Move? currentMove;
@@ -27,13 +27,13 @@
 
 
         // build player list with racks
-        var p1 = playerList.List[0];
+        var p1 = playerList[0];
         p1.Rack = new Rack();
         p1.Rack = p1.Rack.AddTiles(new List<Domain.Tile> { new('A'), new('B') });
         p1.Score = 10;
         playerScores.Add(0, p1.Score);
 
-        var p2 = playerList.List[1];
+        var p2 = playerList[1];
         p2.Rack = new Rack();
         p2.Rack = p2.Rack.AddTiles(new List<Domain.Tile> { new('C'), new('D') });
         p2.Score = 20;

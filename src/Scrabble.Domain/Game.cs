@@ -14,14 +14,14 @@ namespace Scrabble.Domain
         public byte TurnOfPlayer { get; set; } = 1;
         public bool GameDone { get; } = false;
 
-        private Game(Lexicon lexicon, PlayerList players) {
+        private Game(Lexicon lexicon, List<Player> players) {
             Lexicon = lexicon;
             TileBag = TileBag.TileBagFactory.Create();           
             Board = new Board(lexicon.IsWordValid);
 
             // create each player, add to game and draw tiles from bag
             byte i = 1;
-            players.List.ForEach(p =>
+            players.ForEach(p =>
             {
                 var player = new Player(p.Name);
                 TileBag = DrawTiles(player);
@@ -65,7 +65,7 @@ namespace Scrabble.Domain
 
         public static class GameFactory
         {
-            public static Game CreateGame(Lexicon lexicon, PlayerList players)
+            public static Game CreateGame(Lexicon lexicon, List<Player> players)
             {
                 return new Game(lexicon, players);
             }

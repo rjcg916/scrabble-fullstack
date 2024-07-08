@@ -16,7 +16,7 @@ namespace Scrabble.Domain.Tests
             var players = new List<Player> { new("A")};
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => Game.GameFactory.CreateGame(lexicon, new PlayerList(players)));
+            var exception = Assert.Throws<ArgumentException>(() => Game.GameFactory.CreateGame(lexicon,players));
             Assert.Contains("is not a valid players list size", exception.Message);
         }
 
@@ -29,7 +29,7 @@ namespace Scrabble.Domain.Tests
             var players = new List<Player> {  new("A"), new("B"), new("C"), new("D"), new("E"), new("Alice") }; // 5 players
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => Game.GameFactory.CreateGame(lexicon, new PlayerList(players)));
+            var exception = Assert.Throws<ArgumentException>(() => Game.GameFactory.CreateGame(lexicon, players));
             Assert.Contains("is not a valid players list size", exception.Message);
         }
 
@@ -41,7 +41,7 @@ namespace Scrabble.Domain.Tests
             var players = new List<Player> { new("A"), new("B"), new("C") };
 
             // Act
-            var game = Game.GameFactory.CreateGame(lexicon, new PlayerList( players));
+            var game = Game.GameFactory.CreateGame(lexicon, players);
 
             // Assert
             Assert.NotNull(game);
@@ -61,7 +61,7 @@ namespace Scrabble.Domain.Tests
             var players = new List<Player> { new("A"), new("B") };
 
             // Act
-            var game = Game.GameFactory.CreateGame(lexicon, new PlayerList(players));
+            var game = Game.GameFactory.CreateGame(lexicon, players);
 
             // Assert
             Assert.Equal(players.Count, game.NumberOfPlayers);
@@ -79,7 +79,7 @@ namespace Scrabble.Domain.Tests
             var players = new List<Player> { new("A"), new("B") };
 
             // Act
-            var game = Game.GameFactory.CreateGame(lexicon, new PlayerList(players));
+            var game = Game.GameFactory.CreateGame(lexicon, players);
 
             // Assert
             foreach (var player in game.Players.Values)
