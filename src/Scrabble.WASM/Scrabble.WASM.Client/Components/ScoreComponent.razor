@@ -1,8 +1,0 @@
-@code {
-    [Parameter]
-    public Dictionary<int, int> PlayerScores { get; set; }
-}
-@foreach (var playerScore in PlayerScores)
-{
-    <div>Player @playerScore.Key: @playerScore.Value</div>
-}
