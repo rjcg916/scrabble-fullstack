@@ -50,7 +50,7 @@ namespace Scrabble.Domain
             new(new Tile('X'), 1),
             new(new Tile('Y'), 2),
             new(new Tile('Z'), 1),
-            new(new Tile(' '), 2)
+            new(new Tile('?'), 2)
         ];
 
         public IReadOnlyList<Tile> Tiles { get; }

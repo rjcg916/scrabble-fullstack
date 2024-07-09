@@ -12,7 +12,25 @@
     .dropzone-dragging {
         background-color: var(--mud-theme-success);
     }
-</style>﻿
+
+    .player-rack {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f4f4f4; /* Light gray */
+        padding: 10px;
+        border-radius: 10px;
+        border: 2px solid var(--mud-border-lines-default);
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+        width: fit-content;
+        margin: 10px auto;
+    }
+
+    .player-rack .dropzone {
+        margin: 0 5px;
+    }
+</style>
+
 <MudDropZone T="DropSquare"
              Identifier="@squareId"
              DraggingClass="dropzone-dragging"

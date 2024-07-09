@@ -4,9 +4,22 @@
         justify-content: center;
         align-items: center;
         border: 2px solid var(--mud-border-lines-default);
-        background-color: var(--docs-gray-bg);
         height: 64px;
         width: 64px;
+        font-family: 'Times New Roman', Times, serif; /* Classic font style */
+        font-size: 0.75em;
+        color: #000; /* Black color for labels */
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    .dropzone::before {
+        content: attr(data-label);
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        font-size: 0.75em;
+        color: rgba(0, 0, 0, 0.6); /* Semi-transparent black */
     }
 
     .dropzone-dragging {
@@ -14,34 +27,40 @@
     }
 
     .square-dl {
-        background-color: #ccccff;
+        background-color: #add8e6; /* Light blue */
     }
 
     .square-dw {
-        background-color: #ffcccc;
+        background-color: #fa8072; /* Light red */
     }
 
     .square-tl {
-        background-color: #9999ff;
+        background-color: #4682b4; /* Darker blue */
     }
 
     .square-tw {
-        background-color: #ff9999;
+        background-color: #dc143c; /* Darker red */
     }
 
     .square-start {
-        background-color: #ffffcc;
+        background-color: #ffffcc; /* Light yellow */
     }
 
     .square-default {
-        background-color: #f4f4f4;
+        background-color: #f4f4f4; /* Light gray */
+    }
+
+    .dropzone, .square-dl, .square-dw, .square-tl, .square-tw, .square-start, .square-default {
+        border: 1px solid #d3d3d3; /* Light gray border */
     }
 </style>
+
 
 <MudDropZone T="DropSquare"
              Identifier="@squareId"
              DraggingClass="dropzone-dragging"
-             Class="@($"dropzone {GetSquareClass(squareType)}")" />
+             Class="@($"dropzone {GetSquareClass(squareType)}")"
+             data-label="@(squareType != SquareType.reg ? squareType.ToString() : string.Empty)" />
 
 @code {
 
@@ -63,4 +82,5 @@
             _ => "square-default"
         };
     }
+
 }

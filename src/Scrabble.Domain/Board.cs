@@ -193,23 +193,33 @@ namespace Scrabble.Domain
 
         public (bool valid, PlacementError) TilesContiguous(List<TilePlacement> tilePlacementList)
         {
+    
+            // get currently occupied squares
             var occupiedList = new List<(int, int)>();
-            for (int r = 0; r < 15; r++)
-                for (int c = 0; c < 15; c++)
+            for (int r = 0; r < Coord.RowCount; r++)
+                for (int c = 0; c < Coord.ColCount; c++)
                     if (squares[r, c].IsOccupied)
                         occupiedList.Add((r, c));
 
-            var proposedList = new List<(int, int)>();
+            // get proposed tiles for squares   
+            var proposedList = new List<(int row, int col)>();
             foreach (var (coord, _) in tilePlacementList)
             {
                 proposedList.Add((coord.RVal, coord.CVal));
             }
             
-            var (row, col) = proposedList.First();
+
+            // for display purposes, sort tiles in board placement order
+            tilePlacementList = [.. tilePlacementList.OrderBy(tp => tp.Coord.RVal).OrderBy(tp => tp.Coord.CVal)];
+
+            // report results
+            var (row, col) = proposedList.FirstOrDefault();
             var letters = tilePlacementList.Select( tp => tp.Tile).ToList().TilesToLetters();
 
-            return (Placement.IsContiguous(occupiedList, proposedList), 
-                    new PlacementError(new Coord(row, col), letters));                                     
+            var isContiguous = Placement.IsContiguous(occupiedList, proposedList);
+            var msg = isContiguous ? letters : $"Not Contiguous :: {letters}";
+            var placementError = new PlacementError(new Coord(row, col), msg);
+            return (isContiguous, placementError);                                     
         }
 
         /// <summary>

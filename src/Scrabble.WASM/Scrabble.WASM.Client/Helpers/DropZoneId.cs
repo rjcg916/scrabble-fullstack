@@ -4,7 +4,6 @@ namespace Scrabble.WASM.Client.Helpers
 {
     public static class DropZoneId
     {
-
         // Determines if the identifier corresponds to a rack slot
         public static bool IsOnRack(string id) =>
             id.Length == 1;
@@ -15,7 +14,7 @@ namespace Scrabble.WASM.Client.Helpers
 
         // Parses a board identifier to get the row and column coordinates
         public static Coord GetCoord(string id) =>
-            new Coord(int.Parse(id.Substring(0, 2)), int.Parse(id.Substring(2, 2)));
+            new Coord(int.Parse(id[..2]), int.Parse(id[2..4]));
 
         // Generates a rack slot identifier from a slot index
         public static string ToId(int slot) =>

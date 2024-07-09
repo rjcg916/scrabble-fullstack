@@ -1,58 +1,41 @@
 ﻿@page "/"
 @inject Services.GameService GameService
 <PageTitle>Scrabble</PageTitle>
+@rendermode InteractiveWebAssembly
 
 <GameControl></GameControl>
-<GameBoard board="@board" rack="@playerList[currentPlayer].Rack" CurrentPlayer="@currentPlayer" ></GameBoard>
+<GameBoard  rack="@rack" board="@board" CurrentPlayer="@currentPlayer" ></GameBoard>
 
 @code {
     private static Lexicon lexicon = new Lexicon();
-    TileBag tileBag = TileBag.TileBagFactory.Create().Shuffle();
 
+    private TileBag tileBag = TileBag.TileBagFactory.Create();
 
-    private Board board = new((s) => true);
+    private Rack rack;
 
-    private List<Player>  playerList = 
-        new List<Player>(new List<Player>() { new Player("1"), new Player("2")});
+    private Board board;
 
     private Move? currentMove;
 
     private int currentPlayer = 0;
 
-    private bool IsBoardValid = true;
-
     protected override void OnInitialized()
     {
         GameService.OnMoveRequest += HandleMoveButtonClicked;
 
-        List<Tile> rackTiles;
+        List<Tile> rackTiles1;
+        (rackTiles1, tileBag) = tileBag.DrawTiles(new TileDrawCount(Rack.Capacity));
 
-        (rackTiles, tileBag) = tileBag.DrawTiles(new TileDrawCount( Rack.Capacity));
-        
-        // build player list with racks
-        var p1 = playerList[0];
-        p1.Rack = new Rack();
-        p1.Rack = p1.Rack.AddTiles(rackTiles);
-        p1.Score = 10;
+        rack = new Rack().AddTiles(rackTiles1);
 
-        (rackTiles, tileBag) = tileBag.DrawTiles(new TileDrawCount(Rack.Capacity));
- 
-        var p2 = playerList[1];
-        p2.Rack = new Rack();
-        p2.Rack = p2.Rack.AddTiles(rackTiles);
-        p2.Score = 20;
-
-        // initialize board
-
-        var boardTiles = new List<TilePlacement>
-            {
-                new(new Coord(R._8, C.H), new Tile('B')),
-                new(new Coord(R._8, C.I), new Tile('A')),
-                new(new Coord(R._8, C.J), new Tile('L')),
-                new(new Coord(R._8, C.K), new Tile('L'))
-            };
-        board.MakeMove(MoveFactory.CreateMove(boardTiles));
-
+        board = new Board((s) => true,
+           MoveFactory.CreateMove(new List<TilePlacement>
+                   {
+                    new(new Coord(R._8, C.H), new Tile('B')),
+                    new(new Coord(R._8, C.I), new Tile('A')),
+                    new(new Coord(R._8, C.J), new Tile('L')),
+                    new(new Coord(R._8, C.K), new Tile('L'))
+                   }));     
     }
 
     private async Task HandleMoveButtonClicked()
@@ -75,7 +58,6 @@
         var tiles = move.Letters.Select(letter => new Domain.Tile(letter)).ToList();
         currentMove = MoveFactory.CreateMove(startFrom, tiles, move.IsHorizontal);
 
-        //IsBoardValid = currentBoard.IsMoveValid()
 
         board = board.MakeMove(currentMove);
 

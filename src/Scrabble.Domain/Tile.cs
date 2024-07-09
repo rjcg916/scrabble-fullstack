@@ -12,7 +12,7 @@ namespace Scrabble.Domain
                 letters.Select(letter => new Tile(letter)).ToList();
 
         public static string TilesToLetters(this List<Tile> tiles) =>
-            string.Concat(tiles.Select(t => t.Letter));
+            string.Join(", ", tiles.Select(t => t.Letter));
     }
     public record Tile(char Letter)
     {
@@ -25,7 +25,7 @@ namespace Scrabble.Domain
             { 'K', 5 }, { 'L', 1 }, { 'M', 3 }, { 'N', 1 }, { 'O', 1 },
             { 'P', 3 }, { 'Q', 10 }, { 'R', 1 }, { 'S', 1 }, { 'T', 1 },
             { 'U', 1 }, { 'V', 4 }, { 'W', 4 }, { 'X', 8 }, { 'Y', 4 },
-            { 'Z', 10 }, { ' ', 0 }
+            { 'Z', 10 }, { '?', 0 }
         };
 
         public int Value

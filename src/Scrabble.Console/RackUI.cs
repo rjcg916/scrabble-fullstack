@@ -12,7 +12,7 @@ namespace Scrabble.Console
         {
             Console.WriteLine("Tiles"); Console.WriteLine();
             Console.WriteLine(
-             String.Join(", ", Rack.GetTiles().Select(t => $"[{t.Letter}]"))
+             Rack.GetTiles().TilesToLetters()
             );            
         }
     }
