@@ -1,6 +1,6 @@
 @inject Services.GameService GameService
 @using static Scrabble.WASM.Client.Helpers.DropZoneId
-@rendermode InteractiveWebAssembly
+
 
 <style>
     .tile-rack h3 {
@@ -28,6 +28,7 @@
     </MudCardContent>
 </MudCard>
 
+
 <MudDropContainer T="DropSquare"
                   Items="tiles"
                   ItemIsDisabled="@( (item) => item.IsLocked)"
@@ -37,7 +38,7 @@
                   CanDropClass="mud-border-info"
                   NoDropClass="mud-border-error"
                   Class="border-2 border-solid mud-border-lines-default">
-    <ChildContent>
+                  <ChildContent>
         <div class="tile-rack">
             <h3>Tile Rack</h3>
             <div class="d-flex">
@@ -47,19 +48,19 @@
                 }
             </div>
         </div>
-         <div class="tile-board">
-              <h3>Board</h3>
-              @for (int r = 0; r < Coord.RowCount; r++)
-              {
-                  <div class="d-flex">
-                      @for (int c = 0; c < Coord.ColCount; c++)
-                      {
-                          var squareType = board.squares[r, c].SquareType;
-                          <BoardSquare squareType="@squareType" squareId="@ToId(r,c)"></BoardSquare>
-                      }
-                  </div>
-              } 
-         </div>
+        <div class="tile-board">
+            <h3>Board</h3>
+            @for (int r = 0; r < Coord.RowCount; r++)
+            {
+                <div class="d-flex">
+                    @for (int c = 0; c < Coord.ColCount; c++)
+                    {
+                        var squareType = board.squares[r, c].SquareType;
+                        <BoardSquare squareType="@squareType" squareId="@ToId(r,c)"></BoardSquare>
+                    }
+                </div>
+            }
+        </div>
     </ChildContent>
     <ItemRenderer>
         <div Disabled="@(context.IsLocked)"
@@ -77,10 +78,8 @@
     [Parameter]
     public Board board { get; set; }
 
-
     [Parameter]
     public int CurrentPlayer { get; set; }
-
 
     private List<DropSquare> tiles { get; set; } = new();
 
@@ -91,35 +90,39 @@
     private Move? CurrentMove = null;
     private string BoardMessages = "";
 
+
     protected override void OnInitialized()
     {
+
         GameService.OnMoveRequest += HandleMoveRequest;
+    }
 
-        List<DropSquare> sTiles = new();
+    protected override void OnParametersSet()
+    {
 
-        sTiles.AddRange(
-            rack.Tiles.Select((tile, s) => new DropSquare
-            {
-                Name = tile.Letter,
-                Identifier = $"{ToId(s)}",
-                Value = tile.Value,
-                IsLocked = false
-            }));
 
-        sTiles.AddRange(
-                (from r in Enumerable.Range(0, Coord.RowCount)
-                 from c in Enumerable.Range(0, Coord.ColCount)
-                 let square = board.squares[r, c]
-                 where square.IsOccupied
-                 select new DropSquare
-                     {
-                         Name = square.Tile.Letter,
-                         Identifier = $"{ToId(r, c)}",
-                         Value = square.Tile.Value,
-                         IsLocked = true
-                     }));
+            tiles.AddRange(
+                rack.Tiles.Select((tile, s) => new DropSquare
+                    {
+                        Name = tile.Letter,
+                        Identifier = $"{ToId(s)}",
+                        Value = tile.Value,
+                        IsLocked = false
+                    }));
 
-        tiles = sTiles;
+            tiles.AddRange(
+                    (from r in Enumerable.Range(0, Coord.RowCount)
+                     from c in Enumerable.Range(0, Coord.ColCount)
+                     let square = board.squares[r, c]
+                     where square.IsOccupied
+                     select new DropSquare
+                         {
+                             Name = square.Tile.Letter,
+                             Identifier = $"{ToId(r, c)}",
+                             Value = square.Tile.Value,
+                             IsLocked = true
+                         }));
+   
     }
 
     public void Dispose()
@@ -131,8 +134,6 @@
     {
         SubmitMove();
     }
-
-
 
     private IEnumerable<TilePlacement> GetCurrentMoveTiles()
     {

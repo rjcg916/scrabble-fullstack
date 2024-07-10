@@ -55,7 +55,6 @@
     }
 </style>
 
-
 <MudDropZone T="DropSquare"
              Identifier="@squareId"
              DraggingClass="dropzone-dragging"
@@ -70,7 +69,7 @@
     [Parameter]
     public string squareId { get; set; } 
 
-    static string GetSquareClass(SquareType st)
+    private static string GetSquareClass(SquareType st)
     {
         return st switch
         {
