@@ -16,17 +16,17 @@ namespace Scrabble.Domain
 
         static public int ScoreRun(this List<Square> squares)
         {
-            int score = 0;
+            int wordScore = 0;
 
-            int cumulativeWordMultiplier = 1;
+            int wordMultiplier = 1;
 
             foreach (var location in squares)
             {
-                score += (location.Tile.Value * location.LetterMultiplier);
-                cumulativeWordMultiplier *= location.WordMultiplier;                       
+                wordScore += (location.Tile.Value * location.LetterMultiplier);
+                wordMultiplier *= location.WordMultiplier;                       
             }
 
-            return score * cumulativeWordMultiplier;
+            return wordScore * wordMultiplier;
         }
     }
 

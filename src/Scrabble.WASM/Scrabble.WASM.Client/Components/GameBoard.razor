@@ -72,6 +72,7 @@
 </MudDropContainer>
 
 @code {
+
     [Parameter]
     public Rack rack { get; set; }
 
@@ -93,14 +94,11 @@
 
     protected override void OnInitialized()
     {
-
         GameService.OnMoveRequest += HandleMoveRequest;
     }
 
     protected override void OnParametersSet()
     {
-
-
             tiles.AddRange(
                 rack.Tiles.Select((tile, s) => new DropSquare
                     {
@@ -121,8 +119,7 @@
                              Identifier = $"{ToId(r, c)}",
                              Value = square.Tile.Value,
                              IsLocked = true
-                         }));
-   
+                         }));   
     }
 
     public void Dispose()

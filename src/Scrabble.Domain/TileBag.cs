@@ -11,7 +11,7 @@ namespace Scrabble.Domain
         public TileDrawCount(int count)
         {
             if (!IsValid(count))
-                throw new ArgumentException($"Not a valid tile count {count}");
+                throw new ArgumentException($"Not a valid tile draw count {count}");
 
             Value = count;
         }

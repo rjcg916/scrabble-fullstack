@@ -67,6 +67,9 @@ namespace Scrabble.Domain
         {
             public static Game CreateGame(Lexicon lexicon, List<Player> players)
             {
+                if ((players.Count < 2) || (players.Count > 4))
+                    throw new System.ArgumentException($"{players.Count} is not a valid players list size");
+
                 return new Game(lexicon, players);
             }
         }

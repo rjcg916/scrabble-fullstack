@@ -46,7 +46,7 @@ namespace Scrabble.Domain.Tests
         [InlineData('X', 8)]
         [InlineData('Y', 4)]
         [InlineData('Z', 10)]
-        [InlineData(' ', 0)]
+        [InlineData('?', 0)]
         public void Tile_CorrectValue(char character, int expectedValue)
         {
             // Act

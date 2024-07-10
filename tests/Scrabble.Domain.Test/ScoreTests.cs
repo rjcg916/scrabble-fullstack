@@ -18,9 +18,9 @@ namespace Scrabble.Domain.Tests
             // define move
             var tilesAsPlacement = new List<TilePlacement>
             {
-                new(new Coord(R._8, C.H), new Tile(' ')),
-                new(new Coord(R._8, C.I), new Tile(' ')),
-                new(new Coord(R._8, C.J), new Tile(' ')),
+                new(new Coord(R._8, C.H), new Tile('?')),
+                new(new Coord(R._8, C.I), new Tile('?')),
+                new(new Coord(R._8, C.J), new Tile('?')),
             };
 
             // score initial move
@@ -37,7 +37,7 @@ namespace Scrabble.Domain.Tests
             var tilesAsPlacement = new List<TilePlacement>
             {
                 new(new Coord(R._8, C.H), new Tile('A')),
-                new(new Coord(R._8, C.I), new Tile(' ')),
+                new(new Coord(R._8, C.I), new Tile('?')),
                 new(new Coord(R._8, C.J), new Tile('Z')),
             };
 
@@ -299,6 +299,9 @@ namespace Scrabble.Domain.Tests
 
             Assert.Equal((((int)R._8), ((int)R._9)), result);
         }
+        
 
     }
+
 }
+
