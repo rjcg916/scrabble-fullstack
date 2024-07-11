@@ -15,9 +15,7 @@
 
     private TileBag tileBag = TileBag.TileBagFactory.Create();
 
-    private GameBoard gameBoard;
-
-    private Rack rack = new();
+    private Rack rack = new Rack();
 
     private Board board = new((s) => true);
 
@@ -27,11 +25,7 @@
 
     protected override void OnInitialized()
     {
-        List<Tile> tiles;
-        (tiles, tileBag) = tileBag.DrawTiles(new TileDrawCount(Rack.Capacity));
-        rack = rack.AddTiles(tiles);
-
-        board = new Board((s) => true);
+        (tileBag, rack) = FillRack(tileBag, rack);     
     }
 
     private void OnCurrentMoveChanged(Move move)
@@ -46,19 +40,20 @@
             // make the move
             board = board.MakeMove(currentMove);
 
-            // update rack
-
-            // remove tiles from move
+            // remove tiles used in move
             rack = rack.RemoveTiles(currentMove.TilePlacements.Select(x => x.Tile));
 
             // add replacement tiles
-            List<Tile> tiles;
-            (tiles, tileBag) = tileBag.DrawTiles(new TileDrawCount(currentMove.TilePlacements.Count));
-            rack = rack.AddTiles(tiles);
+            (tileBag, rack) = FillRack(tileBag, rack);
 
             // update player
             currentPlayer = (currentPlayer + 1) % 2; //todo
-
         }
+    }
+
+    private static (TileBag, Rack) FillRack(TileBag tileBag, Rack rack) {
+        List<Tile> tiles;
+        (tiles, tileBag) = tileBag.DrawTiles(new TileDrawCount(Rack.Capacity - rack.TileCount));
+        return (tileBag, rack.AddTiles(tiles));
     }
 }

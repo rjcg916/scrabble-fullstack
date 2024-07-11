@@ -26,12 +26,12 @@
     </MudCardContent>
 </MudCard>
 
-<MudDropContainer T="DropSquare"
+<MudDropContainer  T="DropSquare"
                   Items="tiles"
                   ItemIsDisabled="@( (item) => item.IsLocked)"
                   ItemsSelector="@((item, dropzone) => item.Identifier == dropzone)"
                   ItemDropped="OnItemDropped"
-                  CanDrop="OnCanDrop"
+                  CanDrop="OnCanDrop"                  
                   CanDropClass="mud-border-info"
                   NoDropClass="mud-border-error"
                   Class="border-2 border-solid mud-border-lines-default">
@@ -92,6 +92,8 @@
     private int CurrentMoveScore = 0;
     private string BoardMessages = "";
 
+    private MudDropZone<DropSquare> mudDropZone;
+
     protected override void OnInitialized()
     {
     }
@@ -101,16 +103,17 @@
 
         if (_CurrentPlayer == CurrentPlayer) return;
 
-        tiles = new();
+        tiles.Clear();
 
         tiles.AddRange(
-        rack.Tiles.Select((tile, s) => new DropSquare
-            {
-                Name = tile.Letter,
-                Identifier = $"{ToId(s)}",
-                Value = tile.Value,
-                IsLocked = false
-            }));
+            rack.Tiles.Select((tile, s) => new DropSquare
+                {
+                    Name = tile.Letter,
+                    Identifier = $"{ToId(s)}",
+                    Value = tile.Value,
+                    IsLocked = false            
+                }));
+
 
         tiles.AddRange(
                 (from r in Enumerable.Range(0, Coord.RowCount)
@@ -126,8 +129,11 @@
                      }));
 
         _CurrentPlayer = CurrentPlayer;
-    }
 
+        ResetBoardStatus();
+
+        StateHasChanged();
+    }
 
     private IEnumerable<TilePlacement> GetCurrentMoveTiles()
     {
@@ -152,7 +158,6 @@
 
     private void UpdateBoardStatus(List<TilePlacement> currentTilePlacements)
     {
-
         if (currentTilePlacements.Count == 0)
         {
             ResetBoardStatus();
@@ -170,9 +175,6 @@
         SetValidMoveStatus(MoveFactory.CreateMove(currentTilePlacements));
     }
 
-    private const string VALIDMOVEMSG = "Valid";
-    private const string ERRORMOVEMSG = "Error";
-
     private void ResetBoardStatus()
     {
         IsCurrentMoveValid = false;
@@ -186,7 +188,7 @@
         IsCurrentMoveValid = false;
         CurrentMoveScore = 0;
         CurrentMove = null;
-        BoardMessages = $"{ERRORMOVEMSG} at {errors.First().Location.ToDisplayString()} :: {string.Join(", ", errors.Select(m => m.Letters))}";
+        BoardMessages = $"Error at {errors.First().Location.ToDisplayString()} :: {string.Join(", ", errors.Select(m => m.Letters))}";
     }
 
     private void SetValidMoveStatus(Move move)
@@ -196,9 +198,8 @@
         IsCurrentMoveValid = true;
         CurrentMoveScore = board.ScoreMove(move);
         CurrentMove = move;
-        BoardMessages = $"{VALIDMOVEMSG} at {move.TilePlacements[0].Coord.ToDisplayString()} :: {string.Join(", ", tilePlacements.Select(tp => tp.Tile.Letter))}";
+        BoardMessages = $"Valid at {move.TilePlacements[0].Coord.ToDisplayString()} :: {string.Join(", ", tilePlacements.Select(tp => tp.Tile.Letter))}";
 
         CurrentMoveChanged.InvokeAsync(CurrentMove);
-
     }
 }

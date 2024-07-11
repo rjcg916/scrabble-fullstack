@@ -23,6 +23,7 @@ namespace Scrabble.Domain
         public static readonly Coord STAR = new(R._8, C.H);
 
         public int MoveNumber = 0;
+        public int TileCount = 0;
 
         internal readonly Func<string, bool> IsWordValid;
 
@@ -44,6 +45,7 @@ namespace Scrabble.Domain
             IsWordValid = other.IsWordValid;
          
             MoveNumber = other.MoveNumber;
+            TileCount = other.TileCount;
 
             foreach (var r in Coord.Rows)
                 foreach (var c in Coord.Cols)
@@ -83,6 +85,7 @@ namespace Scrabble.Domain
                 int col = placement.Coord.CVal;
                 squares[row, col].Tile = new Tile(placement.Tile.Letter);
                 squares[row, col].MoveNumber = MoveNumber;
+                TileCount++;
             }
             return this;
         }
