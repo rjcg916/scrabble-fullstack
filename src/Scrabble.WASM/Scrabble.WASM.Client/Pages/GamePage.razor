@@ -1,0 +1,64 @@
+﻿@page "/"
+
+<PageTitle>Scrabble</PageTitle>
+
+<MudButton OnClick="ProcessCurrentMove">Make Move</MudButton>
+
+<GameBoard  
+            rack="@rack" 
+            board="@board" 
+            CurrentPlayer="@currentPlayer"
+            CurrentMoveChanged="OnCurrentMoveChanged">
+</GameBoard>
+
+@code {
+
+    private TileBag tileBag = TileBag.TileBagFactory.Create();
+
+    private GameBoard gameBoard;
+
+    private Rack rack = new();
+
+    private Board board = new((s) => true);
+
+    private Move currentMove;
+
+    private int currentPlayer = 0;
+
+    protected override void OnInitialized()
+    {
+        List<Tile> tiles;
+        (tiles, tileBag) = tileBag.DrawTiles(new TileDrawCount(Rack.Capacity));
+        rack = rack.AddTiles(tiles);
+
+        board = new Board((s) => true);
+    }
+
+    private void OnCurrentMoveChanged(Move move)
+    {
+        currentMove = move;
+    }
+
+    private void ProcessCurrentMove()
+    {
+        if (currentMove != null)
+        {
+            // make the move
+            board = board.MakeMove(currentMove);
+
+            // update rack
+
+            // remove tiles from move
+            rack = rack.RemoveTiles(currentMove.TilePlacements.Select(x => x.Tile));
+
+            // add replacement tiles
+            List<Tile> tiles;
+            (tiles, tileBag) = tileBag.DrawTiles(new TileDrawCount(currentMove.TilePlacements.Count));
+            rack = rack.AddTiles(tiles);
+
+            // update player
+            currentPlayer = (currentPlayer + 1) % 2; //todo
+
+        }
+    }
+}

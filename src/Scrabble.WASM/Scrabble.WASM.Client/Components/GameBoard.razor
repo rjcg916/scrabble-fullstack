@@ -1,6 +1,4 @@
-@inject Services.GameService GameService
 @using static Scrabble.WASM.Client.Helpers.DropZoneId
-
 
 <style>
     .tile-rack h3 {
@@ -22,12 +20,11 @@
 
 <MudCard>
     <MudCardContent>
-        <MudTextField @bind-Value="IsCurrentMoveValid"></MudTextField>
+        <MudTextField Label="Player#" @bind-Value="CurrentPlayer"></MudTextField>
+        <MudTextField Label="Score" @bind-Value="CurrentMoveScore"></MudTextField>
         <MudTextField @bind-Value="BoardMessages"> </MudTextField>
-        <MudTextField @bind-Value="CurrentMoveScore"></MudTextField>
     </MudCardContent>
 </MudCard>
-
 
 <MudDropContainer T="DropSquare"
                   Items="tiles"
@@ -38,7 +35,7 @@
                   CanDropClass="mud-border-info"
                   NoDropClass="mud-border-error"
                   Class="border-2 border-solid mud-border-lines-default">
-                  <ChildContent>
+    <ChildContent>
         <div class="tile-rack">
             <h3>Tile Rack</h3>
             <div class="d-flex">
@@ -82,55 +79,55 @@
     [Parameter]
     public int CurrentPlayer { get; set; }
 
-    private List<DropSquare> tiles { get; set; } = new();
+    [Parameter]
+    public EventCallback<Move> CurrentMoveChanged { get; set; }
 
-    private const string VALIDMOVEMSG = "Valid";
+    private Move CurrentMove;
+
+    private int _CurrentPlayer = -1; 
+
+    private List<DropSquare> tiles { get; set; } = new();
 
     private bool IsCurrentMoveValid = false;
     private int CurrentMoveScore = 0;
-    private Move? CurrentMove = null;
     private string BoardMessages = "";
-
 
     protected override void OnInitialized()
     {
-        GameService.OnMoveRequest += HandleMoveRequest;
     }
 
     protected override void OnParametersSet()
     {
-            tiles.AddRange(
-                rack.Tiles.Select((tile, s) => new DropSquare
-                    {
-                        Name = tile.Letter,
-                        Identifier = $"{ToId(s)}",
-                        Value = tile.Value,
-                        IsLocked = false
-                    }));
 
-            tiles.AddRange(
-                    (from r in Enumerable.Range(0, Coord.RowCount)
-                     from c in Enumerable.Range(0, Coord.ColCount)
-                     let square = board.squares[r, c]
-                     where square.IsOccupied
-                     select new DropSquare
-                         {
-                             Name = square.Tile.Letter,
-                             Identifier = $"{ToId(r, c)}",
-                             Value = square.Tile.Value,
-                             IsLocked = true
-                         }));   
+        if (_CurrentPlayer == CurrentPlayer) return;
+
+        tiles = new();
+
+        tiles.AddRange(
+        rack.Tiles.Select((tile, s) => new DropSquare
+            {
+                Name = tile.Letter,
+                Identifier = $"{ToId(s)}",
+                Value = tile.Value,
+                IsLocked = false
+            }));
+
+        tiles.AddRange(
+                (from r in Enumerable.Range(0, Coord.RowCount)
+                 from c in Enumerable.Range(0, Coord.ColCount)
+                 let square = board.squares[r, c]
+                 where square.IsOccupied
+                 select new DropSquare
+                     {
+                         Name = square.Tile.Letter,
+                         Identifier = $"{ToId(r, c)}",
+                         Value = square.Tile.Value,
+                         IsLocked = true
+                     }));
+
+        _CurrentPlayer = CurrentPlayer;
     }
 
-    public void Dispose()
-    {
-        GameService.OnMoveRequest -= HandleMoveRequest;
-    }
-
-    private async Task HandleMoveRequest()
-    {
-        SubmitMove();
-    }
 
     private IEnumerable<TilePlacement> GetCurrentMoveTiles()
     {
@@ -144,17 +141,6 @@
     private bool IsOccupied(string id) =>
         tiles.Count(x => x.Identifier == id) > 0;
 
-    private void SubmitMove()
-    {
-        if (!IsCurrentMoveValid)
-            throw new Exception("Can't Submit Move that is not valid");
-
-        // TODO
-        // lock tiles on display board
-        // add move to board
-        // reset rack
-    }
-
     private void OnItemDropped(MudItemDropInfo<DropSquare> dropItem)
     {
         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
@@ -166,32 +152,6 @@
 
     private void UpdateBoardStatus(List<TilePlacement> currentTilePlacements)
     {
-
-        void ResetBoardStatus()
-        {
-            IsCurrentMoveValid = true;
-            CurrentMoveScore = 0;
-            CurrentMove = null;
-            BoardMessages = "";
-        }
-
-        void SetInvalidMoveStatus(List<PlacementError> errors)
-        {
-            IsCurrentMoveValid = false;
-            CurrentMoveScore = 0;
-            CurrentMove = null;
-            BoardMessages = $"Error at {errors.First().Location.ToDisplayString()} :: {string.Join(", ", errors.Select(m => m.Letters))}";
-        }
-
-        void SetValidMoveStatus(Move move)
-        {
-            List<TilePlacement> tilePlacements = [.. move.TilePlacements.OrderBy(tp => tp.Coord.RVal).OrderBy(tp => tp.Coord.CVal)];
-
-            IsCurrentMoveValid = true;
-            CurrentMoveScore = board.ScoreMove(move);
-            CurrentMove = move;
-            BoardMessages = $"{VALIDMOVEMSG} at {move.TilePlacements[0].Coord.ToDisplayString()} :: {string.Join(", ", tilePlacements.Select(tp => tp.Tile.Letter))}";
-        }
 
         if (currentTilePlacements.Count == 0)
         {
@@ -208,5 +168,37 @@
         }
 
         SetValidMoveStatus(MoveFactory.CreateMove(currentTilePlacements));
+    }
+
+    private const string VALIDMOVEMSG = "Valid";
+    private const string ERRORMOVEMSG = "Error";
+
+    private void ResetBoardStatus()
+    {
+        IsCurrentMoveValid = false;
+        CurrentMoveScore = 0;
+        CurrentMove = null;
+        BoardMessages = "";
+    }
+
+    private void SetInvalidMoveStatus(List<PlacementError> errors)
+    {
+        IsCurrentMoveValid = false;
+        CurrentMoveScore = 0;
+        CurrentMove = null;
+        BoardMessages = $"{ERRORMOVEMSG} at {errors.First().Location.ToDisplayString()} :: {string.Join(", ", errors.Select(m => m.Letters))}";
+    }
+
+    private void SetValidMoveStatus(Move move)
+    {
+        List<TilePlacement> tilePlacements = [.. move.TilePlacements.OrderBy(tp => tp.Coord.RVal).OrderBy(tp => tp.Coord.CVal)];
+
+        IsCurrentMoveValid = true;
+        CurrentMoveScore = board.ScoreMove(move);
+        CurrentMove = move;
+        BoardMessages = $"{VALIDMOVEMSG} at {move.TilePlacements[0].Coord.ToDisplayString()} :: {string.Join(", ", tilePlacements.Select(tp => tp.Tile.Letter))}";
+
+        CurrentMoveChanged.InvokeAsync(CurrentMove);
+
     }
 }

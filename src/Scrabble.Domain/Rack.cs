@@ -31,7 +31,7 @@ namespace Scrabble.Domain
 
         public Rack AddTiles(IEnumerable<Tile> newTiles)
         {
-            if (TileCount + newTiles.Count() > Capacity)
+            if ((TileCount + newTiles.Count()) > Capacity)
                 throw new InvalidOperationException("Exceeding rack capacity");
 
             var updatedTiles = Tiles.Concat(newTiles).ToList();
