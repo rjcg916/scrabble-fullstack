@@ -17,7 +17,10 @@
 
     private Rack rack = new Rack();
 
-    private Board board = new((s) => true);
+    private Board board = new((s) => 
+        (s.Length == 1)  ?  
+            ((s[0] == 'A' || s[0] == 'I') ? true : false  ) 
+            : true);
 
     private Move currentMove;
 

@@ -28,7 +28,7 @@
 
 <MudDropContainer  T="DropSquare"
                   Items="tiles"
-                  ItemIsDisabled="@( (item) => item.IsLocked)"
+                  ItemIsDisabled="@( (DropSquare item) => item.IsLocked)"
                   ItemsSelector="@((item, dropzone) => item.Identifier == dropzone)"
                   ItemDropped="OnItemDropped"
                   CanDrop="OnCanDrop"                  
@@ -100,7 +100,6 @@
 
     protected override void OnParametersSet()
     {
-
         if (_CurrentPlayer == CurrentPlayer) return;
 
         tiles.Clear();
@@ -113,7 +112,6 @@
                     Value = tile.Value,
                     IsLocked = false            
                 }));
-
 
         tiles.AddRange(
                 (from r in Enumerable.Range(0, Coord.RowCount)

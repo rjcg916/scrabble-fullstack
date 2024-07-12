@@ -8,7 +8,7 @@ namespace Scrabble.Domain
 {
     public record LocationSquare(Coord Coord, Square Square);
 
-    public partial class Board
+    public class Board
     {
         public  Square[,] squares = new Square[Coord.RowCount, Coord.ColCount];
 
@@ -147,7 +147,6 @@ namespace Scrabble.Domain
                 if (sq.IsOccupied)
                     slice.Add((location, new(sq)));
             }
-
             return slice;
         }
 
@@ -265,7 +264,6 @@ namespace Scrabble.Domain
             }
 
             var other = (Board)obj;
-
 
             if (!IsWordValid.Method.Equals(other.IsWordValid.Method))
             {

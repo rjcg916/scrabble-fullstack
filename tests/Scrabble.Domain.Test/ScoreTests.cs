@@ -11,7 +11,6 @@ namespace Scrabble.Domain.Tests
         [Fact]
         public void ScoreMove_AllBlanks_ReturnsCorrectScore()
         {
-
             //starting board
             var board = new Board(MockWordValidator);
 
