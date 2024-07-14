@@ -9,7 +9,6 @@ namespace Scrabble.Domain
     public record PlacementSpec(bool IsHorizontal, int SliceLocation, List<int> TileLocations);
     public record TilePlacement(Coord Coord, Tile Tile);
 
-
     public static class Placement
     {
         public static Move ToMove(this List<TilePlacement> placements) =>
@@ -32,7 +31,6 @@ namespace Scrabble.Domain
             var tileLocations = tileList.Select(c => isHorizontal ? c.Coord.CVal : c.Coord.RVal).ToList();
 
             return new(isHorizontal, SliceLocation: fixedLocation, TileLocations: tileLocations);
-
         }
 
         public static bool IsContiguous(List<(int, int)> occupied, List<(int, int)> proposed)
@@ -40,7 +38,7 @@ namespace Scrabble.Domain
             var combined = occupied.Concat(proposed).ToList();
             var locationSet = new HashSet<(int, int)>(combined);
 
-            if (!locationSet.Any())
+            if (locationSet.Count == 0)
                 return true;  // No locations, trivially contiguous
 
             var start = combined[0];
