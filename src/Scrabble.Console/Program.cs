@@ -25,7 +25,7 @@ boardUI.DisplayBoard(false);
 //// display rack
 rackUI.DisplayRack();
 
-var emptySquares = game.Board.GetLocationSquares().Select( ls => ls.Coord).ToList();
+var emptySquares = game.Board.GetVacantSquares().Select( ls => ls.Coord).ToList();
 
 //// place tiles until valid and done
 

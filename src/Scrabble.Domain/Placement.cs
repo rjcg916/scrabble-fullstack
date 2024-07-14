@@ -63,7 +63,7 @@ namespace Scrabble.Domain
 
             queue.Enqueue(start);
 
-            while (queue.Any())
+            while (queue.Count != 0)
             {
                 var current = queue.Dequeue();
 

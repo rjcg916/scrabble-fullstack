@@ -48,7 +48,7 @@ namespace Scrabble.Console
    
         public void PlaceTile(Player player)
         {
-            var emptySquares = Board.GetLocationSquares().Select(ls => ls.Coord).ToList();
+            var emptySquares = Board.GetVacantSquares().Select(ls => ls.Coord).ToList();
 
             var availableLetters = player.Rack.GetTiles().TilesToLetters();
 

@@ -119,7 +119,7 @@ namespace Scrabble.Domain
         /// <summary>
         /// get list of coord and squares (by default, empty squares)
         /// </summary>
-        public List<LocationSquare> GetLocationSquares(bool IsOccupied = false)
+        private List<LocationSquare> GetLocationSquares(bool IsOccupied = false)
         {
             List<LocationSquare> locationSquareList = [];
 
@@ -130,6 +130,13 @@ namespace Scrabble.Domain
 
             return locationSquareList;
         }
+
+        public List<LocationSquare> GetOccupiedSquares() =>
+            GetLocationSquares(IsOccupied: true);
+
+        public List<LocationSquare> GetVacantSquares() =>
+           GetLocationSquares(IsOccupied: false);
+
 
         /// <summary>
         /// fetch all squares in a range of a slice
@@ -155,6 +162,8 @@ namespace Scrabble.Domain
 
         public bool IsOccupied(Coord coord) => squares[coord.RVal, coord.CVal].IsOccupied;
         public bool AreOccupied(List<Coord> locations) => locations.Any(l => IsOccupied(l));
+
+
 
         public (bool valid, List<PlacementError> errorList) IsMoveValid(List<TilePlacement> moveToTest)
         {

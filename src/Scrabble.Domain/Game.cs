@@ -31,7 +31,7 @@ namespace Scrabble.Domain
 
         public void TakeTurn(Func<List<Tile>, List<Coord>, List<TilePlacement>> GetMove)
         {
-            var availableSquares = Board.GetLocationSquares().Select(ls => ls.Coord).ToList();
+            var availableSquares = Board.GetVacantSquares().Select(ls => ls.Coord).ToList();
             var availableTiles = Players[TurnOfPlayer].Rack.GetTiles();
 
             bool moveValid;
