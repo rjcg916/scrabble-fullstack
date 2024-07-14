@@ -28,7 +28,7 @@
 
 <MudDropContainer  T="DropSquare"
                   Items="tiles"
-                  ItemIsDisabled="@( (DropSquare item) => item.IsLocked)"
+                  ItemDisabled="@( (DropSquare item) => item.IsLocked)"
                   ItemsSelector="@((item, dropzone) => item.Identifier == dropzone)"
                   ItemDropped="OnItemDropped"
                   CanDrop="OnCanDrop"                  
