@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Scrabble.Domain
 {
@@ -9,10 +10,11 @@ namespace Scrabble.Domain
         public ILexicon Lexicon { get; set; }
         public Board Board { get; set; }
         public TileBag TileBag { get; set; }
-        public Dictionary<byte, Player> Players { get; set; } = [];
+        public List<Player> Players { get; set; } = [];
         public int NumberOfPlayers => Players.Count;
         public byte TurnOfPlayer { get; set; } = 1;
         public bool GameDone { get; } = false;
+        public List<(Move move,int score, string player)> Moves { get; set; }
 
         private Game(Lexicon lexicon, List<Player> players) {
             Lexicon = lexicon;
@@ -20,30 +22,39 @@ namespace Scrabble.Domain
             Board = new Board(lexicon.IsWordValid);
 
             // create each player, add to game and draw tiles from bag
-            byte i = 1;
             players.ForEach(p =>
             {
                 var player = new Player(p.Name);
                 TileBag = DrawTiles(player);
-                Players.Add(i++, player);
+                Players.Add(player);
             });
         }
 
-        public void TakeTurn(Func<List<Tile>, List<Coord>, List<TilePlacement>> GetMove)
-        {
-            var availableSquares = Board.GetVacantSquares().Select(ls => ls.Coord).ToList();
-            var availableTiles = Players[TurnOfPlayer].Rack.GetTiles();
+        //public void TakeTurn(Func<List<Tile>, List<Coord>, List<TilePlacement>> GetMove)
+        //{
+        //    var availableSquares = Board.GetVacantSquares().Select(ls => ls.Coord).ToList();
+        //    var availableTiles = Players[TurnOfPlayer].Rack.GetTiles();
 
-            bool moveValid;
+        //    bool moveValid;
 
-            do
-            {
-                var candidateMove = GetMove(availableTiles, availableSquares);
-                 (moveValid, var errorList) = this.Board.IsMoveValid(candidateMove);
-            } while (!moveValid);
+        //    do
+        //    {
+        //        var candidateMove = GetMove(availableTiles, availableSquares);
+        //         (moveValid, var errorList) = this.Board.IsMoveValid(candidateMove);
+        //    } while (!moveValid);
+        //}
+
+        public void RecordMove(Player player, Move move) {
+
+            if (!Board.IsMoveValid(move.TilePlacements).valid)
+                _ = new SystemException("Invalid Move");                
+
+            var score = Board.ScoreMove(move);
+            Board = Board.MakeMove(move);
+
+            Moves.Add((move, score, player.Name));
 
         }
-
 
         internal TileBag DrawTiles(Player player)
         {
@@ -61,6 +72,20 @@ namespace Scrabble.Domain
             player.Rack = player.Rack.AddTiles(tilesToAddToRack);
 
             return tileBagAfterRemoval;
+        }
+
+        public bool IsGameDone()
+        {
+            var tileBagEmpty = TileBag.Count == 0;
+
+            var playerWithEmptyRack = false;
+
+            foreach (var player in Players) { 
+
+                playerWithEmptyRack = playerWithEmptyRack || (player.Rack.TileCount == 0);
+            }
+                
+            return tileBagEmpty && playerWithEmptyRack;
         }
 
         public static class GameFactory

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Scrabble.Domain
+﻿namespace Scrabble.Domain
 {
 
     public class Player(string name)

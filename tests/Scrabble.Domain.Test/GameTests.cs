@@ -65,10 +65,8 @@ namespace Scrabble.Domain.Tests
 
             // Assert
             Assert.Equal(players.Count, game.NumberOfPlayers);
-            Assert.True(game.Players.ContainsKey(1));
-            Assert.True(game.Players.ContainsKey(2));
-            Assert.Equal("A", game.Players[1].Name);
-            Assert.Equal("B", game.Players[2].Name);
+            Assert.Equal("A", game.Players[0].Name);
+            Assert.Equal("B", game.Players[1].Name);
         }
 
         [Fact]
@@ -82,7 +80,7 @@ namespace Scrabble.Domain.Tests
             var game = Game.GameFactory.CreateGame(lexicon, players);
 
             // Assert
-            foreach (var player in game.Players.Values)
+            foreach (var player in game.Players)
             {
                 Assert.Equal(player.Rack.TileCount, Rack.Capacity); // Ensure players have full rack
             }
