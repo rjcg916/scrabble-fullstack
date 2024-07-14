@@ -59,5 +59,36 @@ namespace Scrabble.Domain
         {
             Letter = newLetter;
         }
+
+        public bool Equals(Tile other)
+        {
+            if (other == null)
+                return false;
+
+            return _letter == other._letter && Value == other.Value;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Tile);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_letter, Value);
+        }
+
+        public static bool operator ==(Tile left, Tile right)
+        {
+            if (left is null)
+                return right is null;
+
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Tile left, Tile right)
+        {
+            return !(left == right);
+        }
     }
 }
