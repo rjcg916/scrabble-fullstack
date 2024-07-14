@@ -5,19 +5,15 @@ namespace Scrabble.Domain.Tests
 {
     public class TileTests
     {
+
+
         [Fact]
-        public void Tile_UppercaseConversion()
+        public void Constructor_ShouldThrowException_ForInvalidCharacter()
         {
-            // Arrange
-            char input = 'a';
-            char expected = 'A';
-
-            // Act
-            Tile tile = new(input);
-
-            // Assert
-            Assert.Equal(expected, tile.Letter);
+            // Arrange & Act & Assert
+            Assert.Throws<ArgumentException>(() => new Tile('1'));
         }
+
 
         [Theory]
         [InlineData('A', 1)]
@@ -64,6 +60,66 @@ namespace Scrabble.Domain.Tests
 
             // Act & Assert
             Assert.Throws<ArgumentException>(() => new Tile(invalidCharacter).Value);
+        }
+
+        [Fact]
+        public void Tile_UppercaseConversion()
+        {
+            // Arrange
+            char input = 'a';
+            char expected = 'A';
+
+            // Act
+            Tile tile = new(input);
+
+            // Assert
+            Assert.Equal(expected, tile.Letter);
+        }
+
+        [Fact]
+        public void ChangeLetter_ShouldAllowChange_ForWildcardTile()
+        {
+            // Arrange
+            var wildcardTile = new Tile('?');
+
+            // Act
+            wildcardTile.ChangeLetter('Z');
+
+            // Assert
+            Assert.Equal('Z', wildcardTile.Letter);
+            Assert.Equal(0, wildcardTile.Value); 
+        }
+
+        [Fact]
+        public void ChangeLetter_ShouldNotAllowChange_ForNonWildcardTile()
+        {
+            // Arrange
+            var tile = new Tile('A');
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidOperationException>(() => tile.ChangeLetter('B'));
+            Assert.Equal("Only tiles with value 0 can be changed.", exception.Message);
+            Assert.Equal('A', tile.Letter); // Ensure the letter hasn't changed
+        }
+
+        [Fact]
+        public void Value_ShouldReturnCorrectValue_ForValidLetters()
+        {
+            // Arrange
+            var tile = new Tile('K');
+
+            // Act
+            var value = tile.Value;
+
+            // Assert
+            Assert.Equal(5, value);
+        }
+
+        [Fact]
+        public void Value_ShouldThrowException_ForInvalidLetters()
+        {
+
+            Assert.Throws<ArgumentException>(() => new Tile('1'));
         }
     }
 }

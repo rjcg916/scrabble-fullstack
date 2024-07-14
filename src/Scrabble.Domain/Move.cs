@@ -43,16 +43,18 @@ namespace Scrabble.Domain
         public static bool IsVertical(List<TilePlacement> tileList) =>
             tileList.All(c => c.Coord.CVal == tileList[0].Coord.CVal);
      
+        public static bool HasWildcardTile(List<TilePlacement> tileList) =>
+            tileList.Select(x => x.Tile.Value == 0).Any();
+
         public static class MoveFactory
         {
             public static Move CreateMove(List<TilePlacement> tilePlacements)
             {
                 if (Move.UniDirectionalMove(tilePlacements))
                 {
-                    if (Move.IsHorizontal(tilePlacements))
-                        return new MoveHorizontal(tilePlacements);
-                    else
-                        return new MoveVertical(tilePlacements);
+                    return Move.IsHorizontal(tilePlacements) ?
+                        new MoveHorizontal(tilePlacements) :
+                        new MoveVertical(tilePlacements);                
                 }
                 else
                 {
@@ -60,13 +62,9 @@ namespace Scrabble.Domain
                 }
             }
 
-            public static Move CreateMove(Coord startFrom, List<Tile> tiles, bool isHorizontal)
-            {
-                if (isHorizontal)
-                    return new MoveHorizontal(startFrom, tiles);
-                else
-                    return new MoveVertical(startFrom, tiles);
-            }
+            public static Move CreateMove(Coord startFrom, List<Tile> tiles, bool isHorizontal) =>
+                isHorizontal ? new MoveHorizontal(startFrom, tiles) : new MoveVertical(startFrom, tiles);
+            
         }
     }
 

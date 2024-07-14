@@ -1,0 +1,8 @@
+﻿/* Tile Rack */
+.tile-rack h3 {
+    margin: 0;
+}
+
+.tile-rack .d-flex {
+    display: flex;
+}

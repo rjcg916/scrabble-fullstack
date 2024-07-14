@@ -1,0 +1,8 @@
+﻿/* Tile Board */
+.tile-board h3 {
+    margin: 0;
+}
+
+.tile-board .d-flex {
+    display: flex;
+}

@@ -1,6 +1,4 @@
-﻿using MudBlazor;
-
-namespace Scrabble.WASM.Client.Models
+﻿namespace Scrabble.WASM.Client.Models
 {
     public class DropSquare
     {

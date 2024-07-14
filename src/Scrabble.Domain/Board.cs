@@ -2,7 +2,6 @@
 using System.Linq;
 using System;
 using static Scrabble.Domain.Move;
-using System.Runtime.InteropServices;
 
 namespace Scrabble.Domain
 {
@@ -77,6 +76,10 @@ namespace Scrabble.Domain
 
         public Board MakeMove(Move move)
         {
+
+            if (Move.HasWildcardTile(move.TilePlacements))
+                _ = new SystemException("Cannot make Move with wildcard tiles.");
+
             this.MoveNumber++;
 
             foreach (var placement in move.TilePlacements)
@@ -162,7 +165,6 @@ namespace Scrabble.Domain
 
         public bool IsOccupied(Coord coord) => squares[coord.RVal, coord.CVal].IsOccupied;
         public bool AreOccupied(List<Coord> locations) => locations.Any(l => IsOccupied(l));
-
 
 
         public (bool valid, List<PlacementError> errorList) IsMoveValid(List<TilePlacement> moveToTest)
