@@ -14,9 +14,36 @@ namespace Scrabble.Domain
         public static string TilesToLetters(this List<Tile> tiles) =>
             string.Join(", ", tiles.Select(t => t.Letter));
     }
-    public record Tile(char Letter)
+
+    public class Tile
     {
-        public char Letter { get; } = Char.ToUpper(Letter);
+        private char _letter;
+
+        public Tile(char letter)
+        {
+            _letter = Char.ToUpper(letter);
+            Value = LetterValues.TryGetValue(_letter, out int value) 
+                    ? value : throw new ArgumentException("Invalid character");
+        }
+
+        public int Value { get; }
+
+        public char Letter
+        {
+            get => _letter;
+            private set
+            {
+                if (Value == 0)
+                {
+                    _letter = Char.ToUpper(value);
+                }
+                else
+                {
+                    throw new InvalidOperationException("Only tiles with value 0 can be changed.");
+                }
+            }
+        }
+
 
         private static readonly Dictionary<char, int> LetterValues = new()
         {
@@ -28,16 +55,9 @@ namespace Scrabble.Domain
             { 'Z', 10 }, { '?', 0 }
         };
 
-        public int Value
+        public void ChangeLetter(char newLetter)
         {
-            get
-            {
-                if (LetterValues.TryGetValue(Letter, out int value))
-                {
-                    return value;
-                }
-                throw new ArgumentException("Invalid character");
-            }
+            Letter = newLetter;
         }
     }
 }

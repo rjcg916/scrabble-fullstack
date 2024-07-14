@@ -83,6 +83,7 @@ namespace Scrabble.Domain
             return new TileBag(tiles);
         }
 
+
         public static class TileBagFactory
         {
             public static TileBag Create()
