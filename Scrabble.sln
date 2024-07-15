@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scrabble.WASM", "src\Scrabb
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scrabble.WASM.Client", "src\Scrabble.WASM\Scrabble.WASM.Client\Scrabble.WASM.Client.csproj", "{92510AF5-66D2-4A46-A9B4-0FC855C70049}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scrabble.Blazor.Test", "tests\Scrabble.Blazor.Test\Scrabble.Blazor.Test.csproj", "{757819A1-DA91-4C28-996C-E04A99576D3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{92510AF5-66D2-4A46-A9B4-0FC855C70049}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92510AF5-66D2-4A46-A9B4-0FC855C70049}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92510AF5-66D2-4A46-A9B4-0FC855C70049}.Release|Any CPU.Build.0 = Release|Any CPU
+		{757819A1-DA91-4C28-996C-E04A99576D3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{757819A1-DA91-4C28-996C-E04A99576D3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{757819A1-DA91-4C28-996C-E04A99576D3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{757819A1-DA91-4C28-996C-E04A99576D3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +68,7 @@ Global
 		{C0E39479-7F9F-4707-9EF0-BDB64D2AC51C} = {7961B6D7-3F49-4780-B8E0-416049C0A2F6}
 		{8F9CF13E-5F7B-4C6D-9C56-CBF20ABDD65E} = {7961B6D7-3F49-4780-B8E0-416049C0A2F6}
 		{92510AF5-66D2-4A46-A9B4-0FC855C70049} = {7961B6D7-3F49-4780-B8E0-416049C0A2F6}
+		{757819A1-DA91-4C28-996C-E04A99576D3A} = {A8259792-7C58-4F6E-9095-30AFD1B88FC3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {55B9FAD2-9D47-4F9B-905A-814FAC72CB44}
