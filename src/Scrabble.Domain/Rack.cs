@@ -20,6 +20,11 @@ namespace Scrabble.Domain
 #pragma warning restore IDE0301 // Simplify collection initialization
         }
 
+        public Rack(Rack rack)
+        {
+            this.Tiles = new List<Tile>( rack.Tiles).AsReadOnly();
+        }
+
         public Rack(IEnumerable<Tile> newTiles)
         {
             Tiles = new List<Tile>(newTiles).AsReadOnly();

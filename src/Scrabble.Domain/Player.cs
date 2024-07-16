@@ -6,11 +6,22 @@ using System.Linq;
 namespace Scrabble.Domain
 {
 
-    public class Player(string name)
+    public class Player
     {
         public Rack Rack { get; set; } = new Rack();
-        public string Name { get; set; } = name;
+        public string Name { get; set; } 
         public int Score { get; set; } = 0;
+
+        public Player(string name) {   
+            Name = name;
+        }
+
+        public Player( Player player) 
+        {
+            Rack = new Rack( player.Rack);
+            Name = player.Name;
+            Score = player.Score;
+        }
     }
 
     public class Players : IEnumerable<Player>
@@ -28,7 +39,7 @@ namespace Scrabble.Domain
             _players = new Player[players.Count];
             for (int i = 0; i < players.Count; i++)
             {
-                _players[i] = players[i];
+                _players[i] = new Player( players[i]);
             }
 
             _index = 0;
@@ -42,7 +53,6 @@ namespace Scrabble.Domain
         public Player GetByName(string name) =>
             _players.First(p => p.Name == name);
 
-  
         public Player GetNext()
         {
             _index = (_index + 1) % _players.Length;
@@ -57,8 +67,7 @@ namespace Scrabble.Domain
             return _players.OrderByDescending(p => p.Score).FirstOrDefault();
         }
 
-     
-
+    
         public IEnumerator<Player> GetEnumerator()
         {
             return ((IEnumerable<Player>)_players).GetEnumerator();
