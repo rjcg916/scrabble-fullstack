@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace Scrabble.Domain
 {
@@ -21,6 +22,23 @@ namespace Scrabble.Domain
             Rack = new Rack( player.Rack);
             Name = player.Name;
             Score = player.Score;
+        }
+
+        public TileBag DrawTiles(TileBag tileBag)
+        {
+            var tilesAvailable = tileBag.Count;
+
+            if (tilesAvailable == 0)
+                throw new Exception("No tiles available to draw.");
+
+            var tilesNeeded = Rack.Capacity - Rack.TileCount;
+
+            var drawCount = tilesAvailable > tilesNeeded ? tilesNeeded : tilesAvailable;
+
+            var (tilesToAddToRack, tileBagAfterRemoval) = tileBag.DrawTiles(new TileDrawCount(drawCount));
+            this.Rack = this.Rack.AddTiles(tilesToAddToRack);
+
+            return tileBagAfterRemoval;
         }
     }
 
@@ -67,7 +85,8 @@ namespace Scrabble.Domain
             return _players.OrderByDescending(p => p.Score).FirstOrDefault();
         }
 
-    
+   
+
         public IEnumerator<Player> GetEnumerator()
         {
             return ((IEnumerable<Player>)_players).GetEnumerator();

@@ -41,7 +41,68 @@ namespace Scrabble.Domain.Tests
             Assert.Equal(originalPlayer.Score, copiedPlayer.Score);
             Assert.NotSame(originalPlayer.Rack, copiedPlayer.Rack);
         }
+
+
+        [Fact]
+        public void DrawTiles_ShouldThrowException_WhenNoTilesAvailable()
+        {
+            // Arrange
+            var player = new Player("Player");
+            var emptyTileBag = TileBag.TileBagFactory.Create(new List<Tile>());
+
+            // Act & Assert
+            Assert.Throws<Exception>(() => player.DrawTiles(emptyTileBag));
+        }
+
+        [Fact]
+        public void DrawTiles_ShouldDrawCorrectNumberOfTiles_WhenTilesAvailableLessThanNeeded()
+        {
+            // Arrange
+            var player = new Player("Player") { Rack = new Rack (new List<Tile> { new Tile('X'), new Tile('Y'), new Tile('Z') } ) };
+            var tileBag = TileBag.TileBagFactory.Create(new List<Tile> { new Tile('A'), new Tile('B') });
+
+            // Act
+            var resultTileBag = player.DrawTiles(tileBag);
+
+            // Assert
+            Assert.Equal(5, player.Rack.TileCount); // 3 existing + 2 drawn
+            Assert.Equal(0, resultTileBag.Count); // 2 drawn from original count of 2
+        }
+
+        [Fact]
+        public void DrawTiles_ShouldDrawCorrectNumberOfTiles_WhenTilesAvailableMoreThanNeeded()
+        {
+            // Arrange
+            var player = new Player("Player") { Rack = new Rack(new List<Tile> { new Tile('X'), new Tile('Y'), new Tile('Z') }) };
+            var tileBag = 
+                TileBag.TileBagFactory.Create(new List<Tile> { new Tile('A'), new Tile('B'), new Tile('C'), new Tile('D'), new Tile('E')  });
+
+            // Act
+            var resultTileBag = player.DrawTiles(tileBag);
+
+            // Assert
+            Assert.Equal(7, player.Rack.TileCount); // 3 existing + 4 drawn (to fill capacity)
+            Assert.Equal(1, resultTileBag.Count); // 5 original - 4 drawn
+        }
+
+        [Fact]
+        public void DrawTiles_ShouldDrawAllTiles_WhenTilesAvailableEqualsNeeded()
+        {
+            // Arrange
+            var player = new Player("Player") { Rack = new Rack(new List<Tile> { new Tile('X'), new Tile('Y'), new Tile('Z') }) };
+            var tileBag =
+                       TileBag.TileBagFactory.Create(new List<Tile> { new Tile('A'), new Tile('B'), new Tile('C'), new Tile('D') });
+
+            // Act
+            var resultTileBag = player.DrawTiles(tileBag);
+
+            // Assert
+            Assert.Equal(7, player.Rack.TileCount); // 3 existing + 4 drawn (to fill capacity)
+            Assert.Equal(0, resultTileBag.Count); // 4 original - 4 drawn
+        }
     }
+
+
 
     public class PlayersTests
     {

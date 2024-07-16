@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks.Dataflow;
+﻿using System.Linq;
 
 namespace Scrabble.Domain
 {
@@ -41,7 +39,7 @@ namespace Scrabble.Domain
             if (game.TileBag.Count > 0)
             {
                 // get tiles
-                game.TileBag = game.DrawTiles(currentPlayer);
+                game.TileBag = currentPlayer.DrawTiles(game.TileBag);
                 game.messages.Add($"Drawing tiles");
             }
 

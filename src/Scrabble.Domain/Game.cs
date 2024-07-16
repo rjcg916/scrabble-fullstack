@@ -48,25 +48,5 @@ namespace Scrabble.Domain
             _state.Handle(this);
         }
 
-        internal TileBag DrawTiles(Player player)
-        {
-            var tilesAvailable = TileBag.Count;
-
-            if (tilesAvailable == 0)
-                throw new Exception("No tiles available to draw.");
-
-            var tilesNeeded = Rack.Capacity - player.Rack.TileCount;
-
-            var drawCount = tilesAvailable > tilesNeeded ? tilesNeeded : tilesAvailable;
-
-            var (tilesToAddToRack, tileBagAfterRemoval) = TileBag.DrawTiles(new TileDrawCount(drawCount));
-
-            player.Rack = player.Rack.AddTiles(tilesToAddToRack);
-
-            return tileBagAfterRemoval;
-        }
-
- 
-
     }
 }
