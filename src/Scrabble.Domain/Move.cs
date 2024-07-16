@@ -8,6 +8,9 @@ namespace Scrabble.Domain
     {
         public List<TilePlacement> TilePlacements { get; init; }
 
+        public string Letters =>
+            TilePlacements.Select(tp => tp.Tile).ToList().TilesToLetters();
+
         protected Move(List<TilePlacement> tilePlacements)
         {
             var (valid, msg) = IsValidTilePlacement(tilePlacements);

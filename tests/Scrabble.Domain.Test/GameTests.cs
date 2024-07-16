@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 
@@ -45,12 +46,12 @@ namespace Scrabble.Domain.Tests
 
             // Assert
             Assert.NotNull(game);
-            Assert.Equal(3, game.NumberOfPlayers);
+            Assert.Equal(3, game.Players.Count);
             Assert.NotNull(game.Lexicon);
             Assert.NotNull(game.TileBag);
             Assert.NotNull(game.Board);
-            Assert.False(game.GameDone);
-            Assert.Equal(1, game.TurnOfPlayer); // Turn should start with player 1
+            //Assert.False(game.GameDone);
+            Assert.Equal("A", game.Players.CurrentPlayer.Name); // Turn should start with player 1
         }
 
         [Fact]
@@ -64,9 +65,9 @@ namespace Scrabble.Domain.Tests
             var game = Game.GameFactory.CreateGame(lexicon, players);
 
             // Assert
-            Assert.Equal(players.Count, game.NumberOfPlayers);
-            Assert.Equal("A", game.Players[0].Name);
-            Assert.Equal("B", game.Players[1].Name);
+            Assert.Equal(players.Count, game.Players.Count);
+            Assert.Equal("A", game.Players.First().Name);            
+            Assert.Equal("B", game.Players.GetNext().Name );
         }
 
         [Fact]

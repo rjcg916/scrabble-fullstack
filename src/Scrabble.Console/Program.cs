@@ -14,7 +14,7 @@ gameManager.AddGame(game);
 var moveBoard = new Board(game.Board);
 
 //// get rack for current player
-var currentRack = game.Players[game.TurnOfPlayer].Rack;
+var currentRack = game.Players.CurrentPlayer.Rack;
 var currentLetters = currentRack.GetTiles().Select( t => t.Letter).ToList();
 var rackUI = new RackUI(currentRack);
 

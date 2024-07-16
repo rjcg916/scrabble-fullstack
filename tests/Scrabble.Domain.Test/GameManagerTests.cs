@@ -22,7 +22,7 @@ namespace Scrabble.Domain.Tests
             Assert.Equal(1, gameManager.NumberOfGames());
             var getGame = gameManager.GetGame(gameId);
             Assert.NotNull(getGame);
-            Assert.Equal(2, getGame.NumberOfPlayers);
+            Assert.Equal(2, getGame.Players.Count);
         }
 
         [Fact]
@@ -41,7 +41,7 @@ namespace Scrabble.Domain.Tests
             var fetchedGame = gameManager.GetGame(gameId);
 
             // Assert
-            Assert.Equal(2, fetchedGame.NumberOfPlayers);
+            Assert.Equal(2, fetchedGame.Players.Count);
         }
 
         [Fact]

@@ -43,11 +43,11 @@ app.MapDelete("/api/Games/{Id}", (Guid Id, IGames games) =>
     return Results.Ok();
 });
 
-app.MapPost("/api/Games/{Id}/{playerId}/Board/Tiles", (Guid Id, int playerId, Coord coord, Tile tile, IGameManager GameManager) =>
+app.MapPost("/api/Games/{Id}/{playerName}/Board/Tiles", (Guid Id, string playerName, Coord coord, Tile tile, IGameManager GameManager) =>
 {
     var game = GameManager.GetGame(Id);
     var board = game.Board;
-    var player = game.Players[(byte)playerId];
+    var player = game.Players.GetByName(playerName);
 
    // board.PlaceTile(coord, tile);
 
