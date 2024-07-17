@@ -34,7 +34,7 @@ namespace Scrabble.Domain
             this.Board = new Board(lexicon.IsWordValid);
             this.Players = new Players(players);
 
-            this._state = new MoveStarting();
+            this._state = new GameStarting();
         }
 
         public void SetState(GameState state)

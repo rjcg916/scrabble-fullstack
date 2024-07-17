@@ -57,7 +57,7 @@ namespace Scrabble.Domain
             
             game.Players.GetNext();
 
-            game.NextMove = Move.MoveFactory.CreateMove(new());
+            game.NextMove = null;
 
             game.SetState(new MoveStarting());
         }

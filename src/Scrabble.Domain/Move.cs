@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Scrabble.Domain
 {
@@ -56,16 +57,18 @@ namespace Scrabble.Domain
         {
             public static Move CreateMove(List<TilePlacement> tilePlacements)
             {
+                if (tilePlacements.Count == 0)
+                    throw new Exception("Invalid Move provided");
+
                 if (Move.UniDirectionalMove(tilePlacements))
                 {
                     return Move.IsHorizontal(tilePlacements) ?
                         new MoveHorizontal(tilePlacements) :
                         new MoveVertical(tilePlacements);                
                 }
-                else
-                {
-                    throw new Exception("Move is in both horizontal and vertical direction");
-                }
+                               
+                throw new Exception("Move is in both horizontal and vertical direction");
+                
             }
 
             public static Move CreateMove(Coord startFrom, List<Tile> tiles, bool isHorizontal) =>

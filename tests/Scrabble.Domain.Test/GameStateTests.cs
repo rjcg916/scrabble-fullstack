@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace Scrabble.Domain.Test
 {
-
     public class GameStateTests
     {
         [Fact]
