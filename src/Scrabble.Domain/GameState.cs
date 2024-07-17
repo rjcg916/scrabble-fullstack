@@ -57,6 +57,8 @@ namespace Scrabble.Domain
             
             game.Players.GetNext();
 
+            game.NextMove = Move.MoveFactory.CreateMove(new());
+
             game.SetState(new MoveStarting());
         }
     }
@@ -66,7 +68,7 @@ namespace Scrabble.Domain
         public override void Handle(Game game)
         {
             var board = game.Board;
-            var move = Move.MoveFactory.CreateMove(game.NextMove.TilePlacements);
+            var move = game.NextMove;
             var player = game.Players.CurrentPlayer;
 
             // can move be made
@@ -82,6 +84,8 @@ namespace Scrabble.Domain
             game.Moves.Add((move, score, player.Name));
            
             game.messages.Add($"Move for {player.Name} with tiles {move.Letters} was completed with score {score}");
+
+            game.NextMove = null;
 
             // next player's turn
             game.Players.GetNext();

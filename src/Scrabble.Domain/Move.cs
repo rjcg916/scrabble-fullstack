@@ -22,6 +22,9 @@ namespace Scrabble.Domain
 
         public static (bool valid, string msg) IsValidTilePlacement(List<TilePlacement> tilePlacements)
         {
+            if (tilePlacements.Count == 0)
+                return (false, "Move not defined.");
+
             if (!AllowedNumberOfTiles(tilePlacements.Count))
                 return (false, "Move includes too many tiles");
 

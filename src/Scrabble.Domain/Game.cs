@@ -5,30 +5,29 @@ namespace Scrabble.Domain
 {
     public class Game
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public ILexicon Lexicon { get; set; }
         public Board Board { get; set; }
         public TileBag TileBag { get; set; }
         public Players Players { get; set; } 
 
-        public Move NextMove;
+        public Move NextMove { get; set; }
 
-        public List<string> messages;
+        public List<string> messages = new();
 
-        public List<(Move move, int score, string playerName)> Moves { get; set; }
+        public List<(Move move, int score, string playerName)> Moves { get; set; } = new();
 
         private GameState _state;
 
         public static class GameFactory
         {
-            public static Game CreateGame(Lexicon lexicon, List<Player> players)
+            public static Game CreateGame(ILexicon lexicon, List<Player> players)
             {
- 
                 return new Game(lexicon, players);
             }
         }
 
-        private Game(Lexicon lexicon, List<Player> players) {
+        private Game(ILexicon lexicon, List<Player> players) {
 
             this.Lexicon = lexicon;
             this.TileBag = TileBag.TileBagFactory.Create();
@@ -41,6 +40,11 @@ namespace Scrabble.Domain
         public void SetState(GameState state)
         {
             _state = state;
+        }
+
+        public GameState GetState()
+        {
+            return _state;
         }
 
         public void Handle()
