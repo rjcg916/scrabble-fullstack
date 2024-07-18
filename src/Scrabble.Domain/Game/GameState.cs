@@ -11,7 +11,6 @@ namespace Scrabble.Domain
     {
         public override void Handle(Game game)
         {
-
             game.messages.Add($"Game Starting: Id: {game.Id} starting.");
 
             game.SetState(new MoveStarting());
@@ -25,7 +24,6 @@ namespace Scrabble.Domain
            
             var currentPlayer = game.Players.CurrentPlayer;
 
-   
             // if no more tiles in bag or rack
             if ((game.TileBag.Count == 0) && (currentPlayer.Rack.TileCount == 0))
             {
@@ -75,7 +73,11 @@ namespace Scrabble.Domain
 
             // can move be made
             if (!move.IsValid(move.TilePlacements).valid)
+            {
                 game.SetState(new MoveFinishing());
+                game.messages.Add("Move Finishing: Invalid Move.");
+                return;
+            }
 
             // make and score move
             board.MakeMove(move);
@@ -84,8 +86,6 @@ namespace Scrabble.Domain
 
             // record move
             game.Moves.Add((move, score, player.Name));
-           
-   
             game.NextMove = null;
 
             // next player's turn
@@ -110,9 +110,7 @@ namespace Scrabble.Domain
             game.SetState(new GameCompleted());
 
             game.messages.Add($"{winner.Name} won with {winner.Score} points");
-
             game.messages.Add(string.Join(", ", players.Select(p => $"{p.Name}: {p.Score}")));
-
             game.messages.Add($"Game Finishing: Id: {game.Id}");
 
         }

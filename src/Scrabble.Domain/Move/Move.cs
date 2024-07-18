@@ -26,7 +26,8 @@ namespace Scrabble.Domain
                     new MoveVertical(tilePlacements);
             }
             public static Move CreateMove(Coord startFrom, List<Tile> tiles, bool isHorizontal) =>
-                isHorizontal ? new MoveHorizontal(startFrom, tiles) : new MoveVertical(startFrom, tiles);
+                isHorizontal    ? new MoveHorizontal(startFrom, tiles) 
+                                : new MoveVertical(startFrom, tiles);
         }
 
         protected Move(List<TilePlacement> tilePlacements)

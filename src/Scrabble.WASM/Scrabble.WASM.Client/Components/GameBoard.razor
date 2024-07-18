@@ -162,7 +162,9 @@
             return;
         }
 
-        var (isValid, errors) = board.IsMoveValid(currentTilePlacements);
+        var move = Move.MoveFactory.CreateMove(currentTilePlacements);
+
+        var (isValid, errors) = board.IsMoveValid(move);
 
         if (!isValid)
         {
@@ -170,7 +172,7 @@
             return;
         }
 
-        SetValidMoveStatus(MoveFactory.CreateMove(currentTilePlacements));
+        SetValidMoveStatus(move);
     }
 
     private void ResetBoardStatus()

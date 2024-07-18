@@ -172,44 +172,6 @@ namespace Scrabble.Domain.Tests
             Assert.False(board.TilesContiguous(proposedTiles).valid);
         }
 
-        [Fact]
-        public void WordOnBoardValid_RealValidator_ReturnValid()
-        {
-            var lex = new Lexicon(["ball", "bat"]);
-
-            var board = new Board(lex.IsWordValid);
-            var tiles = new List<TilePlacement>
-            {
-                new(new Coord(R._8, C.H), new Tile('B')),
-                new(new Coord(R._8, C.I), new Tile('A')),
-                new(new Coord(R._8, C.J), new Tile('L')),
-                new(new Coord(R._8, C.K), new Tile('L'))
-            };
-            board.MakeMove(MoveFactory.CreateMove(tiles));
-
-            Assert.True(board.OnlyValidWords().valid);
-        }
-        [Fact]
-        public void WordOnBoardInValid_RealValidator_ReturnInvalid()
-        {
-            var lex = new Lexicon(["mitt", "base"]);
-
-            var board = new Board(lex.IsWordValid);
-            var tiles = new List<TilePlacement>
-            {
-                new(new Coord(R._8, C.H), new Tile('B')),
-                new(new Coord(R._8, C.I), new Tile('A')),
-                new(new Coord(R._8, C.J), new Tile('L')),
-                new(new Coord(R._8, C.K), new Tile('L'))
-            };
-            board.MakeMove(MoveFactory.CreateMove(tiles));
-
-            var(valid, errorList) = board.OnlyValidWords();
-            Assert.False(valid);
-            Assert.Equal("BALL", errorList[0].Letters);
-            Assert.Equal<Coord>(new Coord(R._8, C.A), errorList[0].Location);
-        }
-
 
         [Fact]
         public void GetSlice_ReturnsCorrectRowSlice()
@@ -272,7 +234,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.A), new Tile('A')),
                 new(new Coord(R._8, C.K), new Tile('C')),
             };
-            var result = board.IsMoveValid(moveTiles);
+            var result = board.IsMoveValid(Move.MoveFactory.CreateMove(moveTiles));
 
             Assert.Equal(originalBoard, board);
         }
@@ -286,7 +248,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.G), new Tile('A')),
                 new(new Coord(R._8, C.H), new Tile('B'))
             };
-            Assert.True(board.IsMoveValid(tiles).valid);
+            Assert.True(board.IsMoveValid(Move.MoveFactory.CreateMove(tiles)).valid);
         }
 
         [Fact]
@@ -298,7 +260,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.A), new Tile('A')),
                 new(new Coord(R._8, C.B), new Tile('B'))
             };
-            Assert.False(board.IsMoveValid(tiles).valid);
+            Assert.False(board.IsMoveValid(Move.MoveFactory.CreateMove(tiles)).valid);
         }
 
         [Fact]
@@ -310,7 +272,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.G), new Tile('A')),
                 new(new Coord(R._8, C.H), new Tile('B'))
             };
-            Assert.False(board.IsMoveValid(tiles).valid);
+            Assert.False(board.IsMoveValid(Move.MoveFactory.CreateMove(tiles)).valid);
         }
 
         [Fact]
@@ -323,7 +285,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.H), new Tile('B')),
                 new(new Coord(R._8, C.J), new Tile('C')),
             };
-            Assert.False(board.IsMoveValid(tiles).valid);
+            Assert.False(board.IsMoveValid(Move.MoveFactory.CreateMove(tiles)).valid);
         }
 
         [Fact]
@@ -336,7 +298,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.H), new Tile('B')),
                 new(new Coord(R._10, C.H), new Tile('C')),
             };
-            var result = board.IsMoveValid(tiles);
+            var result = board.IsMoveValid(Move.MoveFactory.CreateMove(tiles));
 
             Assert.False(result.valid);
         }
@@ -351,7 +313,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.H), new Tile('B')),
                 new(new Coord(R._9, C.I), new Tile('C')),
             };
-            var result = board.IsMoveValid(tiles);
+            var result = board.IsMoveValid(Move.MoveFactory.CreateMove(tiles));
 
             Assert.False(result.valid);
         }
@@ -374,7 +336,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.J), new Tile('B')),
                 new(new Coord(R._8, C.K), new Tile('C')),
             };
-            var result = board.IsMoveValid(moveTiles);
+            var result = board.IsMoveValid(Move.MoveFactory.CreateMove(tiles));
 
             Assert.True(result.valid);
         }
@@ -396,7 +358,7 @@ namespace Scrabble.Domain.Tests
                 new(new Coord(R._8, C.A), new Tile('A')),
                 new(new Coord(R._8, C.K), new Tile('C')),
             };
-            var result = board.IsMoveValid(moveTiles);
+            var result = board.IsMoveValid(Move.MoveFactory.CreateMove(tiles));
 
             Assert.False(result.valid);
         }

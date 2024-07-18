@@ -11,9 +11,8 @@ namespace Scrabble.Domain
 
         public Guid AddGame(Game game)
         {
-            var gameId = Guid.NewGuid();
-            _games.Add(gameId, game);
-            return gameId;
+            _games.Add(game.Id, game);
+            return game.Id;
         }
 
         public Game GetGame(Guid gameId)
@@ -34,7 +33,6 @@ namespace Scrabble.Domain
         {
             return _games;
         }
-
         public int NumberOfGames() => _games.Count;
     }
 }

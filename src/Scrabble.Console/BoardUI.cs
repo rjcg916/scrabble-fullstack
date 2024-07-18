@@ -29,22 +29,22 @@ namespace Scrabble.Console
                 Console.WriteLine();
             }
 
-            if (DisplayStatus) 
-                DisplayBoardStatus();
+  //          if (DisplayStatus) 
+  //              DisplayBoardStatus();
 
             Console.WriteLine(); 
             Console.Write("Press RETURN"); 
             Console.ReadLine();
         }
    
-        public void DisplayBoardStatus()
-        {
-            (bool IsBoardValid, List<PlacementError> InvalidMessage) = Board.OnlyValidWords();
+        //public void DisplayBoardStatus()
+        //{
+        //    (bool IsBoardValid, List<PlacementError> InvalidMessage) = Board.//OnlyValidWords();
 
-            Console.WriteLine(
-               $"Is Board Valid? {IsBoardValid}\n{(IsBoardValid ? string.Empty : InvalidMessage.ToString())}");
-            Console.WriteLine();
-        }
+        //    Console.WriteLine(
+        //       $"Is Board Valid? {IsBoardValid}\n{(IsBoardValid ? string.Empty : InvalidMessage.ToString())}");
+        //    Console.WriteLine();
+        //}
    
         public void PlaceTile(Player player)
         {
@@ -55,10 +55,3 @@ namespace Scrabble.Console
         }
     }
 }
-
-
-
-
-
-
-
