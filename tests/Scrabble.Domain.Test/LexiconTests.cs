@@ -51,21 +51,56 @@ namespace Scrabble.Domain.Tests
         }
 
         [Fact]
-        public void IValidSequence_ReturnsCorrectValidation()
+        public void IsValidSequence_ValidSequence_ReturnsCorrectValidation()
         {
             var validWordList = new List<string> { "Hello", "World" };
             bool isWordValid(string word) => validWordList.Contains(word);
 
             var validSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };
-            var invalidSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'X', 'y', 'z' };
 
             var (valid, blankWord) = validSequence.IsValidWordList(isWordValid);
             Assert.True(valid);
             Assert.Equal("", blankWord);
 
-            var (validFalse, invalidWord) = invalidSequence.IsValidWordList(isWordValid);
+        }
+
+        [Fact]
+        public void IsValidSequence_InvalidSequence_ReturnsCorrectValidation()
+        {
+            var validWordList = new List<string> { "Hello", "World" };
+            bool isWordValid(string word) => validWordList.Contains(word);
+
+            var validSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'X', 'y', 'z' };
+
+            var (validFalse, invalidWord) = validSequence.IsValidWordList(isWordValid);
             Assert.False(validFalse);
             Assert.Equal("Xyz", invalidWord);
+        }
+
+        [Fact]
+        public void IsValidSequence_SingleCharacterValid_ReturnsCorrectValidation()
+        {
+            var validWordList = new List<string> { "Hello", "World", "i", "a" };
+            bool isWordValid(string word) => validWordList.Contains(word);
+
+            var validSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'a' };
+
+            var (valid, blank) = validSequence.IsValidWordList(isWordValid);
+            Assert.True(valid);
+            Assert.Equal("", blank);
+        }
+
+        [Fact]
+        public void IsValidSequence_SingleCharacterInvalid_ReturnsCorrectValidation()
+        {
+            var validWordList = new List<string> { "Hello", "World", "i", "a" };
+            bool isWordValid(string word) => validWordList.Contains(word);
+
+            var invalidSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'c' };
+
+            var (validFalse, invalidWord) = invalidSequence.IsValidWordList(isWordValid);
+            Assert.False(validFalse);
+            Assert.Equal("c", invalidWord);
         }
     }
 }

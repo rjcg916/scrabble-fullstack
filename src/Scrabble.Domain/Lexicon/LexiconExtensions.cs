@@ -16,12 +16,8 @@ namespace Scrabble.Domain
 
             var invalidWord = words.FirstOrDefault(word => !IsWordValid(word));
 
-            if (invalidWord?.Length > 1) // single char are valid
-            {
-                return (false, invalidWord);
-            }
-
-            return (true, string.Empty); // no invalid word
+            return invalidWord?.Length > 0 ? 
+                    (false, invalidWord) : (true, string.Empty); // no invalid word
         }
     }
 }
