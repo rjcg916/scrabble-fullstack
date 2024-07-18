@@ -1,5 +1,4 @@
 ﻿using Moq;
-using Scrabble.Domain.Interface;
 using System.Collections.Generic;
 using Xunit;
 

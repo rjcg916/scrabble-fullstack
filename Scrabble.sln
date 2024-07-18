@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scrabble.WASM", "src\Scrabb
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scrabble.WASM.Client", "src\Scrabble.WASM\Scrabble.WASM.Client\Scrabble.WASM.Client.csproj", "{92510AF5-66D2-4A46-A9B4-0FC855C70049}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scrabble.Blazor.Test", "tests\Scrabble.Blazor.Test\Scrabble.Blazor.Test.csproj", "{757819A1-DA91-4C28-996C-E04A99576D3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scrabble.Blazor.Test", "tests\Scrabble.Blazor.Test\Scrabble.Blazor.Test.csproj", "{757819A1-DA91-4C28-996C-E04A99576D3A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

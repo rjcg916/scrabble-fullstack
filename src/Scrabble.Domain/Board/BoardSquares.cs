@@ -17,11 +17,6 @@ namespace Scrabble.Domain
 
         public Tile GetTile(Coord loc) => squares[loc.RVal, loc.CVal]?.Tile;
 
-        public static bool DoesMoveTouchSTAR(List<TilePlacement> tileList) =>
-             tileList.Exists(t => (t.Coord.Col == Board.STAR.Col) && (t.Coord.Row == Board.STAR.Row));
-
-        public bool IsOccupied(Coord coord) => squares[coord.RVal, coord.CVal].IsOccupied;
-        public bool AreOccupied(List<Coord> locations) => locations.Any(l => IsOccupied(l));
 
         // fetch all squares in a range of a slice
         internal static List<Square> GetSquares(

@@ -7,6 +7,13 @@ namespace Scrabble.Domain
     public partial class Board
     {
 
+        public static bool DoesMoveTouchSTAR(List<TilePlacement> tileList) =>
+             tileList.Exists(t => (t.Coord.Col == Board.STAR.Col) && (t.Coord.Row == Board.STAR.Row));
+
+        public bool AreOccupied(List<Coord> locations) => locations.Any(l => IsOccupied(l));
+
+        public bool IsOccupied(Coord coord) => squares[coord.RVal, coord.CVal].IsOccupied;
+
         public (bool valid, List<PlacementError> errorList) IsMoveValid(Move move)
         {
             Board board = new(this);
@@ -60,7 +67,6 @@ namespace Scrabble.Domain
                 proposedList.Add((coord.RVal, coord.CVal));
             }
 
-
             // for display purposes, sort tiles in board placement order
             tilePlacementList = [.. tilePlacementList.OrderBy(tp => tp.Coord.RVal).OrderBy(tp => tp.Coord.CVal)];
 
@@ -71,6 +77,7 @@ namespace Scrabble.Domain
             var isContiguous = Placement.IsContiguous(occupiedList, proposedList);
             var msg = isContiguous ? letters : $"Not Contiguous :: {letters}";
             var placementError = new PlacementError(new Coord(row, col), msg);
+
             return (isContiguous, placementError);
         }
 

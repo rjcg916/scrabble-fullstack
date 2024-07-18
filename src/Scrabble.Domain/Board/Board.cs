@@ -4,7 +4,6 @@ using static Scrabble.Domain.Move;
 
 namespace Scrabble.Domain
 {
-
     public partial class Board
     {
         public Square[,] squares = new Square[Coord.RowCount, Coord.ColCount];
