@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Scrabble.Domain.Interface;
 
 namespace Scrabble.Domain
 {
@@ -15,7 +16,7 @@ namespace Scrabble.Domain
 
         public List<string> messages = new();
 
-        public List<(Move move, int score, string playerName)> Moves { get; set; } = new();
+        public List<(Move move, int score, string playerName)> Moves { get; set; } = [];
 
         private GameState _state;
 

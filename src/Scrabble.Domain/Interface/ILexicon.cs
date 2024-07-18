@@ -1,4 +1,4 @@
-﻿namespace Scrabble.Domain
+﻿namespace Scrabble.Domain.Interface
 {
     public interface ILexicon
     {

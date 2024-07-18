@@ -1,4 +1,5 @@
 using Scrabble.Domain;
+using Scrabble.Domain.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 

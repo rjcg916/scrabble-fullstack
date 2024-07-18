@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Scrabble.Domain
 {
-    public static class LexiconExtension
+    public static class LexiconExtensions
     {
         public static (bool valid, string invalidWord) IsValidWordList(this List<char> charArray, Func<string, bool> IsWordValid)
         {
@@ -23,19 +23,5 @@ namespace Scrabble.Domain
 
             return (true, string.Empty); // no invalid word
         }
-    }
-    public class Lexicon : ILexicon
-    {
-        private readonly HashSet<string> words;
-
-        public Lexicon() { 
-            this.words = ["car", "house", "dog", "talent"];
-        }
-        public Lexicon(IEnumerable<string> list) {
-            this.words = new(list);            
-        }
-
-        public bool IsWordValid(string word) =>
-            !(word == null) && words.Contains(word.ToLower());
     }
 }

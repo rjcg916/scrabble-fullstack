@@ -37,17 +37,6 @@ namespace Scrabble.Domain
         {
             return $"{RVal+1}{Col}";
         }
-        //public List<Coord> GetAdjacent()
-        //{   
-        //    var adjList = new List<Coord>();
-
-        //    if (RVal > 0)               adjList.Add(new((R)(RVal - 1), Col)); // Up
-        //    if (RVal < RowCount - 1)    adjList.Add(new((R)(RVal + 1), Col)); // Down
-        //    if (CVal > 0)               adjList.Add(new(Row, (C)(CVal - 1))); // Left
-        //    if (CVal < ColCount - 1)    adjList.Add(new(Row, (C)(CVal + 1)));  // Right            
-            
-        //    return adjList;            
-        //}
 
         public bool IsValidCoord() =>
             RVal >= 0 && RVal < RowCount &&

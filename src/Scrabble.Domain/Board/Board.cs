@@ -5,9 +5,8 @@ using static Scrabble.Domain.Move;
 
 namespace Scrabble.Domain
 {
-    public record LocationSquare(Coord Coord, Square Square);
-
-    public class Board
+  
+    public partial class Board
     {
         public  Square[,] squares = new Square[Coord.RowCount, Coord.ColCount];
 
@@ -76,7 +75,6 @@ namespace Scrabble.Domain
 
         public Board MakeMove(Move move)
         {
-
             if (Move.HasWildcardTile(move.TilePlacements))
                 _ = new SystemException("Cannot make Move with wildcard tiles.");
 
@@ -267,143 +265,5 @@ namespace Scrabble.Domain
             return invalidMessages;
         }
 
-        public override bool Equals(object obj)
-        {
-            if (obj == null || GetType() != obj.GetType())
-            {
-                return false;
-            }
-
-            var other = (Board)obj;
-
-            if (!IsWordValid.Method.Equals(other.IsWordValid.Method))
-            {
-                return false;
-            }
-
-            if (MoveNumber != other.MoveNumber)
-            {
-                return false;
-            }
-
-            for (int r = 0; r < Coord.RowCount; r++)
-            {
-                for (int c = 0; c < Coord.ColCount; c++)
-                {
-                    if (!squares[r, c].Equals(other.squares[r, c]))
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        public override int GetHashCode()
-        {
-            var hashCode = new HashCode();
-
-            // Combine hash codes of relevant properties
-            hashCode.Add(IsWordValid.Method);
-            hashCode.Add(MoveNumber);
-
-            for (int r = 0; r < Coord.RowCount; r++)
-            {
-                for (int c = 0; c < Coord.ColCount; c++)
-                {
-                    hashCode.Add(squares[r, c]);
-                }
-            }
-
-            return hashCode.ToHashCode();
-        }
-        private void Initialize()
-        {
-            // start
-            squares[(int)R._8, (int)C.H].SquareType = SquareType.start;
-
-            // triple letters
-            SetSquareTypes(SquareType.tl,
-
-              [
-                new(R._2, C.F), new(R._2, C.J),
-
-                new(R._6, C.B), new(R._6, C.F), new(R._6, C.J), new(R._6, C.N),
-
-                new(R._10, C.B), new(R._10, C.F), new(R._10, C.J), new(R._10, C.N),
-
-                new(R._14, C.F), new(R._14, C.J)
-              ]);
-
-            // double letters
-            SetSquareTypes(SquareType.dl,
-                [
-              new(R._1, C.D), new(R._1, C.L),
-
-              new(R._3, C.G), new(R._3, C.I),
-
-              new(R._4, C.A), new(R._4, C.H), new(R._4, C.O),
-
-              new(R._7, C.C), new(R._7, C.G), new(R._7, C.I), new(R._7, C.M),
-
-              new(R._8, C.D), new(R._8, C.L),
-
-              new(R._9, C.C), new(R._9, C.G), new(R._9, C.I), new(R._9, C.M),
-
-              new(R._12, C.A), new(R._12, C.H), new(R._12, C.O),
-
-              new(R._13, C.G), new(R._13, C.I),
-
-              new(R._15, C.D), new(R._15, C.L)
-
-            ]);
-
-            // double word
-            SetSquareTypes(SquareType.dw,
-
-              [
-                new(R._2, C.B), new(R._2, C.N),
-
-                new(R._3, C.C), new(R._3, C.M),
-
-                new(R._4, C.D), new(R._4, C.L),
-
-                new(R._5, C.E), new(R._5, C.K),
-
-                new(R._11, C.E), new(R._11, C.K),
-
-                new(R._12, C.D), new(R._12, C.L),
-
-                new(R._13, C.C), new(R._13, C.M),
-
-                new(R._14, C.B), new(R._14, C.N)
-
-              ]);
-
-
-            // triple word
-            SetSquareTypes(
-              SquareType.tw,
-
-              [
-                new(R._1, C.A), new(R._1, C.H), new(R._1, C.O),
-
-                new(R._8, C.A), new(R._8, C.O),
-
-                new(R._15, C.A), new(R._15, C.H), new(R._15, C.O)
-              ]
-            );
-        }
-        private void SetSquareTypes(SquareType t, Coord[] locs)
-        {
-            foreach (Coord loc in locs)
-            {
-                squares[(int)loc.Row, (int)loc.Col] = new Square
-                {
-                    SquareType = t
-                };
-            }
-        }
-    }
+ }
 }

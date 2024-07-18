@@ -2,46 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 
 namespace Scrabble.Domain
 {
-
-    public class Player
-    {
-        public Rack Rack { get; set; } = new Rack();
-        public string Name { get; set; } 
-        public int Score { get; set; } = 0;
-
-        public Player(string name) {   
-            Name = name;
-        }
-
-        public Player( Player player) 
-        {
-            Rack = new Rack( player.Rack);
-            Name = player.Name;
-            Score = player.Score;
-        }
-
-        public TileBag DrawTiles(TileBag tileBag)
-        {
-            var tilesAvailable = tileBag.Count;
-
-            if (tilesAvailable == 0)
-                throw new Exception("No tiles available to draw.");
-
-            var tilesNeeded = Rack.Capacity - Rack.TileCount;
-
-            var drawCount = tilesAvailable > tilesNeeded ? tilesNeeded : tilesAvailable;
-
-            var (tilesToAddToRack, tileBagAfterRemoval) = tileBag.DrawTiles(new TileDrawCount(drawCount));
-            this.Rack = this.Rack.AddTiles(tilesToAddToRack);
-
-            return tileBagAfterRemoval;
-        }
-    }
-
     public class Players : IEnumerable<Player>
     {
         private readonly Player[] _players;
@@ -57,7 +20,7 @@ namespace Scrabble.Domain
             _players = new Player[players.Count];
             for (int i = 0; i < players.Count; i++)
             {
-                _players[i] = new Player( players[i]);
+                _players[i] = new Player(players[i]);
             }
 
             _index = 0;
@@ -85,8 +48,6 @@ namespace Scrabble.Domain
             return _players.OrderByDescending(p => p.Score).FirstOrDefault();
         }
 
-   
-
         public IEnumerator<Player> GetEnumerator()
         {
             return ((IEnumerable<Player>)_players).GetEnumerator();
@@ -97,5 +58,5 @@ namespace Scrabble.Domain
             return _players.GetEnumerator();
         }
     }
-
 }
+

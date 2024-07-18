@@ -5,6 +5,7 @@ using static Scrabble.Domain.Move;
 
 namespace Scrabble.Domain
 {
+    public record LocationSquare(Coord Coord, Square Square);
     public record PlacementError(Coord Location, string Letters);
     public record PlacementSpec(bool IsHorizontal, int SliceLocation, List<int> TileLocations);
     public record TilePlacement(Coord Coord, Tile Tile);
@@ -52,10 +53,10 @@ namespace Scrabble.Domain
         {
             var directions = new (int, int)[]
             {
-            (0, 1), // Right
-            (1, 0), // Down
-            (0, -1), // Left
-            (-1, 0) // Up
+                (0, 1), // Right
+                (1, 0), // Down
+                (0, -1), // Left
+                (-1, 0) // Up
             };
 
             var queue = new Queue<(int, int)>();

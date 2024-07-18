@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Scrabble.Domain
+namespace Scrabble.Domain.Interface
 {
     public interface IGameManager
     {

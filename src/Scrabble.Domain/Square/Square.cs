@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Scrabble.Domain
 {
@@ -9,27 +7,7 @@ namespace Scrabble.Domain
         reg, dl, tl, dw, tw, start
     }
 
-    public static class SquareExtensions
-    {
-        static public List<char>ToCharList(this List<Square> slice ) =>
-            slice.Select(square => square.Tile?.Letter ?? ' ').ToList();
-
-        static public int ScoreRun(this List<Square> squares)
-        {
-            int wordScore = 0;
-
-            int wordMultiplier = 1;
-
-            foreach (var location in squares)
-            {
-                wordScore += (location.Tile.Value * location.LetterMultiplier);
-                wordMultiplier *= location.WordMultiplier;                       
-            }
-
-            return wordScore * wordMultiplier;
-        }
-    }
-
+  
     public class Square(SquareType squareType = SquareType.reg)
     {
         public SquareType SquareType { get; set; } = squareType;

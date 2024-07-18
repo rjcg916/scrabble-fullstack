@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Scrabble.Domain.Interface;
 
 namespace Scrabble.Domain
 {
