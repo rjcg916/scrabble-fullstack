@@ -2,7 +2,6 @@
 
 namespace Scrabble.Domain
 {
-
     public abstract class GameState
     {
         public abstract void Handle(Game game);
@@ -13,7 +12,7 @@ namespace Scrabble.Domain
         public override void Handle(Game game)
         {
 
-            game.messages.Add($"Game {game.Id} starting.");
+            game.messages.Add($"Game Starting: Id: {game.Id} starting.");
 
             game.SetState(new MoveStarting());
         }
@@ -26,8 +25,7 @@ namespace Scrabble.Domain
            
             var currentPlayer = game.Players.CurrentPlayer;
 
-            game.messages.Add($"Move in process for {currentPlayer.Name}");
-
+   
             // if no more tiles in bag or rack
             if ((game.TileBag.Count == 0) && (currentPlayer.Rack.TileCount == 0))
             {
@@ -40,12 +38,14 @@ namespace Scrabble.Domain
             {
                 // get tiles
                 game.TileBag = currentPlayer.DrawTiles(game.TileBag);
-                game.messages.Add($"Drawing tiles");
+                game.messages.Add($"Drawing tiles.");
             }
 
      
             game.SetState(new MoveFinishing());
-                      
+
+            game.messages.Add($"Move Starting: Player: {currentPlayer.Name}");
+
         }
     }
 
@@ -53,13 +53,15 @@ namespace Scrabble.Domain
     {
         public override void Handle(Game game)
         {
-            game.messages.Add($"Skipping turn for {game.Players.CurrentPlayer.Name}");
-            
+  
             game.Players.GetNext();
 
             game.NextMove = null;
 
             game.SetState(new MoveStarting());
+
+            game.messages.Add($"Skipping Move: Player: {game.Players.CurrentPlayer.Name}");
+
         }
     }
 
@@ -83,15 +85,16 @@ namespace Scrabble.Domain
             // record move
             game.Moves.Add((move, score, player.Name));
            
-            game.messages.Add($"Move for {player.Name} with tiles {move.Letters} was completed with score {score}");
-
+   
             game.NextMove = null;
 
             // next player's turn
             game.Players.GetNext();
 
             game.SetState(new MoveStarting());
-  
+
+            game.messages.Add($"Move Finishing: Move for {player.Name} with tiles {move.Letters} was completed with score {score}");
+
         }
     }
 
@@ -106,11 +109,11 @@ namespace Scrabble.Domain
    
             game.SetState(new GameCompleted());
 
-            game.messages.Add($"Game Completing: {game.Id}");
-
             game.messages.Add($"{winner.Name} won with {winner.Score} points");
 
             game.messages.Add(string.Join(", ", players.Select(p => $"{p.Name}: {p.Score}")));
+
+            game.messages.Add($"Game Finishing: Id: {game.Id}");
 
         }
     }
@@ -119,7 +122,7 @@ namespace Scrabble.Domain
     {
         public override void Handle(Game game)
         {
-            game.messages.Add($"Game Completed: {game.Id}");
+            game.messages.Add($"Game Completed: Id: {game.Id}");
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Scrabble.Domain.Test
             gameStarting.Handle(game);
 
             // Assert
-            Assert.Contains($"Game {game.Id} starting.", game.messages);
+            Assert.Contains($"Game Starting:", game.messages[^1]);
             Assert.IsType<MoveStarting>(game.GetState());
         }
 
@@ -40,8 +40,8 @@ namespace Scrabble.Domain.Test
             moveStarting.Handle(game);
 
             // Assert
-            Assert.Contains($"Move in process for Player1", game.messages);
-            Assert.Contains($"Drawing tiles", game.messages);
+            Assert.Contains($"Drawing tiles", game.messages[^2]);
+            Assert.Contains($"Move Starting: ", game.messages[^1]);
             Assert.IsType<MoveFinishing>(game.GetState());
         }
 
@@ -62,7 +62,7 @@ namespace Scrabble.Domain.Test
             moveStarting.Handle(game);
 
             // Assert
-            Assert.Contains($"No more tiles in bag or rack.", game.messages);
+            Assert.Contains($"No more tiles in bag or rack.", game.messages[^1]);
             Assert.IsType<GameFinishing>(game.GetState());
         }
 
@@ -86,7 +86,7 @@ namespace Scrabble.Domain.Test
             moveFinishing.Handle(game);
 
             // Assert
-            Assert.Contains($"Move for Player1 with tiles A was completed with score 1", game.messages);
+            Assert.Contains($"Move Finishing", game.messages[^1]);
             Assert.IsType<MoveStarting>(game.GetState());
         }
 
@@ -112,8 +112,8 @@ namespace Scrabble.Domain.Test
             gameFinishing.Handle(game);
 
             // Assert
-            Assert.Contains($"Game Completing: {game.Id}", game.messages);
-            Assert.Contains($"Player1 won with 100 points", game.messages);
+            Assert.Contains($"Game Finishing: Id: {game.Id}", game.messages[^1]);
+            Assert.Contains($"Player1 won with 100 points", game.messages[^3]);
             Assert.IsType<GameCompleted>(game.GetState());
         }
     }

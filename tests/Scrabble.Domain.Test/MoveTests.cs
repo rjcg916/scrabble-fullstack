@@ -25,7 +25,7 @@ namespace Scrabble.Domain.Tests
             var (valid, msg) = Move.IsValidTilePlacement(tiles);
 
             Assert.False(valid);
-            Assert.Equal("Move includes too many tiles", msg);
+            Assert.Equal("Move includes too many tiles.", msg);
         }
 
         [Fact]
@@ -128,7 +128,7 @@ namespace Scrabble.Domain.Tests
 
             var exception = Assert.Throws<Exception>(() => MoveFactory.CreateMove(tiles));
 
-            Assert.Equal("Move is in both horizontal and vertical direction", exception.Message);
+            Assert.Equal("Move cannot be in both horizontal and vertical direction.", exception.Message);
         }
 
         [Fact]

@@ -25,9 +25,9 @@ namespace Scrabble.Domain.Tests
             // Initial state should be GameStarting
             game.NextMove = Move.MoveFactory.CreateMove(new(R._8, C.H), new List<Tile> { new Tile('A') }, isHorizontal: true);
             game.Handle();
-            Assert.Contains($"Game {game.Id} starting.", game.messages);
+            Assert.Contains($"Game Starting: Id: {game.Id} starting.", game.messages);
             Assert.IsType<MoveStarting>(game.GetState());
-
+         
 
             List<Move> moves = new();
             moves.Add(Move.MoveFactory.CreateMove(new(R._9, C.H), new List<Tile> { new Tile('B') }, isHorizontal: false));
@@ -45,7 +45,7 @@ namespace Scrabble.Domain.Tests
                 // Ensure state transition is happening correctly
                 if (currentState is MoveStarting)
                 {
-                    Assert.Contains("Move in process", game.messages[^2]);
+                    Assert.Contains("Move Starting:", game.messages[^1]);
 
                     if (moveIndex < moves.Count)
                     {
@@ -58,17 +58,17 @@ namespace Scrabble.Domain.Tests
                 }
                 else if (currentState is MoveFinishing)
                 {
-                    Assert.Contains("was completed with score", game.messages[^1]);
+                    Assert.Contains("Move Finishing:", game.messages[^1]);
                 }
                 else if (currentState is SkippingMove)
                 {
-                    Assert.Contains("Skipping turn for", game.messages[^1]);
+                    Assert.Contains("Skipping Move:", game.messages[^1]);
 
                     game.SetState(new GameFinishing());
                 }
                 else if (currentState is GameFinishing)
                 {
-                    Assert.Contains("Game Completing:", game.messages[^3]);
+                    Assert.Contains("Game Finishing:", game.messages[^1]);
                 }
             }
 

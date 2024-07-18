@@ -24,13 +24,13 @@ namespace Scrabble.Domain
         public static (bool valid, string msg) IsValidTilePlacement(List<TilePlacement> tilePlacements)
         {
             if (tilePlacements.Count == 0)
-                return (false, "Move not defined.");
+                return (false, "Invalid Move specified.");
 
             if (!AllowedNumberOfTiles(tilePlacements.Count))
-                return (false, "Move includes too many tiles");
+                return (false, "Move includes too many tiles.");
 
             if (!UniDirectionalMove(tilePlacements))
-                return (false, "Move is in both horizontal and vertical direction");
+                return (false, "Move cannot be in both horizontal and vertical direction.");
 
             return (true, "Valid Move");
         }
@@ -49,7 +49,7 @@ namespace Scrabble.Domain
 
         public static bool IsVertical(List<TilePlacement> tileList) =>
             tileList.All(c => c.Coord.CVal == tileList[0].Coord.CVal);
-     
+
         public static bool HasWildcardTile(List<TilePlacement> tileList) =>
             tileList.Select(x => x.Tile.Value == 0).Any();
 
@@ -58,22 +58,17 @@ namespace Scrabble.Domain
             public static Move CreateMove(List<TilePlacement> tilePlacements)
             {
                 if (tilePlacements.Count == 0)
-                    throw new Exception("Invalid Move provided");
+                    throw new Exception("Invalid Move specified.");
 
-                if (Move.UniDirectionalMove(tilePlacements))
-                {
-                    return Move.IsHorizontal(tilePlacements) ?
-                        new MoveHorizontal(tilePlacements) :
-                        new MoveVertical(tilePlacements);                
-                }
-                               
-                throw new Exception("Move is in both horizontal and vertical direction");
+                if (!Move.UniDirectionalMove(tilePlacements))               
+                    throw new Exception("Move cannot be in both horizontal and vertical direction.");
                 
+                return Move.IsHorizontal(tilePlacements) ?
+                    new MoveHorizontal(tilePlacements) :
+                    new MoveVertical(tilePlacements);
             }
-
             public static Move CreateMove(Coord startFrom, List<Tile> tiles, bool isHorizontal) =>
                 isHorizontal ? new MoveHorizontal(startFrom, tiles) : new MoveVertical(startFrom, tiles);
-            
         }
     }
 
@@ -109,7 +104,7 @@ namespace Scrabble.Domain
         {
 
             if (!IsHorizontal(tilePlacements))
-                return (false, "Move is not horizontal");
+                return (false, "Move must be but is not horizontal");
 
             var (baseValid, baseMsg) = base.IsValid(tilePlacements);
             if (!baseValid)
@@ -138,7 +133,7 @@ namespace Scrabble.Domain
             var count = tiles.Count;
 
             if (!AllowedNumberOfTiles(count))
-                return (false, "Move contains more than number of allowed tiles.");
+                return (false, "Move includes too many tiles.");
 
             if ((startFrom.RVal + count) > (int)R._15)
                 return (false, "Move off of board (Bottom)");
@@ -149,7 +144,7 @@ namespace Scrabble.Domain
         public override (bool valid, string msg) IsValid(List<TilePlacement> tilePlacements)
         {
             if (!IsVertical(tilePlacements))
-                return (false, "Move is not vertical");
+                return (false, "Move must be but is not vertical");
 
             var (baseValid, baseMsg) = base.IsValid(tilePlacements);
             if (!baseValid)
