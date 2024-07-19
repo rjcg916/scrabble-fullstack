@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using System;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Scrabble.Domain
 {
@@ -54,25 +53,6 @@ namespace Scrabble.Domain
                         locationSquareList.Add(new LocationSquare(new Coord(r, c), squares[(int)r, (int)c]));
 
             return locationSquareList;
-        }
-
-        /// <summary>
-        /// fetch all squares in a range of a slice
-        /// </summary>
-        internal static List<(int, Square)> GetLocationSquares(
-                                        Func<int, int, Square> GetSquare,
-                                        int sliceLocation,
-                                        (int Start, int End) range)
-        {
-            List<(int, Square)> slice = [];
-
-            for (int location = range.Start; location <= range.End; location++)
-            {
-                var sq = GetSquare(location, sliceLocation);
-                if (sq.IsOccupied)
-                    slice.Add((location, new(sq)));
-            }
-            return slice;
         }
 
     }

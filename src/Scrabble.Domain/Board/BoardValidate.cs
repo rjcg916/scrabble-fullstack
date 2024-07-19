@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Scrabble.Domain
 {
-    public partial class Board
+    public  partial class Board
     {
         public static bool DoesMoveTouchSTAR(List<TilePlacement> tileList) =>
              tileList.Exists(t => (t.Coord.Col == Board.STAR.Col) && (t.Coord.Row == Board.STAR.Row));
@@ -42,8 +42,8 @@ namespace Scrabble.Domain
 
             var invalidMessages = new List<PlacementError>();
 
-            invalidMessages.AddRange(ValidateWordSlices(r => GetSquares(board.SquareByColumn, r, (0, Coord.ColCount - 1)), Coord.ColCount, isHorizontal:true));
-            invalidMessages.AddRange(ValidateWordSlices(c => GetSquares(board.SquareByRow, c, (0, Coord.RowCount - 1)), Coord.RowCount, isHorizontal:false));
+            invalidMessages.AddRange(Squares.ValidateWordSlices(r => GetSquares(board.SquareByColumn, r, (0, Coord.ColCount - 1)), Coord.ColCount, isHorizontal:true, IsWordValid));
+            invalidMessages.AddRange(Squares.ValidateWordSlices(c => GetSquares(board.SquareByRow, c, (0, Coord.RowCount - 1)), Coord.RowCount, isHorizontal:false, IsWordValid));
 
             return invalidMessages.Count > 0    ? (false, invalidMessages) 
                                                 : (true, new List<PlacementError>());
@@ -80,37 +80,5 @@ namespace Scrabble.Domain
             return (isContiguous, placementError);
         }
 
-        /// <summary>
-        /// apply word validity check across a slice (row or col) of the board
-        /// </summary>
-        internal List<PlacementError> ValidateWordSlices(
-                                            Func<int, List<Square>> getSquares,
-                                            int sliceCount,
-                                            bool isHorizontal)
-        {
-            List<PlacementError> invalidMessages = [];
-
-            for (int index = 0; index < sliceCount; index++)
-            {
-                var squareList = getSquares(index);
-                var charList = squareList.ToCharList();
-
-                if (charList != null)
-                {
-                    var words = charList.ToWords();
-                    var (valid, invalidWord) = words.ValidateWordList(IsWordValid);
-
-                    if (!valid)
-                    {
-                        var coord = isHorizontal
-                                ? new Coord((R)index, 0) : new Coord(0, (C)index);
-
-                        invalidMessages.Add(new(coord, invalidWord));
-                    }
-                }
-            }
-
-            return invalidMessages;
-        }
     }
 }
