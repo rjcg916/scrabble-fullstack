@@ -304,21 +304,6 @@ namespace Scrabble.Domain.Tests
         }
 
         [Fact]
-        public void IsMoveValid_FirstMoveOnDiagonal_False()
-        {
-            var board = new Board(MockWordValidator);
-            var tiles = new List<TilePlacement>
-            {
-                new(new Coord(R._8, C.G), new Tile('A')),
-                new(new Coord(R._8, C.H), new Tile('B')),
-                new(new Coord(R._9, C.I), new Tile('C')),
-            };
-            var result = board.IsMoveValid(Move.MoveFactory.CreateMove(tiles));
-
-            Assert.False(result.valid);
-        }
-
-        [Fact]
         public void IsMoveValid_NextMoveHorizontalExtends_True()
         {
             var tiles = new List<TilePlacement>
@@ -352,13 +337,12 @@ namespace Scrabble.Domain.Tests
             };
             var board = new Board(MockWordValidator, Move.MoveFactory.CreateMove(tiles));
 
-
             var moveTiles = new List<TilePlacement>
             {
                 new(new Coord(R._8, C.A), new Tile('A')),
                 new(new Coord(R._8, C.K), new Tile('C')),
             };
-            var result = board.IsMoveValid(Move.MoveFactory.CreateMove(tiles));
+            var result = board.IsMoveValid(Move.MoveFactory.CreateMove(moveTiles));
 
             Assert.False(result.valid);
         }

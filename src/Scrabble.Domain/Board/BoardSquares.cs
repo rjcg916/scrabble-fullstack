@@ -14,7 +14,6 @@ namespace Scrabble.Domain
         public Square SquareByColumn(int col, int row) =>
             squares[row, col];
 
-
         public Tile GetTile(Coord loc) => squares[loc.RVal, loc.CVal]?.Tile;
 
 
@@ -28,9 +27,9 @@ namespace Scrabble.Domain
 
             for (int location = range.Start; location <= range.End; location++)
             {
-                var sq = GetSquare(location, sliceLocation);
-                if (sq.IsOccupied)
-                    slice.Add(new(sq));
+                var square = GetSquare(location, sliceLocation);
+                if (square.IsOccupied)
+                    slice.Add(new(square));
             }
 
             return slice;

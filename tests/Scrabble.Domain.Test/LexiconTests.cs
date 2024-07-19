@@ -58,7 +58,9 @@ namespace Scrabble.Domain.Tests
 
             var validSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };
 
-            var (valid, blankWord) = validSequence.IsValidWordList(isWordValid);
+            var words = validSequence.ToWords();
+
+            var (valid, blankWord) = words.ValidateWordList(isWordValid);
             Assert.True(valid);
             Assert.Equal("", blankWord);
 
@@ -72,7 +74,8 @@ namespace Scrabble.Domain.Tests
 
             var validSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'X', 'y', 'z' };
 
-            var (validFalse, invalidWord) = validSequence.IsValidWordList(isWordValid);
+            var words = validSequence.ToWords();
+            var (validFalse, invalidWord) = words.ValidateWordList(isWordValid);
             Assert.False(validFalse);
             Assert.Equal("Xyz", invalidWord);
         }
@@ -85,7 +88,8 @@ namespace Scrabble.Domain.Tests
 
             var validSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'a' };
 
-            var (valid, blank) = validSequence.IsValidWordList(isWordValid);
+            var words = validSequence.ToWords();
+            var (valid, blank) = words.ValidateWordList(isWordValid);
             Assert.True(valid);
             Assert.Equal("", blank);
         }
@@ -98,7 +102,8 @@ namespace Scrabble.Domain.Tests
 
             var invalidSequence = new List<char> { 'H', 'e', 'l', 'l', 'o', ' ', 'c' };
 
-            var (validFalse, invalidWord) = invalidSequence.IsValidWordList(isWordValid);
+            var words = invalidSequence.ToWords();
+            var (validFalse, invalidWord) = words.ValidateWordList(isWordValid);
             Assert.False(validFalse);
             Assert.Equal("c", invalidWord);
         }

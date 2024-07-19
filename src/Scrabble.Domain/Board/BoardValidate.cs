@@ -6,7 +6,6 @@ namespace Scrabble.Domain
 {
     public partial class Board
     {
-
         public static bool DoesMoveTouchSTAR(List<TilePlacement> tileList) =>
              tileList.Exists(t => (t.Coord.Col == Board.STAR.Col) && (t.Coord.Row == Board.STAR.Row));
 
@@ -43,8 +42,8 @@ namespace Scrabble.Domain
 
             var invalidMessages = new List<PlacementError>();
 
-            invalidMessages.AddRange(ValidateWordSlices(r => GetSquares(SquareByColumn, r, (0, Coord.ColCount - 1)), Coord.ColCount, true));
-            invalidMessages.AddRange(ValidateWordSlices(c => GetSquares(SquareByRow, c, (0, Coord.RowCount - 1)), Coord.RowCount, false));
+            invalidMessages.AddRange(ValidateWordSlices(r => GetSquares(board.SquareByColumn, r, (0, Coord.ColCount - 1)), Coord.ColCount, isHorizontal:true));
+            invalidMessages.AddRange(ValidateWordSlices(c => GetSquares(board.SquareByRow, c, (0, Coord.RowCount - 1)), Coord.RowCount, isHorizontal:false));
 
             return invalidMessages.Count > 0    ? (false, invalidMessages) 
                                                 : (true, new List<PlacementError>());
@@ -60,21 +59,21 @@ namespace Scrabble.Domain
                     if (squares[r, c].IsOccupied)
                         occupiedList.Add((r, c));
 
-            // get proposed tiles for squares   
+            // get proposed tiles placements   
             var proposedList = new List<(int row, int col)>();
             foreach (var (coord, _) in tilePlacementList)
             {
                 proposedList.Add((coord.RVal, coord.CVal));
             }
 
-            // for display purposes, sort tiles in board placement order
-            tilePlacementList = [.. tilePlacementList.OrderBy(tp => tp.Coord.RVal).OrderBy(tp => tp.Coord.CVal)];
+            var isContiguous = Placement.IsContiguous(occupiedList, proposedList);
+
 
             // report results
             var (row, col) = proposedList.FirstOrDefault();
+            tilePlacementList = [.. tilePlacementList.OrderBy(tp => tp.Coord.RVal).OrderBy(tp => tp.Coord.CVal)];
             var letters = tilePlacementList.Select(tp => tp.Tile).ToList().TilesToLetters();
 
-            var isContiguous = Placement.IsContiguous(occupiedList, proposedList);
             var msg = isContiguous ? letters : $"Not Contiguous :: {letters}";
             var placementError = new PlacementError(new Coord(row, col), msg);
 
@@ -93,12 +92,13 @@ namespace Scrabble.Domain
 
             for (int index = 0; index < sliceCount; index++)
             {
-                var sqList = getSquares(index);
-                var charList = sqList.ToCharList();
+                var squareList = getSquares(index);
+                var charList = squareList.ToCharList();
 
                 if (charList != null)
                 {
-                    var (valid, invalidWord) = charList.IsValidWordList(IsWordValid);
+                    var words = charList.ToWords();
+                    var (valid, invalidWord) = words.ValidateWordList(IsWordValid);
 
                     if (!valid)
                     {
