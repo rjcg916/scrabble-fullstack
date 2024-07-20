@@ -7,10 +7,20 @@ namespace Scrabble.Domain
         private readonly HashSet<string> words;
 
         public Lexicon() { 
-            this.words = ["car", "house", "dog", "talent"];
+            List<string> list = ["car", "house", "dog", "talent"];
+            Initialize(list);
         }
+
         public Lexicon(IEnumerable<string> list) {
-            this.words = new(list);            
+            Initialize(list);
+        }
+        
+        private void Initialize(IEnumerable<string> list)
+        {
+            foreach (var word in list)
+            {
+                this.words.Add(word.ToLower());
+            }
         }
 
         public bool IsWordValid(string word) =>
