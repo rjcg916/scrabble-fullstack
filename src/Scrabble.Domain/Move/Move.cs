@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Scrabble.Domain.Placement;
 
 namespace Scrabble.Domain
 {
@@ -18,10 +19,10 @@ namespace Scrabble.Domain
                 if (tilePlacements.Count == 0)
                     throw new Exception("Invalid Move specified.");
 
-                if (!Move.UniDirectionalMove(tilePlacements))
+                if (!Placement.UniDirectionalMove(tilePlacements))
                     throw new Exception("Move cannot be in both horizontal and vertical direction.");
 
-                return Move.IsHorizontal(tilePlacements) ?
+                return Placement.IsHorizontal(tilePlacements) ?
                     new MoveHorizontal(tilePlacements) :
                     new MoveVertical(tilePlacements);
             }
@@ -38,7 +39,10 @@ namespace Scrabble.Domain
 
             TilePlacements = tilePlacements;
         }
-        
+
+        public virtual (bool valid, string msg) IsValid(List<TilePlacement> tilePlacements) =>
+            Move.IsValidTilePlacement(tilePlacements);
+
         public static (bool valid, string msg) IsValidTilePlacement(List<TilePlacement> tilePlacements)
         {
             if (tilePlacements.Count == 0)
@@ -53,24 +57,8 @@ namespace Scrabble.Domain
             return (true, "Valid Move");
         }
 
-        public virtual (bool valid, string msg) IsValid(List<TilePlacement> tilePlacements) =>
-            Move.IsValidTilePlacement(tilePlacements);
-
         protected static bool AllowedNumberOfTiles(int tileCount) =>
             tileCount <= Rack.Capacity;
 
-        public static bool UniDirectionalMove(List<TilePlacement> tilePlacements) =>
-            tilePlacements.Count == 1 || IsHorizontal(tilePlacements) ^ IsVertical(tilePlacements);
-
-        public static bool IsHorizontal(List<TilePlacement> tileList) =>
-            tileList.All(c => c.Coord.RVal == tileList[0].Coord.RVal);
-
-        public static bool IsVertical(List<TilePlacement> tileList) =>
-            tileList.All(c => c.Coord.CVal == tileList[0].Coord.CVal);
-
-        public static bool HasWildcardTile(List<TilePlacement> tileList) =>
-            tileList.Select(x => x.Tile.Value == 0).Any();
-
     }
-
 }

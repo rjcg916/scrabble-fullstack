@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Scrabble.Domain
+namespace Scrabble.Util
 {
-    public static class WordExtensions
+    public static class Words
     {
         public static string[] ToWords(this List<char> charArray)
         {

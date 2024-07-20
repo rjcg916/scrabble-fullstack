@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Xunit;
+using Scrabble.Util;
 
 namespace Scrabble.Domain.Tests
 {

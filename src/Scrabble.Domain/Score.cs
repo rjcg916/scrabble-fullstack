@@ -25,17 +25,20 @@ namespace Scrabble.Domain
                         Calculate(Board, Board.SquareByColumn, Board.SquareByRow, SliceLocation, TileLocations):
                         Calculate(Board, Board.SquareByRow, Board.SquareByColumn, SliceLocation, TileLocations);
      
-        private static int Calculate(Board board, Func<int, int, Square> primaryDirection,
+        private static int Calculate(Board board, 
+                                     Func<int, int, Square> primaryDirection,
                                      Func<int, int, Square> secondaryDirection,
                                      int sliceLocation, List<int> tileLocations)
         {
             var (singleRunStart, singleRunEnd) = GetEndpoints(primaryDirection, sliceLocation, tileLocations);
 
-            int score = CalculateMoveSlice((sl, s, e) => Board.GetSquares(primaryDirection, sl, (s, e)), sliceLocation,
-                                            (singleRunStart, singleRunEnd));
+            int score = CalculateMoveSlice((sl, s, e) => 
+                            Board.GetSquares(primaryDirection, sl, (s, e)), 
+                                            sliceLocation, (singleRunStart, singleRunEnd));
 
-            score += CalculatePerpendicularSlices((sl, tls) => GetSquares(secondaryDirection, sl, tls), (singleRunStart, singleRunEnd),
-                                                  sliceLocation, board.MoveNumber);
+            score += CalculatePerpendicularSlices((sl, tls) => 
+                            GetSquares(secondaryDirection, sl, tls), 
+                                        (singleRunStart, singleRunEnd), sliceLocation, board.MoveNumber);
 
             return score;
         }
@@ -74,10 +77,9 @@ namespace Scrabble.Domain
         internal static List<Square> GetSquares(
                                             Func<int, int, Square> GetSquare,
                                             int sliceLocation,
-                                            List<int> locationList,
-                                            int maxIndex = Coord.RowCount - 1)
+                                            List<int> locationList)
         {
-            var (start, end) = GetEndpoints(GetSquare, sliceLocation, locationList, maxIndex);
+            var (start, end) = GetEndpoints(GetSquare, sliceLocation, locationList);
             return Board.GetSquares(GetSquare, sliceLocation, (start, end));
         }
 
@@ -87,14 +89,15 @@ namespace Scrabble.Domain
         internal static (int start, int end) GetEndpoints(
                                         Func<int, int, Square> GetSquare,
                                         int sliceLocation,
-                                        List<int> locationList,
-                                        int maxIndex = Coord.RowCount - 1)
+                                        List<int> locationList
+                                      )
         {
-
+            const int minIndex = 0;
             var minMove = locationList.Min();
+          
             var minOccupied = minMove;
 
-            for (int pos = minMove - 1; pos >= 0; pos--)
+            for (int pos = minMove - 1; pos >= minIndex; pos--)
             {
                 if (!(GetSquare(pos, sliceLocation).IsOccupied))
                 {
@@ -103,7 +106,9 @@ namespace Scrabble.Domain
                 minOccupied--;
             }
 
+            const int maxIndex = Coord.RowCount - 1;
             var maxMove = locationList.Max();
+        
             var maxOccupied = maxMove;
 
             for (int pos = maxMove + 1; pos <= maxIndex; pos++)

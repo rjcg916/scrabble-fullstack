@@ -35,8 +35,7 @@ namespace Scrabble.Domain
 
         public override (bool valid, string msg) IsValid(List<TilePlacement> tilePlacements)
         {
-
-            if (!IsHorizontal(tilePlacements))
+            if (!Placement.IsHorizontal(tilePlacements))
                 return (false, "Move must be but is not horizontal");
 
             var (baseValid, baseMsg) = base.IsValid(tilePlacements);

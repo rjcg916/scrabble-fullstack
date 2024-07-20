@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace Scrabble.Domain
 {
-
     public class TileBag : ITileBag
     {
         public static class TileBagFactory
@@ -12,52 +11,51 @@ namespace Scrabble.Domain
             public static TileBag Create()
             {
                 // create starting tiles for the bag
-                var tilesList = tiles
+                var tilesList = tilesAndFrequencies
                     .SelectMany(tf => Enumerable.Repeat(new Tile(tf.tile.Letter), tf.freq))
                     .ToList();
 
                 // shuffle the tiles
-                return Shuffle(tilesList);
+                return new TileBag(tilesList);//Shuffle(tilesList);
             }
-
+            
             public static TileBag Create(List<Tile> tiles)
             {
                 // shuffle the tiles
-                return Shuffle(tiles);
+                return new TileBag(tiles); // Shuffle(tiles);
             }
 
+            public static TileBag Create(TileBag tileBag)
+            {
+                return new TileBag(tileBag.Tiles);
+            }
         }
 
-        public IReadOnlyList<Tile> Tiles { get; }
+        public List<Tile> Tiles { get; }
 
         public int Count => Tiles.Count;
 
-        private TileBag(IReadOnlyList<Tile> tiles)
+        private TileBag(List<Tile> tiles)
         {
             Tiles = tiles;
+            Shuffle();
         }
+
 
         public List<Tile> Peek() =>
             [.. Tiles];
 
-        public TileBag Shuffle() =>
-            Shuffle([.. this.Tiles]);
-
-        public static TileBag Shuffle(List<Tile> tiles)
+        public void Shuffle()
         {
-
             Random r = new();
-            int n = tiles.Count;
+            int n = Tiles.Count;
 
             for (int i = n - 1; i > 0; i--)
             {
                 int j = r.Next(0, i + 1);
-                (tiles[j], tiles[i]) = (tiles[i], tiles[j]);
-            }
-
-            return new TileBag(tiles);
+                (Tiles[j], Tiles[i]) = (Tiles[i], Tiles[j]);
+            }          
         }
-
 
         public (List<Tile> drawnTiles, TileBag newTileBag) DrawTiles(TileDrawCount count)
         {
@@ -69,7 +67,7 @@ namespace Scrabble.Domain
             }
 
             var drawnTiles = Tiles.Take(drawCount).ToList();
-            var remainingTiles = Tiles.Skip(drawCount).ToList().AsReadOnly();
+            var remainingTiles = Tiles.Skip(drawCount).ToList();
 
             var newTileBag = new TileBag(remainingTiles);
 
@@ -77,7 +75,7 @@ namespace Scrabble.Domain
         }
 
 
-        private static readonly List<(Tile tile, ushort freq)> tiles =
+        private static readonly List<(Tile tile, ushort freq)> tilesAndFrequencies =
         [
             new(new Tile('A'), 9),
             new(new Tile('B'), 2),

@@ -52,13 +52,11 @@ namespace Scrabble.Domain
             return false;
         }
 
-        // Override GetHashCode
         public override int GetHashCode()
         {
             return HashCode.Combine(Row, Col);
         }
 
-        // Implement equality operators
         public static bool operator ==(Coord left, Coord right)
         {
             if (left is null)

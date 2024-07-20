@@ -62,7 +62,7 @@ namespace Scrabble.Domain
 
         public Board MakeMove(Move move)
         {
-            if (Move.HasWildcardTile(move.TilePlacements))
+            if (Placement.HasWildcardTile(move.TilePlacements))
                 _ = new SystemException("Cannot make Move with wildcard tiles.");
 
             this.MoveNumber++;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Scrabble.Util;
 using static Scrabble.Domain.Move;
 
 namespace Scrabble.Domain
@@ -19,6 +20,12 @@ namespace Scrabble.Domain
             tileList.Select(c => c.Coord.RVal).Distinct().Count() == 1;
         public static bool IsVertical(this List<TilePlacement> tileList) =>
             tileList.Select(c => c.Coord.CVal).Distinct().Count() == 1;
+
+        public static bool UniDirectionalMove(List<TilePlacement> tileList) =>
+            tileList.Count == 1 || IsHorizontal(tileList) ^ IsVertical(tileList);
+
+        public static bool HasWildcardTile(List<TilePlacement> tileList) =>
+            tileList.Select(x => x.Tile.Value == 0).Any();
 
         public static PlacementSpec ToPlacementSpec(this List<TilePlacement> tileList)
         {

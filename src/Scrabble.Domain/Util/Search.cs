@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Scrabble.Domain
+namespace Scrabble.Util
 {
     public class Search
     {

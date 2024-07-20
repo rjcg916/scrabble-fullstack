@@ -85,7 +85,8 @@ namespace Scrabble.Domain.Tests
             var originalTileBag = TileBag.TileBagFactory.Create();
 
             // Act
-            var shuffledTileBag  = originalTileBag.Shuffle();
+            var shuffledTileBag = TileBag.TileBagFactory.Create(originalTileBag);
+            shuffledTileBag.Shuffle();
 
             // Assert
             Assert.NotEqual(originalTileBag, shuffledTileBag); // Not guaranteed to be different but highly likely

@@ -7,7 +7,6 @@ namespace Scrabble.Domain
         reg, dl, tl, dw, tw, start
     }
 
-  
     public class Square(SquareType squareType = SquareType.reg)
     {
         public SquareType SquareType { get; set; } = squareType;
