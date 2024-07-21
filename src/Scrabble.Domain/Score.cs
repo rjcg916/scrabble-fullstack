@@ -21,28 +21,28 @@ namespace Scrabble.Domain
         }
 
         public int Calculate() =>
-                    IsHorizontal ? 
-                        Calculate(Board, Board.SquareByColumn, Board.SquareByRow, SliceLocation, TileLocations):
+                    IsHorizontal ?
+                        Calculate(Board, Board.SquareByColumn, Board.SquareByRow, SliceLocation, TileLocations) :
                         Calculate(Board, Board.SquareByRow, Board.SquareByColumn, SliceLocation, TileLocations);
-     
-        private static int Calculate(Board board, 
+
+        private static int Calculate(Board board,
                                      Func<int, int, Square> primaryDirection,
                                      Func<int, int, Square> secondaryDirection,
                                      int sliceLocation, List<int> tileLocations)
         {
             var (singleRunStart, singleRunEnd) = GetEndpoints(primaryDirection, sliceLocation, tileLocations);
 
-            int score = CalculateMoveSlice((sl, s, e) => 
-                            Board.GetSquares(primaryDirection, sl, (s, e)), 
-                            sliceLocation, 
+            int score = CalculateMoveSlice((sl, s, e) =>
+                            Board.GetSquares(primaryDirection, sl, (s, e)),
+                            sliceLocation,
                             (singleRunStart, singleRunEnd));
 
             score += CalculatePerpendicularSlices((sl, tls) =>
                         Board.GetSquares(secondaryDirection, sl, GetEndpoints(secondaryDirection, sl, tls)),
-                        (singleRunStart, singleRunEnd), 
-                        sliceLocation, 
+                        (singleRunStart, singleRunEnd),
+                        sliceLocation,
                         board.MoveNumber);
-     
+
             return score;
         }
 
@@ -73,7 +73,7 @@ namespace Scrabble.Domain
             return score;
         }
 
-        
+
         /// <summary>
         /// Determine start and end location of occupied squares contiguous with specified squares
         /// </summary>
@@ -85,7 +85,7 @@ namespace Scrabble.Domain
         {
             const int minIndex = 0;
             var minMove = locationList.Min();
-          
+
             var minOccupied = minMove;
 
             for (int pos = minMove - 1; pos >= minIndex; pos--)
@@ -99,7 +99,7 @@ namespace Scrabble.Domain
 
             const int maxIndex = Coord.RowCount - 1;
             var maxMove = locationList.Max();
-        
+
             var maxOccupied = maxMove;
 
             for (int pos = maxMove + 1; pos <= maxIndex; pos++)
@@ -114,4 +114,23 @@ namespace Scrabble.Domain
             return (minOccupied, maxOccupied);
         }
     }
+
+    public static class Scorer
+    {
+        static public int ScoreRun(this List<Square> squares)
+        {
+            int wordScore = 0;
+
+            int wordMultiplier = 1;
+
+            foreach (var location in squares)
+            {
+                wordScore += (location.Tile.Value * location.LetterMultiplier);
+                wordMultiplier *= location.WordMultiplier;
+            }
+
+            return wordScore * wordMultiplier;
+        }
+    }
+
 }

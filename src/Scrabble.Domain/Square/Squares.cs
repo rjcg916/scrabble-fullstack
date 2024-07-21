@@ -10,20 +10,7 @@ namespace Scrabble.Domain
         static public List<char> ToCharList(this List<Square> slice) =>
             slice.Select(square => square.Tile?.Letter ?? ' ').ToList();
 
-        static public int ScoreRun(this List<Square> squares)
-        {
-            int wordScore = 0;
 
-            int wordMultiplier = 1;
-
-            foreach (var location in squares)
-            {
-                wordScore += (location.Tile.Value * location.LetterMultiplier);
-                wordMultiplier *= location.WordMultiplier;
-            }
-
-            return wordScore * wordMultiplier;
-        }
 
         /// <summary>
         /// fetch all squares in a range of a slice
