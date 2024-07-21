@@ -2,7 +2,7 @@
 using Xunit;
 using System.Collections.Generic;
 
-namespace Scrabble.Domain.Test
+namespace Scrabble.Domain.Tests
 {
     public class GameStateTests
     {

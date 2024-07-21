@@ -41,7 +41,7 @@ namespace Scrabble.Domain
         }
 
         /// <summary>
-        /// create a new Board with initial move
+        /// Create a new Board with initial move
         /// </summary>>
         public Board(Func<string, bool> IsWordValid,
                      Move move) :
@@ -51,7 +51,7 @@ namespace Scrabble.Domain
         }
 
         /// <summary>
-        /// create a new Board with initial move
+        /// Create a new Board with initial move
         /// </summary>
         public Board(Func<string, bool> IsWordValid,
                         Coord startFrom,

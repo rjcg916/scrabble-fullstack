@@ -4,7 +4,7 @@ namespace Scrabble.Domain
 {
     public class Lexicon : ILexicon
     {
-        private readonly HashSet<string> words;
+        private readonly HashSet<string> words = new();
 
         public Lexicon() { 
             List<string> list = ["car", "house", "dog", "talent"];

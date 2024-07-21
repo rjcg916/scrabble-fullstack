@@ -16,7 +16,6 @@ namespace Scrabble.Domain
         public Tile GetTile(Coord loc) => squares[loc.RVal, loc.CVal]?.Tile;
 
 
-  
         /// <summary>
         ///  Fetch all squares in the range of a slice
         /// </summary>

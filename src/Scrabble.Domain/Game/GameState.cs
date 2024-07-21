@@ -72,7 +72,7 @@ namespace Scrabble.Domain
             if (!move.IsValid(move.TilePlacements).valid)
             {
                 game.SetState(new MoveFinishing());
-                game.messages.Add("Move Finishing: Invalid Move.");
+                game.messages.Add("Invalid Move.");
                 return;
             }
 
