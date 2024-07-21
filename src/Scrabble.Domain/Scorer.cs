@@ -4,14 +4,14 @@ using System.Linq;
 
 namespace Scrabble.Domain
 {
-    public class Score
+    public class Scorer
     {
         readonly Board Board;
         readonly bool IsHorizontal;
         readonly int SliceLocation;
         readonly List<int> TileLocations;
 
-        public Score(Board board, Move move)
+        public Scorer(Board board, Move move)
         {
             Board = board;
             var tileSpecs = move.TilePlacements.ToPlacementSpec();
@@ -91,9 +91,8 @@ namespace Scrabble.Domain
             for (int pos = minMove - 1; pos >= minIndex; pos--)
             {
                 if (!(GetSquare(pos, sliceLocation).IsOccupied))
-                {
                     break;
-                }
+                
                 minOccupied--;
             }
 
@@ -105,9 +104,8 @@ namespace Scrabble.Domain
             for (int pos = maxMove + 1; pos <= maxIndex; pos++)
             {
                 if (!(GetSquare(pos, sliceLocation).IsOccupied))
-                {
                     break;
-                }
+                
                 maxOccupied++;
             }
 
@@ -115,12 +113,11 @@ namespace Scrabble.Domain
         }
     }
 
-    public static class Scorer
+    public static class RunScorer
     {
         static public int ScoreRun(this List<Square> squares)
         {
             int wordScore = 0;
-
             int wordMultiplier = 1;
 
             foreach (var location in squares)

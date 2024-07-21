@@ -4,7 +4,7 @@ using static Scrabble.Domain.Move;
 
 namespace Scrabble.Domain.Tests
 {
-    public class ScoreTests
+    public class ScorerTests
     {
         static private bool MockWordValidator(string _) => true;
 
@@ -277,7 +277,7 @@ namespace Scrabble.Domain.Tests
                 ];
             board.MakeMove(MoveFactory.CreateMove(tiles));
 
-            var result = Score.GetEndpoints(board.SquareByColumn, (int)R._8, [(int)C.H, (int)C.I]);
+            var result = Scorer.GetEndpoints(board.SquareByColumn, (int)R._8, [(int)C.H, (int)C.I]);
 
             Assert.Equal(((int)C.H, (int)C.I), result);
         }
@@ -294,7 +294,7 @@ namespace Scrabble.Domain.Tests
             ];
             board.MakeMove(MoveFactory.CreateMove(tiles));
 
-            var result = Score.GetEndpoints(board.SquareByRow, (int)C.H, [((int)R._8), ((int)R._9)]);
+            var result = Scorer.GetEndpoints(board.SquareByRow, (int)C.H, [((int)R._8), ((int)R._9)]);
 
             Assert.Equal((((int)R._8), ((int)R._9)), result);
         }
