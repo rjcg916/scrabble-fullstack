@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
 
 namespace Scrabble.Domain
 {
@@ -52,5 +54,36 @@ namespace Scrabble.Domain
             _state.Handle(this);
         }
 
+        public void SaveGameState(string filePath)
+        {
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                IncludeFields = true
+            };
+
+            string jsonString = JsonSerializer.Serialize(this, options);
+            File.WriteAllText(filePath, jsonString);
+        }
+
+        // Method to load the game state from a file
+        public static Game LoadGameState(string filePath, ILexicon lexicon)
+        {
+            var options = new JsonSerializerOptions
+            {
+                IncludeFields = true
+            };
+
+            string jsonString = File.ReadAllText(filePath);
+            var game = JsonSerializer.Deserialize<Game>(jsonString, options);
+
+            if (game != null)
+            {
+                game.Lexicon = lexicon;
+                game.Board.IsWordValid = lexicon.IsWordValid;
+            }
+
+            return game;
+        }
     }
 }

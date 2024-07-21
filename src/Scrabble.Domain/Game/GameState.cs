@@ -20,8 +20,7 @@ namespace Scrabble.Domain
     public class MoveStarting : GameState
     {
         public override void Handle(Game game)
-        {
-           
+        {        
             var currentPlayer = game.Players.CurrentPlayer;
 
             // if no more tiles in bag or rack
@@ -39,11 +38,9 @@ namespace Scrabble.Domain
                 game.messages.Add($"Drawing tiles.");
             }
 
-     
             game.SetState(new MoveFinishing());
 
             game.messages.Add($"Move Starting: Player: {currentPlayer.Name}");
-
         }
     }
 
@@ -102,7 +99,6 @@ namespace Scrabble.Domain
     {
         public override void Handle(Game game)
         {
-
             var players = game.Players;
 
             var winner = players.Leader();
@@ -112,7 +108,6 @@ namespace Scrabble.Domain
             game.messages.Add($"{winner.Name} won with {winner.Score} points");
             game.messages.Add(string.Join(", ", players.Select(p => $"{p.Name}: {p.Score}")));
             game.messages.Add($"Game Finishing: Id: {game.Id}");
-
         }
     }
 

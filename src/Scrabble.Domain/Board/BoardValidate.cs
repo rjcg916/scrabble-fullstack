@@ -79,6 +79,5 @@ namespace Scrabble.Domain
 
             return (isContiguous, placementError);
         }
-
     }
 }

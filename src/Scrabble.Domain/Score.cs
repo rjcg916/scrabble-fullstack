@@ -34,12 +34,15 @@ namespace Scrabble.Domain
 
             int score = CalculateMoveSlice((sl, s, e) => 
                             Board.GetSquares(primaryDirection, sl, (s, e)), 
-                                            sliceLocation, (singleRunStart, singleRunEnd));
+                            sliceLocation, 
+                            (singleRunStart, singleRunEnd));
 
-            score += CalculatePerpendicularSlices((sl, tls) => 
-                            GetSquares(secondaryDirection, sl, tls), 
-                                        (singleRunStart, singleRunEnd), sliceLocation, board.MoveNumber);
-
+            score += CalculatePerpendicularSlices((sl, tls) =>
+                        Board.GetSquares(secondaryDirection, sl, GetEndpoints(secondaryDirection, sl, tls)),
+                        (singleRunStart, singleRunEnd), 
+                        sliceLocation, 
+                        board.MoveNumber);
+     
             return score;
         }
 
@@ -72,19 +75,7 @@ namespace Scrabble.Domain
 
         
         /// <summary>
-        ///  fetch all specified squares in a slice (horizontal or vertical)
-        /// </summary>
-        internal static List<Square> GetSquares(
-                                            Func<int, int, Square> GetSquare,
-                                            int sliceLocation,
-                                            List<int> locationList)
-        {
-            var (start, end) = GetEndpoints(GetSquare, sliceLocation, locationList);
-            return Board.GetSquares(GetSquare, sliceLocation, (start, end));
-        }
-
-        /// <summary>
-        /// determine start and end location of occupied squares contiguous with specified squares
+        /// Determine start and end location of occupied squares contiguous with specified squares
         /// </summary>
         internal static (int start, int end) GetEndpoints(
                                         Func<int, int, Square> GetSquare,

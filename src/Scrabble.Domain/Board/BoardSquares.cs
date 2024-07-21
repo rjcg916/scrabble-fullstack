@@ -16,7 +16,10 @@ namespace Scrabble.Domain
         public Tile GetTile(Coord loc) => squares[loc.RVal, loc.CVal]?.Tile;
 
 
-        // fetch all squares in a range of a slice
+  
+        /// <summary>
+        ///  Fetch all squares in the range of a slice
+        /// </summary>
         internal static List<Square> GetSquares(
                                         Func<int, int, Square> GetSquare,
                                         int sliceLocation,
@@ -54,6 +57,5 @@ namespace Scrabble.Domain
 
             return locationSquareList;
         }
-
     }
 }

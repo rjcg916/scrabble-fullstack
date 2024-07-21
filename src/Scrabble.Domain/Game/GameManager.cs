@@ -5,7 +5,6 @@ namespace Scrabble.Domain
 {
     public class GameManager : IGameManager
     {
-      
         private readonly Dictionary<Guid, Game> _games = [];
 
         public Guid AddGame(Game game)

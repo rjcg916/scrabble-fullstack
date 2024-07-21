@@ -44,7 +44,6 @@ namespace Scrabble.Domain
             }
         }
 
-
         private static readonly Dictionary<char, int> LetterValues = new()
         {
             { 'A', 1 }, { 'B', 3 }, { 'C', 3 }, { 'D', 2 }, { 'E', 1 },

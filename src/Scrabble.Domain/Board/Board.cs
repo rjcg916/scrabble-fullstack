@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using static Scrabble.Domain.Move;
 
 namespace Scrabble.Domain
 {
-    public partial class Board
-    {
+    public partial class Board { 
+
+        [JsonInclude]
         public Square[,] squares = new Square[Coord.RowCount, Coord.ColCount];
 
         public static readonly Coord STAR = new(R._8, C.H);
 
-        internal readonly Func<string, bool> IsWordValid;
+        internal Func<string, bool> IsWordValid;
 
-        public int MoveNumber = 0;
-        public int TileCount = 0;
+        public int MoveNumber { get; set; } = 0;
+        public int TileCount { get; set;  } = 0;
 
         public Board(Func<string, bool> IsWordValid)
         {
@@ -58,6 +60,10 @@ namespace Scrabble.Domain
             this(IsWordValid)
         {
             this.MakeMove(MoveFactory.CreateMove(startFrom, tiles, isHorizontal));
+        }
+
+        public Board()
+        {
         }
 
         public Board MakeMove(Move move)
