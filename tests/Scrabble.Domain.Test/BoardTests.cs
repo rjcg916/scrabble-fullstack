@@ -212,7 +212,7 @@ namespace Scrabble.Domain.Tests
             var board = new Board(MockWordValidator);
             var errors = new List<PlacementError>();
 
-            errors = Squares.ValidateWordSlices(r => Board.GetSquares(board.SquareByColumn, r, (0, Coord.ColCount - 1)), Coord.RowCount, isHorizontal:true, board.IsWordValid);
+            errors = Board.ValidateWordSlices(r => Board.GetSquares(board.SquareByColumn, r, (0, Coord.ColCount - 1)), Coord.RowCount, isHorizontal:true, board.IsWordValid);
 
             Assert.Empty(errors);
         }

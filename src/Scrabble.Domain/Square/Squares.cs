@@ -11,10 +11,10 @@ namespace Scrabble.Domain
             slice.Select(square => square.Tile?.Letter ?? ' ').ToList();
 
 
-
         /// <summary>
         /// fetch all squares in a range of a slice
         /// </summary>
+       
         public static List<(int, Square)> GetLocationSquares(
                                         Func<int, int, Square> GetSquare,
                                         int sliceLocation,
@@ -31,37 +31,6 @@ namespace Scrabble.Domain
             return slice;
         }
 
-        public static List<PlacementError> ValidateWordSlices(
-                                    Func<int, List<Square>> getSquares,
-                                    int sliceCount,
-                                    bool isHorizontal,
-                                    Func<string, bool> IsWordValid)
-        {
-            List<PlacementError> invalidMessages = [];
 
-            for (int index = 0; index < sliceCount; index++)
-            {
-                var squareList = getSquares(index);
-                var charList = squareList.ToCharList();
-
-                if (charList != null)
-                {
-                    var words = charList.ToWords();
-                    var (valid, invalidWord) = words.ValidateWordList(IsWordValid);
-
-                    if (!valid)
-                    {
-                        var coord = isHorizontal
-                                    ? new Coord((R)index, 0) 
-                                    : new Coord(0, (C)index);
-
-                        invalidMessages.Add(new(coord, invalidWord));
-                    }
-                }
-            }
-
-            return invalidMessages;
-        }
     }
-
 }

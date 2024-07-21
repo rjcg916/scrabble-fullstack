@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Scrabble.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -42,8 +43,8 @@ namespace Scrabble.Domain
 
             var invalidMessages = new List<PlacementError>();
 
-            invalidMessages.AddRange(Squares.ValidateWordSlices(r => GetSquares(board.SquareByColumn, r, (0, Coord.ColCount - 1)), Coord.ColCount, isHorizontal:true, IsWordValid));
-            invalidMessages.AddRange(Squares.ValidateWordSlices(c => GetSquares(board.SquareByRow, c, (0, Coord.RowCount - 1)), Coord.RowCount, isHorizontal:false, IsWordValid));
+            invalidMessages.AddRange(ValidateWordSlices(r => GetSquares(board.SquareByColumn, r, (0, Coord.ColCount - 1)), Coord.ColCount, isHorizontal:true, IsWordValid));
+            invalidMessages.AddRange(ValidateWordSlices(c => GetSquares(board.SquareByRow, c, (0, Coord.RowCount - 1)), Coord.RowCount, isHorizontal:false, IsWordValid));
 
             return invalidMessages.Count > 0    ? (false, invalidMessages) 
                                                 : (true, new List<PlacementError>());
@@ -79,5 +80,38 @@ namespace Scrabble.Domain
 
             return (isContiguous, placementError);
         }
+
+        public static List<PlacementError> ValidateWordSlices(
+                                Func<int, List<Square>> getSquares,
+                                int sliceCount,
+                                bool isHorizontal,
+                                Func<string, bool> IsWordValid)
+        {
+            List<PlacementError> invalidMessages = [];
+
+            for (int index = 0; index < sliceCount; index++)
+            {
+                var squareList = getSquares(index);
+                var charList = squareList.ToCharList();
+
+                if (charList != null)
+                {
+                    var words = charList.ToWords();
+                    var (valid, invalidWord) = words.ValidateWordList(IsWordValid);
+
+                    if (!valid)
+                    {
+                        var coord = isHorizontal
+                                    ? new Coord((R)index, 0)
+                                    : new Coord(0, (C)index);
+
+                        invalidMessages.Add(new(coord, invalidWord));
+                    }
+                }
+            }
+
+            return invalidMessages;
+        }
+
     }
 }
