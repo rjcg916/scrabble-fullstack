@@ -16,6 +16,7 @@ namespace Scrabble.Domain.Tests
             Assert.NotNull(board.squares);
             Assert.Equal(Coord.RowCount, board.squares.GetLength(0));
             Assert.Equal(Coord.ColCount, board.squares.GetLength(1));
+
             for (int r = 0; r < Coord.RowCount; r++)
             {
                 for (int c = 0; c < Coord.ColCount; c++)
@@ -76,7 +77,6 @@ namespace Scrabble.Domain.Tests
             {
                 new(new Coord(R._7, C.G), new Tile('A'))
             };
-
 
             Assert.False(Board.DoesMoveTouchSTAR(tiles));
         }
@@ -210,9 +210,9 @@ namespace Scrabble.Domain.Tests
         public void ValidateBoardSlices_NoErrorsOnEmptyBoard()
         {
             var board = new Board(MockWordValidator);
-            var errors = new List<PlacementError>();
+            var errors = new List<PlacementMsg>();
 
-            errors = Board.ValidateWordSlices(r => Board.GetSquares(board.SquareByColumn, r, (0, Coord.ColCount - 1)), Coord.RowCount, isHorizontal:true, board.IsWordValid);
+            errors = Board.ValidateWords(Coord.RowCount, isHorizontal:true, r => Board.GetSquares(board.SquareByColumn, r, (0, Coord.ColCount - 1)), board.IsWordValid);
 
             Assert.Empty(errors);
         }

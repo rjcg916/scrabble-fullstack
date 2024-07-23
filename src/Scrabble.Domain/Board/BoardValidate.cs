@@ -5,16 +5,13 @@ using System.Linq;
 
 namespace Scrabble.Domain
 {
-    public  partial class Board
+    public partial class Board
     {
-        public static bool DoesMoveTouchSTAR(List<TilePlacement> tileList) =>
-             tileList.Exists(t => (t.Coord.Col == Board.STAR.Col) && (t.Coord.Row == Board.STAR.Row));
-
         public bool AreOccupied(List<Coord> locations) => locations.Any(l => IsOccupied(l));
 
         public bool IsOccupied(Coord coord) => squares[coord.RVal, coord.CVal].IsOccupied;
 
-        public (bool valid, List<PlacementError> errorList) IsMoveValid(Move move)
+        public (bool valid, List<PlacementMsg> errorList) IsMoveValid(Move move)
         {
             Board board = new(this);
 
@@ -41,53 +38,51 @@ namespace Scrabble.Domain
 
             // validate vertical and horizontal slices
 
-            var invalidMessages = new List<PlacementError>();
+            var placementMsgs = new List<PlacementMsg>();
 
-            invalidMessages.AddRange(ValidateWordSlices(r => GetSquares(board.SquareByColumn, r, (0, Coord.ColCount - 1)), Coord.ColCount, isHorizontal:true, IsWordValid));
-            invalidMessages.AddRange(ValidateWordSlices(c => GetSquares(board.SquareByRow, c, (0, Coord.RowCount - 1)), Coord.RowCount, isHorizontal:false, IsWordValid));
+            placementMsgs.AddRange(
+                ValidateWords(
+                Coord.ColCount, isHorizontal: true,
+                r => GetSquares(board.SquareByColumn, r, (0, Coord.ColCount - 1)), IsWordValid));
 
-            return invalidMessages.Count > 0    ? (false, invalidMessages) 
-                                                : (true, new List<PlacementError>());
+            placementMsgs.AddRange(
+                ValidateWords(
+                Coord.RowCount, isHorizontal: false,
+                c => GetSquares(board.SquareByRow, c, (0, Coord.RowCount - 1)), IsWordValid));
+
+            return placementMsgs.Count > 0 ?
+                                (false, placementMsgs) :
+                                (true, new List<PlacementMsg>());
         }
 
-        public (bool valid, PlacementError) TilesContiguous(List<TilePlacement> tilePlacementList)
+        public (bool valid, PlacementMsg msg) TilesContiguous(List<TilePlacement> tilePlacementList)
         {
 
-            // get currently occupied squares
-            var occupiedList = new List<(int, int)>();
-            for (int r = 0; r < Coord.RowCount; r++)
-                for (int c = 0; c < Coord.ColCount; c++)
-                    if (squares[r, c].IsOccupied)
-                        occupiedList.Add((r, c));
+            var occupiedList = GetOccupiedSquares().Select(s => (s.Coord.RVal, s.Coord.CVal)).ToList();
 
-            // get proposed tiles placements   
-            var proposedList = new List<(int row, int col)>();
-            foreach (var (coord, _) in tilePlacementList)
-            {
-                proposedList.Add((coord.RVal, coord.CVal));
-            }
+            var proposedList = tilePlacementList.Select(s => (s.Coord.RVal, s.Coord.CVal)).ToList();
 
             var isContiguous = Placement.IsContiguous(occupiedList, proposedList);
 
-
-            // report results
+            var letters = tilePlacementList.ToLetters();
             var (row, col) = proposedList.FirstOrDefault();
-            tilePlacementList = [.. tilePlacementList.OrderBy(tp => tp.Coord.RVal).OrderBy(tp => tp.Coord.CVal)];
-            var letters = tilePlacementList.Select(tp => tp.Tile).ToList().TilesToLetters();
 
-            var msg = isContiguous ? letters : $"Not Contiguous :: {letters}";
-            var placementError = new PlacementError(new Coord(row, col), msg);
+            return isContiguous ?
+                (true, new PlacementMsg(new Coord(row, col), letters)) :
+                (false, new PlacementMsg(new Coord(row, col), $"Not Contiguous :: {letters}"));
 
-            return (isContiguous, placementError);
         }
 
-        public static List<PlacementError> ValidateWordSlices(
-                                Func<int, List<Square>> getSquares,
-                                int sliceCount,
-                                bool isHorizontal,
-                                Func<string, bool> IsWordValid)
+        public static bool DoesMoveTouchSTAR(List<TilePlacement> tileList) =>
+             tileList.Exists(t => (t.Coord.Col == Board.STAR.Col) && (t.Coord.Row == Board.STAR.Row));
+
+        internal static List<PlacementMsg> ValidateWords(
+                        int sliceCount,
+                        bool isHorizontal,
+                        Func<int, List<Square>> getSquares,
+                        Func<string, bool> IsWordValid)
         {
-            List<PlacementError> invalidMessages = [];
+            List<PlacementMsg> placementMsgs = [];
 
             for (int index = 0; index < sliceCount; index++)
             {
@@ -101,17 +96,17 @@ namespace Scrabble.Domain
 
                     if (!valid)
                     {
-                        var coord = isHorizontal
-                                    ? new Coord((R)index, 0)
-                                    : new Coord(0, (C)index);
+                        var coord = isHorizontal ?
+                                    new Coord((R)index, 0) :
+                                    new Coord(0, (C)index);
 
-                        invalidMessages.Add(new(coord, invalidWord));
+                        placementMsgs.Add(new(coord, invalidWord));
                     }
                 }
             }
 
-            return invalidMessages;
+            return placementMsgs;
         }
-
     }
+
 }

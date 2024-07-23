@@ -7,14 +7,21 @@ using static Scrabble.Domain.Move;
 namespace Scrabble.Domain
 {
     public record LocationSquare(Coord Coord, Square Square);
-    public record PlacementError(Coord Location, string Letters);
+    public record PlacementMsg(Coord Location, string Letters);
     public record PlacementSpec(bool IsHorizontal, int SliceLocation, List<int> TileLocations);
     public record TilePlacement(Coord Coord, Tile Tile);
+
 
     public static class Placement
     {
         public static Move ToMove(this List<TilePlacement> placements) =>
             MoveFactory.CreateMove(placements);
+
+        public static string ToLetters(this List<TilePlacement> placements)
+        {
+            placements = [.. placements.OrderBy(tp => tp.Coord.RVal).OrderBy(tp => tp.Coord.CVal)];
+            return placements.Select(tp => tp.Tile).ToList().TilesToLetters();
+        }
 
         public static bool IsHorizontal(this List<TilePlacement> tileList) =>
             tileList.Select(c => c.Coord.RVal).Distinct().Count() == 1;
